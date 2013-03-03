@@ -1,0 +1,18 @@
+          1.25A	 24	           1812	"F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24"	1836775	0.34	LITTELFUSE  - 1812L125/16DR
+  10000uF / 10V	  1	               	"C2"
+          100nF	  5	               	"C1, C3, C4, C6, C7"
+           120R	  1	               	"R2"
+           330R	  3	               	"R1, R3, R6"
+            4u7	  2	               	"C5, C8"
+           5.6V	  1	           1206	"VR1"	1189317 	 0.6	AVX - VC120605D150DP 	
+        ADM2484	  1	               	"U2"
+          DIODE	  1	         TO-247	"D2"	1651155	   2	FAIRCHILD SEMICONDUCTOR - RURG5060
+          GREEN	  3	               	"D1, D3, D4"
+         JUMPER	  1	               	"JP1"
+   NX1117CE33Z 	  1	               	"U1"	2057285 	0.25
+   NX1117CE50Z 	  1	               	"U3"	2057286 	0.27	NXP - NX1117CE50Z 
+          POWER	  1	               	"P1"
+              R	  2	               	"R4, R5"
+         RJ45IN	  1	               	"J13"
+        RJ45OUT	  1	               	"J14"
+         USBA-D	 12	         USBA-D	"J1, J2, J3, J4, J5, J6, J7, J8, J9, J10, J11, J12"	0.28	USB-AW-2

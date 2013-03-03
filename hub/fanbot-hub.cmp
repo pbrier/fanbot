@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 2/13/2013 10:09:19 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 3/3/2013 10:54:57 PM
 
 BeginCmp
 TimeStamp = /511962A5;
@@ -18,7 +18,7 @@ BeginCmp
 TimeStamp = /51190DF9;
 Reference = C2;
 ValeurCmp = 10000uF;
-IdModule  = CP20;
+IdModule  = c_elec_10x7.7;
 EndCmp
 
 BeginCmp
@@ -116,7 +116,7 @@ BeginCmp
 TimeStamp = /511BC97B;
 Reference = C16;
 ValeurCmp = 10000uF;
-IdModule  = ;
+IdModule  = c_elec_10x7.7;
 EndCmp
 
 BeginCmp
@@ -137,7 +137,7 @@ BeginCmp
 TimeStamp = /511913B9;
 Reference = D2;
 ValeurCmp = DIODE;
-IdModule  = D4;
+IdModule  = to220-2;
 EndCmp
 
 BeginCmp
@@ -445,7 +445,7 @@ BeginCmp
 TimeStamp = /51196D59;
 Reference = J15;
 ValeurCmp = USB_1;
-IdModule  = USB_B;
+IdModule  = conn_usb_B_micro_smd;
 EndCmp
 
 BeginCmp
@@ -795,14 +795,14 @@ BeginCmp
 TimeStamp = /511961C0;
 Reference = SW1;
 ValeurCmp = SPST;
-IdModule  = SW_PUSH;
+IdModule  = smd_push2;
 EndCmp
 
 BeginCmp
 TimeStamp = /511962A4;
 Reference = SW2;
 ValeurCmp = SPST;
-IdModule  = SW_PUSH;
+IdModule  = smd_push2;
 EndCmp
 
 BeginCmp

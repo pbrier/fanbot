@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0  Date: 2/25/2013 12:26:44 AM
+#
+$CMP LPC11U24FBD48/301
+D LPC11u24 microcontroller 48pin
+K lpc11
+$ENDCMP
+#
+#End Doc Library

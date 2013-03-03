@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 3/3/2013 1:19:07 AM
+EESchema Schematic File Version 2  date 3/3/2013 7:43:55 PM
 LIBS:kekketek
 LIBS:k_lpc1100
 LIBS:w_connectors
@@ -39,11 +39,11 @@ EELAYER END
 $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
-Title ""
-Date "2 mar 2013"
-Rev ""
-Comp ""
-Comment1 ""
+Title "Fanbot brain LPC11u24 PCB  CC-BY-SA-NC-3.0  kekbot.org"
+Date "3 mar 2013"
+Rev "1"
+Comp "KekkeTek"
+Comment1 "peter@kekbot.org"
 Comment2 ""
 Comment3 ""
 Comment4 ""
@@ -409,8 +409,6 @@ F 1 "+3.3V" H 8500 2260 30  0000 C CNN
 $EndComp
 Text Notes 10650 7650 0    60   ~ 0
 1
-Text Notes 10350 7550 0    60   ~ 0
-pbrier@kekbot.org
 $Comp
 L +3.3V #PWR02
 U 1 1 5131F86D
@@ -1064,10 +1062,6 @@ F 1 "LPC11U24FBD48/301" H 3700 6200 60  0000 C CNN
 	1    5000 4950
 	1    0    0    -1  
 $EndComp
-Text Notes 10250 7350 0    60   ~ 0
-CC-BY-SA-NC-3.0
-Text Notes 7350 7550 0    60   ~ 0
-Fanbot LPC11u24
 $Comp
 L C C2
 U 1 1 5122AF18

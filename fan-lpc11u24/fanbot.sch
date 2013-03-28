@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 3/7/2013 12:54:59 AM
+EESchema Schematic File Version 2  date 3/12/2013 9:41:22 PM
 LIBS:ti-launchpad
 LIBS:kekketek
 LIBS:k_lpc1100
@@ -41,7 +41,7 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
 Title "Fanbot brain LPC11u24 PCB  CC-BY-SA-NC-3.0  kekbot.org"
-Date "6 mar 2013"
+Date "12 mar 2013"
 Rev "1"
 Comp "KekkeTek"
 Comment1 "peter@kekbot.org"
@@ -49,6 +49,11 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Connection ~ 6050 1100
+Wire Wire Line
+	6050 950  6050 1250
+Wire Wire Line
+	7400 1100 7050 1100
 Wire Wire Line
 	7600 4100 7100 4100
 Wire Wire Line
@@ -63,8 +68,6 @@ Connection ~ 8900 4150
 Wire Wire Line
 	9350 5700 9800 5700
 Connection ~ 7050 1250
-Wire Wire Line
-	7050 1500 7050 1250
 Wire Wire Line
 	8750 6250 8750 6300
 Wire Wire Line
@@ -301,8 +304,6 @@ Wire Wire Line
 	8500 6350 8500 6250
 Connection ~ 8500 6300
 Wire Wire Line
-	6050 1200 6050 1250
-Wire Wire Line
 	7100 5700 8850 5700
 Wire Wire Line
 	8850 5800 7100 5800
@@ -324,6 +325,19 @@ Wire Wire Line
 	2400 5200 2900 5200
 Wire Wire Line
 	7100 3900 7600 3900
+Wire Wire Line
+	6050 1100 6550 1100
+$Comp
+L R R?
+U 1 1 513F92E0
+P 6800 1100
+F 0 "R?" V 6880 1100 50  0000 C CNN
+F 1 "43k" V 6800 1100 50  0000 C CNN
+	1    6800 1100
+	0    -1   -1   0   
+$EndComp
+Text Label 7050 1100 0    60   ~ 0
+USB_ISP
 $Comp
 L CAPAPOL C17
 U 1 1 5137C7A1
@@ -690,10 +704,10 @@ $EndComp
 $Comp
 L +3.3V #PWR014
 U 1 1 512A945E
-P 6050 1200
-F 0 "#PWR014" H 6050 1160 30  0001 C CNN
-F 1 "+3.3V" H 6050 1310 30  0000 C CNN
-	1    6050 1200
+P 6050 950
+F 0 "#PWR014" H 6050 910 30  0001 C CNN
+F 1 "+3.3V" H 6050 1060 30  0000 C CNN
+	1    6050 950 
 	1    0    0    -1  
 $EndComp
 Text Label 7400 1250 2    60   ~ 0

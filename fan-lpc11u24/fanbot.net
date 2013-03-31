@@ -1,47 +1,47 @@
-# EESchema Netlist Version 1.1 created  3/31/2013 6:19:10 PM
+# EESchema Netlist Version 1.1 created  3/31/2013 10:54:25 PM
 (
- ( /515861D1 $noname  TP1 CONN_1 {Lib=CONN_1}
+ ( /515861D1 $noname  T1 CONN_1 {Lib=CONN_1}
   (    1 /TP1 )
  )
- ( /515861D0 $noname  TP2 CONN_1 {Lib=CONN_1}
+ ( /515861D0 $noname  T2 CONN_1 {Lib=CONN_1}
   (    1 /TP2 )
  )
- ( /515854B3 $noname  TP7 CONN_1 {Lib=CONN_1}
+ ( /515854B3 $noname  T7 CONN_1 {Lib=CONN_1}
   (    1 /TP7 )
  )
- ( /515854B2 $noname  TP8 CONN_1 {Lib=CONN_1}
+ ( /515854B2 $noname  T8 CONN_1 {Lib=CONN_1}
   (    1 /TP8 )
  )
- ( /515854B1 $noname  TP9 CONN_1 {Lib=CONN_1}
+ ( /515854B1 $noname  T9 CONN_1 {Lib=CONN_1}
   (    1 /TP9 )
  )
- ( /515854B0 $noname  TP10 CONN_1 {Lib=CONN_1}
+ ( /515854B0 $noname  T10 CONN_1 {Lib=CONN_1}
   (    1 /TP10 )
  )
- ( /515854AF $noname  TP11 CONN_1 {Lib=CONN_1}
+ ( /515854AF $noname  T11 CONN_1 {Lib=CONN_1}
   (    1 /TP11 )
  )
- ( /515854AE $noname  TP12 CONN_1 {Lib=CONN_1}
+ ( /515854AE $noname  T12 CONN_1 {Lib=CONN_1}
   (    1 /TP12 )
  )
- ( /5158549D $noname  TP6 CONN_1 {Lib=CONN_1}
+ ( /5158549D $noname  T6 CONN_1 {Lib=CONN_1}
   (    1 /TP6 )
  )
- ( /515853C9 $noname  TP5 CONN_1 {Lib=CONN_1}
+ ( /515853C9 $noname  T5 CONN_1 {Lib=CONN_1}
   (    1 /TP5 )
  )
- ( /515853C8 $noname  TP4 CONN_1 {Lib=CONN_1}
+ ( /515853C8 $noname  T4 CONN_1 {Lib=CONN_1}
   (    1 /TP4 )
  )
- ( /515853C7 $noname  TP3 CONN_1 {Lib=CONN_1}
+ ( /515853C7 $noname  T3 CONN_1 {Lib=CONN_1}
   (    1 /TP3 )
  )
  ( /51583F3D 0805  R8 33R {Lib=R}
   (    1 /SERVO_2 )
-  (    2 N-000046 )
+  (    2 N-000050 )
  )
  ( /51583F1A 0805  R3 33R {Lib=R}
-  (    1 N-000024 )
+  (    1 N-000027 )
   (    2 /SERVO_1 )
  )
  ( /515832A6 $noname  P8 CONN_4 {Lib=CONN_4}
@@ -87,20 +87,20 @@
   (    4 /AIN_1 )
  )
  ( /51581403 SIL3  K2 CONN_3 {Lib=CONN_3}
-  (    1 +5V )
-  (    2 GND )
-  (    3 N-000046 )
+  (    1 GND )
+  (    2 +5V )
+  (    3 N-000050 )
  )
  ( /51580A95 $noname  C14 18pF {Lib=C}
   (    1 N-000045 )
   (    2 GND )
  )
  ( /51580A74 $noname  C12 22pF {Lib=C}
-  (    1 N-000032 )
+  (    1 N-000037 )
   (    2 GND )
  )
  ( /5158096F 0805  C17 10uF {Lib=CAPAPOL}
-  (    1 N-000056 )
+  (    1 N-000013 )
   (    2 GND )
  )
  ( /5158095D 0805  C6 10uF {Lib=CAPAPOL}
@@ -152,52 +152,52 @@
   (    2 N-000060 )
  )
  ( /5157FC2B 0805  R15 220R {Lib=R}
-  (    1 N-000006 )
+  (    1 N-000010 )
   (    2 GND )
  )
  ( /5157FC2A 0805  R14 220R {Lib=R}
-  (    1 N-000005 )
+  (    1 N-000011 )
   (    2 GND )
  )
  ( /5157FC27 0805  R13 220R {Lib=R}
-  (    1 N-000007 )
+  (    1 N-000012 )
   (    2 GND )
  )
  ( /5157FC24 0805  R12 220R {Lib=R}
-  (    1 N-000008 )
+  (    1 N-000019 )
   (    2 GND )
  )
  ( /5157FC22 0805  R11 220R {Lib=R}
-  (    1 N-000009 )
+  (    1 N-000020 )
   (    2 GND )
  )
  ( /5157FC15 0805  R9 220R {Lib=R}
-  (    1 N-000010 )
+  (    1 N-000015 )
   (    2 GND )
  )
  ( /51558E45 LED0805  D8 RED {Lib=LED}
   (    1 /LED_8 )
-  (    2 N-000006 )
+  (    2 N-000010 )
  )
  ( /51558E43 LED0805  D7 RED {Lib=LED}
   (    1 /LED_7 )
-  (    2 N-000005 )
+  (    2 N-000011 )
  )
  ( /51558E42 LED0805  D6 RED {Lib=LED}
   (    1 /LED_6 )
-  (    2 N-000007 )
+  (    2 N-000012 )
  )
  ( /51558E41 LED0805  D5 RED {Lib=LED}
   (    1 /LED_5 )
-  (    2 N-000008 )
+  (    2 N-000019 )
  )
  ( /51558E40 LED0805  D4 RED {Lib=LED}
   (    1 /LED_4 )
-  (    2 N-000009 )
+  (    2 N-000020 )
  )
  ( /51558E3E LED0805  D2 RED {Lib=LED}
   (    1 /LED_2 )
-  (    2 N-000010 )
+  (    2 N-000015 )
  )
  ( /5155621F $noname  P5 CONN_4 {Lib=CONN_4}
   (    1 +5V )
@@ -213,13 +213,13 @@
   (    5 GND )
  )
  ( /5133A3AE 0805  R10 100R {Lib=R}
-  (    1 N-000056 )
+  (    1 N-000013 )
   (    2 +3.3V )
  )
  ( /5133A33F SIL3  U3 GP1UX310QS {Lib=SFH-5110}
   (    1 /IR_DATA )
   (    2 GND )
-  (    3 N-000056 )
+  (    3 N-000013 )
  )
  ( /5133A1D9 0603  D3 IR_LED_940nm {Lib=LED}
   (    1 /IR_LED )
@@ -264,11 +264,11 @@
   (    2 N-000060 )
  )
  ( /512A8DB1 HC49  X1 12MHz {Lib=CRYSTAL}
-  (    1 N-000031 )
-  (    2 N-000032 )
+  (    1 N-000036 )
+  (    2 N-000037 )
  )
  ( /512A8D9C $noname  C11 22pF {Lib=C}
-  (    1 N-000031 )
+  (    1 N-000036 )
   (    2 GND )
  )
  ( /512A8D17 48LQFP  U2 LPC11U24FBD48/301 {Lib=LPC11U24FBD48/301}
@@ -277,8 +277,8 @@
   (    3 /RESET )
   (    4 /ISP )
   (    5 GND )
-  (    6 N-000032 )
-  (    7 N-000031 )
+  (    6 N-000037 )
+  (    7 N-000036 )
   (    8 +3.3V )
   (    9 /IO_1 )
   (   10 /IO_0 )
@@ -330,9 +330,9 @@
   (    2 /USB_DM )
  )
  ( /5122ABA9 SIL3  K1 CONN_3 {Lib=CONN_3}
-  (    1 N-000024 )
-  (    2 GND )
-  (    3 +5V )
+  (    1 N-000027 )
+  (    2 +5V )
+  (    3 GND )
  )
  ( /5122AAE4 $noname  JP1 USB-B {Lib=USB-B}
   (    1 +5V )
@@ -341,12 +341,12 @@
   (    4 GND )
  )
  ( /5122A830 0805  R1 220R {Lib=R}
-  (    1 N-000021 )
+  (    1 N-000025 )
   (    2 GND )
  )
  ( /5122A793 LED0805  D1 RED {Lib=LED}
   (    1 /LED_1 )
-  (    2 N-000021 )
+  (    2 N-000025 )
  )
 )
 *
@@ -642,270 +642,270 @@ $endfootprintlist
 }
 { Pin List by Nets
 Net 1 "+3.3V" "+3.3V"
- R7 2
- C6 1
- P8 1
- P8 2
- P8 3
- P8 4
- P3 1
- P3 2
- P4 1
- R20 1
  R19 1
- R16 1
- R23 1
- R6 2
+ R2 1
+ U2 8
+ U2 44
+ U1 4
+ P4 1
+ R7 2
  C7 1
  C10 1
- U2 44
- U2 8
- R2 1
- R10 2
- P3 4
- U1 4
- P3 3
- U1 2
- P3 5
+ C6 1
+ R6 2
+ R20 1
  P3 6
+ P3 4
+ P3 3
+ P3 2
+ P3 1
+ P8 4
+ P8 3
+ P8 2
+ P8 1
+ P3 5
+ R16 1
+ R23 1
+ R10 2
+ U1 2
 Net 2 "GND" "GND"
- JP1 4
- K1 2
- C2 2
- R1 2
  SW1 1
- C13 2
- U2 5
- C11 2
- P7 4
- P7 1
- C14 2
- C12 2
- C17 2
- P6 5
- P6 1
- P6 2
- P6 3
- P6 4
  P6 6
- P7 3
- K2 2
+ P6 5
+ P6 4
+ P6 3
+ C11 2
+ K1 3
+ JP1 4
+ R1 2
+ C2 2
+ U3 2
+ C13 2
+ P7 1
+ P7 4
  P7 2
- R13 2
- R9 2
- P4 5
- P5 4
- C7 2
- C10 2
- C3 2
- C6 2
- R11 2
- R12 2
- R14 2
- R15 2
- R21 2
+ C4 2
+ P6 2
+ P6 1
  U1 1
  C8 2
  C1 2
- C4 2
- U3 2
+ P4 5
+ K2 1
+ P7 3
+ R12 2
+ R14 2
+ R13 2
+ C12 2
+ R9 2
+ U2 5
+ R11 2
+ C7 2
+ C14 2
+ C10 2
  U2 41
+ C17 2
+ R21 2
+ R15 2
+ C3 2
+ P5 4
+ C6 2
 Net 3 "/IR_LED" "IR_LED"
  D3 1
  U2 36
 Net 4 "" ""
- D3 2
  R21 1
-Net 5 "" ""
- D7 2
- R14 1
-Net 6 "" ""
- R15 1
- D8 2
-Net 7 "" ""
- D6 2
- R13 1
-Net 8 "" ""
- R12 1
- D5 2
-Net 9 "" ""
- R11 1
- D4 2
-Net 10 "" ""
- R9 1
- D2 2
-Net 11 "/SWCLK" "SWCLK"
- U2 29
- P4 2
-Net 12 "/SWDIO" "SWDIO"
- P4 3
- U2 39
-Net 13 "/USB_ISP" "USB_ISP"
- R20 2
- U2 14
-Net 14 "/USB_DP" "USB_DP"
- P5 3
- JP1 3
- R5 1
-Net 15 "/USB_DM" "USB_DM"
- P5 2
- JP1 2
- R4 2
-Net 16 "/SCL" "SCL"
- P2 6
- R7 1
- U2 15
-Net 17 "/LED_8" "LED_8"
- D8 1
- U2 35
-Net 18 "/SDA" "SDA"
- P2 5
- R6 1
- U2 16
-Net 19 "/TXD" "TXD"
- R17 2
- U2 12
-Net 20 "/SCK" "SCK"
- P2 3
- U2 13
-Net 21 "" ""
- R1 1
- D1 2
-Net 22 "/IR_DATA" "IR_DATA"
- U2 48
- R23 2
- U3 1
-Net 23 "/SERVO_1" "SERVO_1"
- R3 2
- U2 46
-Net 24 "" ""
- K1 1
- R3 1
-Net 25 "/LED_6" "LED_6"
- D6 1
- U2 30
-Net 26 "/LED_5" "LED_5"
- D5 1
- U2 28
-Net 27 "/LED_4" "LED_4"
- U2 27
- D4 1
-Net 28 "/LED_7" "LED_7"
- U2 34
- D7 1
-Net 29 "/SERVO_2" "SERVO_2"
- R8 1
- U2 47
-Net 30 "/ISP" "ISP"
- SW1 2
- U2 4
- R16 2
-Net 31 "" ""
- C11 1
- U2 7
- X1 1
-Net 32 "" ""
- U2 6
- X1 2
- C12 1
-Net 33 "/LED_2" "LED_2"
- D2 1
- U2 1
-Net 34 "/LED_1" "LED_1"
- U2 2
- D1 1
-Net 35 "/RESET" "RESET"
+ D3 2
+Net 5 "/RESET" "RESET"
+ R2 2
+ U2 3
  C3 1
  P4 4
- U2 3
- R2 2
-Net 36 "/RXD" "RXD"
- R18 1
- U2 11
-Net 37 "/TP5" "TP5"
- TP5 1
- U2 24
-Net 38 "/TP8" "TP8"
- TP8 1
- U2 22
-Net 39 "/TP1" "TP1"
- TP1 1
- U2 42
-Net 40 "/TP2" "TP2"
- U2 43
- TP2 1
-Net 41 "/TP10" "TP10"
- TP10 1
- U2 40
-Net 42 "/TP9" "TP9"
- TP9 1
- U2 23
-Net 43 "/TP11" "TP11"
- U2 45
- TP11 1
-Net 44 "/TP6" "TP6"
- TP6 1
- U2 31
-Net 45 "" ""
- U2 19
- C14 1
- R4 1
- R18 2
-Net 46 "" ""
- R8 2
- K2 3
-Net 47 "/TP3" "TP3"
- TP3 1
- U2 37
-Net 48 "/TP4" "TP4"
- TP4 1
- U2 21
-Net 49 "/TP12" "TP12"
- U2 17
- TP12 1
-Net 50 "/TP7" "TP7"
- TP7 1
- U2 25
-Net 51 "/IO_0" "IO_0"
- P1 1
- U2 10
-Net 52 "/IO_1" "IO_1"
- U2 9
- P1 2
-Net 53 "/AIN_0" "AIN_0"
- U2 32
- P1 3
-Net 54 "/AIN_1" "AIN_1"
- U2 33
- P1 4
-Net 55 "+5V" "+5V"
- C2 1
- JP1 1
- K1 3
- C8 1
- C4 1
- C1 1
- K2 1
- U1 3
- P5 1
-Net 56 "" ""
- C17 1
+Net 6 "/SWDIO" "SWDIO"
+ U2 39
+ P4 3
+Net 7 "/SWCLK" "SWCLK"
+ P4 2
+ U2 29
+Net 8 "/IR_DATA" "IR_DATA"
+ U3 1
+ R23 2
+ U2 48
+Net 9 "/USB_ISP" "USB_ISP"
+ U2 14
+ R20 2
+Net 10 "" ""
+ R15 1
+ D8 2
+Net 11 "" ""
+ R14 1
+ D7 2
+Net 12 "" ""
+ R13 1
+ D6 2
+Net 13 "" ""
  R10 1
  U3 3
-Net 57 "/MISO" "MISO"
- U2 26
- P2 1
-Net 58 "/MOSI" "MOSI"
- P2 2
- U2 38
-Net 59 "/SSEL" "SSEL"
- P2 4
+ C17 1
+Net 14 "/SCL" "SCL"
+ R7 1
+ P2 6
+ U2 15
+Net 15 "" ""
+ D2 2
+ R9 1
+Net 16 "/USB_DM" "USB_DM"
+ R4 2
+ JP1 2
+ P5 2
+Net 17 "+5V" "+5V"
+ JP1 1
+ C1 1
+ C4 1
+ K2 2
+ K1 2
+ U1 3
+ C8 1
+ C2 1
+ P5 1
+Net 18 "/USB_DP" "USB_DP"
+ P5 3
+ R5 1
+ JP1 3
+Net 19 "" ""
+ D5 2
+ R12 1
+Net 20 "" ""
+ R11 1
+ D4 2
+Net 21 "/TP9" "TP9"
+ U2 23
+ T9 1
+Net 22 "/TP11" "TP11"
+ U2 45
+ T11 1
+Net 23 "/TP4" "TP4"
+ T4 1
+ U2 21
+Net 24 "/TP6" "TP6"
+ T6 1
+ U2 31
+Net 25 "" ""
+ D1 2
+ R1 1
+Net 26 "/SSEL" "SSEL"
  U2 18
+ P2 4
+Net 27 "" ""
+ K1 1
+ R3 1
+Net 28 "/LED_6" "LED_6"
+ D6 1
+ U2 30
+Net 29 "/LED_5" "LED_5"
+ U2 28
+ D5 1
+Net 30 "/LED_4" "LED_4"
+ U2 27
+ D4 1
+Net 31 "/TXD" "TXD"
+ R17 2
+ U2 12
+Net 32 "/LED_8" "LED_8"
+ D8 1
+ U2 35
+Net 33 "/LED_7" "LED_7"
+ U2 34
+ D7 1
+Net 34 "/SERVO_2" "SERVO_2"
+ R8 1
+ U2 47
+Net 35 "/ISP" "ISP"
+ R16 2
+ U2 4
+ SW1 2
+Net 36 "" ""
+ X1 1
+ U2 7
+ C11 1
+Net 37 "" ""
+ X1 2
+ U2 6
+ C12 1
+Net 38 "/LED_2" "LED_2"
+ U2 1
+ D2 1
+Net 39 "/LED_1" "LED_1"
+ U2 2
+ D1 1
+Net 40 "/RXD" "RXD"
+ R18 1
+ U2 11
+Net 41 "/TP5" "TP5"
+ T5 1
+ U2 24
+Net 42 "/TP2" "TP2"
+ T2 1
+ U2 43
+Net 43 "/TP1" "TP1"
+ T1 1
+ U2 42
+Net 44 "/TP12" "TP12"
+ T12 1
+ U2 17
+Net 45 "" ""
+ R4 1
+ R18 2
+ C14 1
+ U2 19
+Net 46 "/TP10" "TP10"
+ U2 40
+ T10 1
+Net 47 "/TP8" "TP8"
+ T8 1
+ U2 22
+Net 48 "/TP7" "TP7"
+ U2 25
+ T7 1
+Net 49 "/TP3" "TP3"
+ T3 1
+ U2 37
+Net 50 "" ""
+ R8 2
+ K2 3
+Net 51 "/SERVO_1" "SERVO_1"
+ R3 2
+ U2 46
+Net 52 "/MOSI" "MOSI"
+ U2 38
+ P2 2
+Net 53 "/SCK" "SCK"
+ U2 13
+ P2 3
+Net 54 "/SDA" "SDA"
+ P2 5
+ U2 16
+ R6 1
+Net 55 "/MISO" "MISO"
+ P2 1
+ U2 26
+Net 56 "/IO_0" "IO_0"
+ P1 1
+ U2 10
+Net 57 "/IO_1" "IO_1"
+ U2 9
+ P1 2
+Net 58 "/AIN_0" "AIN_0"
+ P1 3
+ U2 32
+Net 59 "/AIN_1" "AIN_1"
+ P1 4
+ U2 33
 Net 60 "" ""
- R5 2
- R19 2
- R17 1
  U2 20
  C13 1
+ R17 1
+ R19 2
+ R5 2
 }
 #End

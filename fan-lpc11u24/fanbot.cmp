@@ -1,10 +1,10 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 3/31/2013 2:58:31 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 3/31/2013 5:32:52 PM
 
 BeginCmp
 TimeStamp = /5131D303;
 Reference = C1;
 ValeurCmp = 10uF;
-IdModule  = SM1206POL;
+IdModule  = c_0805;
 EndCmp
 
 BeginCmp
@@ -32,7 +32,7 @@ BeginCmp
 TimeStamp = /5158095D;
 Reference = C6;
 ValeurCmp = 10uF;
-IdModule  = SM1206POL;
+IdModule  = c_0805;
 EndCmp
 
 BeginCmp
@@ -46,7 +46,7 @@ BeginCmp
 TimeStamp = /51312FC4;
 Reference = C8;
 ValeurCmp = 10uF;
-IdModule  = SM1206POL;
+IdModule  = c_0805;
 EndCmp
 
 BeginCmp
@@ -193,7 +193,7 @@ BeginCmp
 TimeStamp = /51549A61;
 Reference = P4;
 ValeurCmp = CONN_5;
-IdModule  = pin_strip_5-90;
+IdModule  = SIL-5;
 EndCmp
 
 BeginCmp
@@ -239,9 +239,9 @@ IdModule  = SM0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /512A8D61;
+TimeStamp = /51583F1A;
 Reference = R3;
-ValeurCmp = 68R;
+ValeurCmp = 33R;
 IdModule  = SM0805;
 EndCmp
 
@@ -274,9 +274,9 @@ IdModule  = SM0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /5157FDFA;
+TimeStamp = /51583F3D;
 Reference = R8;
-ValeurCmp = 68R;
+ValeurCmp = 33R;
 IdModule  = SM0805;
 EndCmp
 
@@ -383,6 +383,90 @@ TimeStamp = /512A9448;
 Reference = SW1;
 ValeurCmp = Tactile_push;
 IdModule  = SWITCH_KSS;
+EndCmp
+
+BeginCmp
+TimeStamp = /515853B2;
+Reference = TP1;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515853C6;
+Reference = TP2;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515853C7;
+Reference = TP3;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515853C8;
+Reference = TP4;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515853C9;
+Reference = TP5;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /5158549D;
+Reference = TP6;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515854B3;
+Reference = TP7;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515854B2;
+Reference = TP8;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515854B1;
+Reference = TP9;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515854B0;
+Reference = TP10;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515854AF;
+Reference = TP11;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
+EndCmp
+
+BeginCmp
+TimeStamp = /515854AE;
+Reference = TP12;
+ValeurCmp = CONN_1;
+IdModule  = testpoint_1mm5;
 EndCmp
 
 BeginCmp

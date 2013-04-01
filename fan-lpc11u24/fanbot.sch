@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 3/31/2013 11:31:15 PM
+EESchema Schematic File Version 2  date 4/1/2013 1:20:46 AM
 LIBS:ti-launchpad
 LIBS:kekketek
 LIBS:k_lpc1100

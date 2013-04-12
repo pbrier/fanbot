@@ -1,0 +1,6 @@
+bitmaps: {}
+communication:
+  serialport: COM2
+  simulation: true
+  simulationIP: 127.mmmnk
+  simulationIPPort: '1234'

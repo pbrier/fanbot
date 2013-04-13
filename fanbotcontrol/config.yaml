@@ -2,5 +2,5 @@ bitmaps: {}
 communication:
   serialport: COM2
   simulation: true
-  simulationIP: 127.mmmnk
+  simulationIP: 127.0.0.1
   simulationIPPort: '1234'

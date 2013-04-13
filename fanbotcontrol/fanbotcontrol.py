@@ -9,7 +9,7 @@ from  serial import Serial, SerialException
 import wx
 import os
 from fanbotconfig import FanbotConfig
-
+from fanbotcomm import FanbotComm
 
 class FanbotControl (FanbotFrame) :
     
@@ -21,6 +21,8 @@ class FanbotControl (FanbotFrame) :
         sizer.Add( self.iconDraw, 1, wx.EXPAND )
  
         FanbotConfig.load()
+        self.comm = FanbotComm()
+        
         self.serial = None
         self.initComboSerialPorts()
         self.initFileList()
@@ -111,10 +113,11 @@ class FanbotControl (FanbotFrame) :
         self.handleSelection(True)
     
     def buttonConnectSimulOnButtonClick( self, event ):
-        simulIP = self.textSimulation.GetValue()
-        FanbotConfig.setSimulationIP(simulIP)
+        host = self.textSimulation.GetValue()
+        FanbotConfig.setSimulationIP(host)
         port = self.textPort.GetValue()
         FanbotConfig.setSimulationIPPort(port)
+        FanbotComm.openSocket(host,int(port))
         
     def initComboSerialPorts( self ):
         self.comboSerialPorts.Clear()

@@ -2,6 +2,7 @@
 
 import wx
 import copy
+from fanbotcomm import FanbotComm
 
 
 
@@ -193,6 +194,8 @@ class IconDraw(PanelDrawIcon ):
             self.animateIdx = 0
         self.bitmap.setFrame(self.animateIdx)  
         self.Refresh()  
+        data = self.bitmap.getCompressedArray()
+        FanbotComm.sendCommand(1234,len(data),data)
             
     def getFrameCountAsString(self):
         return '%d/%d' % (self.bitmap.getFrameNr(),self.bitmap.getFrameCount() )    

@@ -124,32 +124,27 @@ class Bitmap:
         
         
     def getCompressedArray(self):
-        sixe = self.width * self.height / 8
+        size = self.height * self.width / 8
         result = array.array('B', [0] * size)
         
-        pixels = this.im.getBuffer()
-        idx = -1
-        
-        val = 0
-        inb = 0
-
-        for j in range(0,self.width * self.height):
-            if j % 8 == 0 and j < len(compressed) * 8: 
-                idx += 1
-                inb = compressed[idx]  
-            if inb & 1 == 1: 
-                val = 150 
-            else: 
-                val = 20
-            inb = inb / 2
-            offset = j * Bitmap.bpp
-            buffer[offset+0] = val  
-            buffer[offset+1] = val  
-            buffer[offset+2] = val  
-            buffer[offset+3] = 0xFF
-        im = Image.frombuffer("RGBA", (self.width,self.height), buffer)
-        self.im = im
-        self.frames = [im]                    
+        pixels = self.im.getdata()
+        byteidx = 0
+        bitidx  = 0
+        b   = 0
+        for pixel in pixels:
+            if pixel[0] > 50: 
+                b |= 128
+            bitidx +=1
+            if bitidx < 8:
+                b = b >> 1
+            else:    
+                bitidx = 0
+                if byteidx < size:
+                    result[byteidx] = b
+                b = 0
+                byteidx += 1
+     
+        return result        
     
     def saveCurrentFile(self):
         try:

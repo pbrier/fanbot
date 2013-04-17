@@ -1,6 +1,6 @@
-update=3/3/2013 11:46:48 PM
+update=4/1/2013 5:53:18 PM
 version=1
-last_client=cvpcb
+last_client=pcbnew
 [general]
 version=1
 [eeschema]
@@ -69,6 +69,11 @@ LibName31=valves
 LibName32=usba-dual
 LibName33=kekketek
 LibName34=dips-s
+[cvpcb]
+version=1
+NetIExt=net
+[cvpcb/libraries]
+EquName1=devcms
 [pcbnew]
 version=1
 PadDrlX=0
@@ -87,6 +92,7 @@ TxtLar=120
 MSegLar=150
 LastNetListRead=fanbot-hub.net
 [pcbnew/libraries]
+LibDir=../../kicad-lib;../../kicad-lib/walter
 LibName1=w_pin_strip
 LibName2=w_smd_diode
 LibName3=w_conn_pc
@@ -107,9 +113,3 @@ LibName17=valves
 LibName18=led
 LibName19=dip_sockets
 LibName20=w_conn_screw
-LibDir=../../kicad-lib;../../kicad-lib/walter
-[cvpcb]
-version=1
-NetIExt=net
-[cvpcb/libraries]
-EquName1=devcms

@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 3/31/2013 10:50:54 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 4/19/2013 7:53:21 PM
 
 BeginCmp
 TimeStamp = /5131D303;
@@ -109,7 +109,7 @@ BeginCmp
 TimeStamp = /5133A1D9;
 Reference = D3;
 ValeurCmp = IR_LED_940nm;
-IdModule  = Led_1206;
+IdModule  = LED-5MM;
 EndCmp
 
 BeginCmp
@@ -150,7 +150,7 @@ EndCmp
 BeginCmp
 TimeStamp = /5122AAE4;
 Reference = JP1;
-ValeurCmp = USB-B;
+ValeurCmp = USB-B_(micro);
 IdModule  = conn_usb_B_micro_smd;
 EndCmp
 
@@ -222,6 +222,13 @@ TimeStamp = /515832A6;
 Reference = P8;
 ValeurCmp = CONN_4;
 IdModule  = SIL-4;
+EndCmp
+
+BeginCmp
+TimeStamp = /516A9D78;
+Reference = Q1;
+ValeurCmp = BSS84;
+IdModule  = SOT23;
 EndCmp
 
 BeginCmp
@@ -344,9 +351,9 @@ IdModule  = SM0805;
 EndCmp
 
 BeginCmp
-TimeStamp = /512A8F7D;
+TimeStamp = /516B2682;
 Reference = R18;
-ValeurCmp = 4.7k;
+ValeurCmp = 43k;
 IdModule  = SM0805;
 EndCmp
 
@@ -382,7 +389,7 @@ BeginCmp
 TimeStamp = /512A9448;
 Reference = SW1;
 ValeurCmp = Tactile_push;
-IdModule  = SWITCH_KSS;
+IdModule  = PCB_PUSH;
 EndCmp
 
 BeginCmp
@@ -430,13 +437,6 @@ EndCmp
 BeginCmp
 TimeStamp = /515854B3;
 Reference = T7;
-ValeurCmp = CONN_1;
-IdModule  = testpoint_1mm5;
-EndCmp
-
-BeginCmp
-TimeStamp = /515854B2;
-Reference = T8;
 ValeurCmp = CONN_1;
 IdModule  = testpoint_1mm5;
 EndCmp

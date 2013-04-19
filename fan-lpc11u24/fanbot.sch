@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 4/19/2013 7:30:31 PM
+EESchema Schematic File Version 2  date 4/19/2013 10:24:32 PM
 LIBS:ti-launchpad
 LIBS:kekketek
 LIBS:k_lpc1100
@@ -533,6 +533,7 @@ U 1 1 516A9D78
 P 8550 4400
 F 0 "Q1" H 8550 4590 60  0000 R CNN
 F 1 "BSS84" H 8550 4220 60  0000 R CNN
+F 3 "http://www.farnell.com/datasheets/46053.pdf" H 8550 4400 60  0001 C CNN
 F 4 "1056526" H 8550 4400 60  0001 C CNN "Farnell"
 F 5 "0.08" H 8550 4400 60  0001 C CNN "PRICE"
 F 6 "INFINEON-BSS84P" H 8550 4400 60  0001 C CNN "MFG"

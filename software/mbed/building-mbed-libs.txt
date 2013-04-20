@@ -1,0 +1,28 @@
+using mbed libs and GCC_ARM compiler, and LPCLINK (via LPCXpresso tools)
+
+Links: 
+
+http://support.code-red-tech.com/CodeRedWiki/CommandLineFlashProgramming
+https://launchpad.net/gcc-arm-embedded/4.7/4.7-2012-q4-major
+http://mbed.org/handbook/mbed-tools
+
+Starting (booting) LPC link:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cd C:\nxp\LPCXpresso_5.1.2_2065\lpcxpresso\bin\
+C:\nxp\LPCXpresso_5.1.2_2065\lpcxpresso\bin\Scripts\bootLPCXpresso.cmd
+
+Downloading code:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\nxp\LPCXpresso_5.1.2_2065\lpcxpresso\bin\crt_emu_lpc11_13_nxp -wire=hid -flash-load-exec=basic.bin -plpc11U14/201 -load-base=0x0
+
+
+Compiling the MBED lib
+~~~~~~~~~~~~~~~~~~~~~~~
+Note: Codesourcery libs are too large for LPC11U24 (or smaller device)
+1) Start the GCC ARM enviroment shell
+
+C:\Program Files (x86)\GNU Tools ARM Embedded\4.7 2012q4\bin\gccvar.bat
+
+cd C:\cygwin\tmp\mbed\workspace_tools
+c:\Python27\python.exe build.py -m LPC11u24 -t GCC_ARM
+c:\Python27\python.exe make.py -m LPC11U24 -t GCC_ARM -p 5

@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 4/19/2013 10:24:32 PM
+EESchema Schematic File Version 2  date 4/20/2013 9:53:02 PM
 LIBS:ti-launchpad
 LIBS:kekketek
 LIBS:k_lpc1100
@@ -41,14 +41,16 @@ $Descr A4 11700 8267
 encoding utf-8
 Sheet 1 1
 Title "Fanbot brain LPC11u24 PCB  CC-BY-SA-NC-3.0  kekbot.org"
-Date "19 apr 2013"
-Rev "3"
+Date "20 apr 2013"
+Rev "4"
 Comp "KekkeTek"
 Comment1 "peter@kekbot.org"
 Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Wire Wire Line
+	8400 5450 8400 5850
 Wire Bus Line
 	10800 4950 9200 4950
 Wire Bus Line
@@ -81,13 +83,10 @@ Wire Wire Line
 	8650 5400 8650 5850
 Wire Bus Line
 	7250 5650 8550 5650
-Connection ~ 8650 5550
 Wire Wire Line
 	8250 5100 8250 5300
 Wire Wire Line
 	8250 5300 7100 5300
-Wire Wire Line
-	8400 5700 8400 5850
 Wire Bus Line
 	7250 5850 8050 5850
 Wire Bus Line
@@ -432,13 +431,7 @@ Connection ~ 8250 4400
 Wire Wire Line
 	8250 4400 8250 4600
 Wire Wire Line
-	8650 5550 8600 5550
-Wire Wire Line
 	7100 5200 7900 5200
-Wire Wire Line
-	7900 5200 7900 5550
-Wire Wire Line
-	7900 5550 8100 5550
 Wire Bus Line
 	8550 5650 8550 5350
 Wire Wire Line
@@ -485,6 +478,8 @@ Wire Bus Line
 	10750 4100 10400 4100
 Wire Bus Line
 	10400 4100 10400 4750
+Wire Wire Line
+	7900 5200 7900 5450
 Text Notes 10500 4200 0    60   ~ 0
 DNA
 Text Notes 9600 1100 0    60   ~ 0
@@ -506,16 +501,16 @@ Left eye
 $Comp
 L R R18
 U 1 1 516B2682
-P 8350 5550
-F 0 "R18" V 8430 5550 50  0000 C CNN
-F 1 "43k" V 8350 5550 50  0000 C CNN
-F 2 "0805" H 8350 5550 60  0001 C CNN
-F 3 "http://www.farnell.com/datasheets/1508534.pdf" H 8350 5550 60  0001 C CNN
-F 4 "2073781" H 8350 5550 60  0001 C CNN "Farnell"
-F 5 "0.01" H 8350 5550 60  0001 C CNN "PRICE"
-F 6 "MULTICOMP-MCMR08X4702FTL (1%)" H 8350 5550 60  0001 C CNN "MFG"
-	1    8350 5550
-	0    -1   -1   0   
+P 8150 5450
+F 0 "R18" V 8230 5450 50  0000 C CNN
+F 1 "43k" V 8150 5450 50  0000 C CNN
+F 2 "0805" H 8150 5450 60  0001 C CNN
+F 3 "http://www.farnell.com/datasheets/1508534.pdf" H 8150 5450 60  0001 C CNN
+F 4 "2073781" H 8150 5450 60  0001 C CNN "Farnell"
+F 5 "0.01" H 8150 5450 60  0001 C CNN "PRICE"
+F 6 "MULTICOMP-MCMR08X4702FTL (1%)" H 8150 5450 60  0001 C CNN "MFG"
+	1    8150 5450
+	0    1    1    0   
 $EndComp
 Text Label 2400 4500 0    60   ~ 0
 USB_CON
@@ -681,7 +676,7 @@ Text Label 7550 5400 2    60   ~ 0
 TP5
 Text Label 7550 5000 2    60   ~ 0
 TP4
-Text Label 7600 4200 2    60   ~ 0
+Text Label 7550 4400 2    60   ~ 0
 TP3
 Text Label 1500 6650 2    60   ~ 0
 TP5
@@ -1282,7 +1277,7 @@ F 1 "GND" H 4800 3430 30  0001 C CNN
 	1    4800 3500
 	1    0    0    -1  
 $EndComp
-Text Label 7550 4400 2    60   ~ 0
+Text Label 7600 4200 2    60   ~ 0
 IR_DATA
 Text Label 7600 4100 2    60   ~ 0
 IR_LED

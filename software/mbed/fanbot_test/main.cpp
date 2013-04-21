@@ -13,12 +13,34 @@ DigitalOut servo1(P0_18);
 DigitalOut servo2(P0_18);
 DigitalIn  button(P0_1);
 
+// IR led and receiver
+DigitalIn ir_rx(P1_16);
+DigitalOut ir_tx(P1_13);
+
+//PwmOut ir_pwm(P0_21);
+PwmOut ir_pwm(P1_13);
+
+
 #define max 0.0003
 
+void ir_test()
+{
+  ir_pwm.period(1.0/38000.0);
+  ir_pwm.pulsewidth(1.0/72000.0);
+  while ( button == 0 )
+  {
+	led1 = ir_rx;
+	/* ir_tx = 1;
+	wait_us(10);
+	ir_tx = 0;
+	wait_us(10); */
+  }
+}
 
 int main() {
 	float t = 0, d =1,tw=0.2;
 	unsigned char i;
+	button.mode(PullUp);
     while(1)
     {	
 	  t = t + 0.00003*d;
@@ -36,6 +58,9 @@ int main() {
 	  led5 = (i & 16 ? 0 : 1);
 	  led6 = (i & 32 ? 0 : 1);
 	  led7 = (i & 64 ? 0 : 1);
+	  
+	  if ( button == 0 ) ir_test();
+	  
 	}
 	
 }

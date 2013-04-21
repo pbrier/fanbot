@@ -6,6 +6,8 @@
 #include "mbed.h"
 #include "USBHID.h"
 #include "serial_api.h"
+#include "pwmout_api.h"
+
 #include "pinmap.h"
 
 
@@ -42,7 +44,10 @@ DigitalOut led7(P0_14);
 DigitalIn  button(P0_1);
 DigitalIn  uart_rx(P1_26); // rx pin as input, so we can disable the pull-up before enumeration
 
-
+// IR led and receiver
+DigitalIn ir_rx(P1_16);
+DigitalOut ir_tx(P1_13);
+PwmOut ir_pwm(P1_13);
 
 volatile int read_res=0, send_res=0, counter=0;
 
@@ -83,32 +88,59 @@ void send(DigitalOut &p, char c)
 
 void tx(DigitalOut &p, char *s)
 {
-  while ( *s ) send(p, *s++);
+  wait_us(2000);
+  while ( *s ) 
+  {
+    send(p, *s++);
+	wait_us(1000);
+  }
 }
 
 void do_serial()
 {
   volatile static int i;
   DigitalOut usb_conn(P0_6); // we control the USB connect output now
-
+  //PwmOut *s1, *s2; 
+  pwmout_t _pwm;  // dummy PWM struct to re-init the PWM ports
+   
   serial_init( &stdio_uart, P1_27, P1_26); // pins: tx, rx
   pin_mode( P1_26, PullNone); // disable weak pullup for RX
   // pin_mode( P0_6, PullNone); // disable weak pullup for USB_CON
   
   printf("Start!\n");
+  pwmout_init(&_pwm, P0_18);
+  pwmout_init(&_pwm, P0_19);
+  
+  //s1 = new PwmOut(P0_18);
+ // s2 = new PwmOut(P0_19);
+  
+ // s1->period_ms(15);
+ // s2->period_ms(15);
+  
+  
   while( 1 )
   {
+    if ( ir_rx == 0 )
+	{
+	  leds = 1<<i;
+	  if ( ++i > 6 ) i = 0;
+	  wait(0.1);
+	}
     if ( serial_readable( &stdio_uart ) )
     {
 	  char c= '0';
 	  while ( serial_readable( &stdio_uart ) )
 	    c = serial_getc(&stdio_uart); 
 		i = c - '0' - 1;
+		
 	  // if ( i > 0 || i < 0 ) i = 0;
 	  if ( c == 'h' )  
-	    tx(usb_conn, "Hello world!\n");
+	    tx(usb_conn, "Hello world 2!\n");
 	  leds = 1<<i;
-	  i++;   
+	  servo1.pulsewidth_us(700 + 25 * i);
+	  servo2.pulsewidth_us(700 + 25 * i);
+	 // s1->pulsewidth_us(700 + 25 * i);  
+	 // s2->pulsewidth_us(700 + 25 * i);  
 	}
 	//wait(0.01);
   }
@@ -116,6 +148,12 @@ void do_serial()
 
 
 int main(void) {
+
+// enable IR transmitter
+  ir_pwm.period(1.0/38000.0);
+  ir_pwm.pulsewidth(1.0/72000.0);
+
+    static int count = 0;
 	button.mode(PullUp);
 	uart_rx.mode(PullNone); // disable pull-up, so we can enumerate 
 	
@@ -150,7 +188,8 @@ int main(void) {
 	{
 	  if ( button == 0 ) // button pressed == LOW 
 	  {
-	    iap();
+	    if ( count++ > 50 ) // button pressed 5 seconds
+	      ; //iap();
 	    servo1.pulsewidth_us(700);
 	    servo2.pulsewidth_us(700);
 		leds=255;
@@ -160,6 +199,8 @@ int main(void) {
 	    servo2.pulsewidth_us(700 + 255);
 		wait(0.1);
       }
+	  else
+	    count = 0;
 
       if (hid.readNB(&recv_report)) 
 	  {

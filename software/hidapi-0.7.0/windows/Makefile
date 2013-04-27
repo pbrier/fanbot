@@ -11,14 +11,14 @@ all: hidtest
 CC=gcc
 CXX=g++
 COBJS=hid.o
-CPPOBJS=../hidtest/hidtest.o
+CPPOBJS=../fanbot/fanbot.o
 OBJS=$(COBJS) $(CPPOBJS)
 CFLAGS=-I../hidapi -g -c
 LIBS= -lsetupapi
 
 
 hidtest: $(OBJS)
-	g++ -g $^ $(LIBS) -o hidtest
+	g++ -g $^ $(LIBS) -o fanbot
 
 $(COBJS): %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@
@@ -27,6 +27,6 @@ $(CPPOBJS): %.o: %.cpp
 	$(CXX) $(CFLAGS) $< -o $@
 
 clean:
-	rm *.o ../hidtest/*.o hidtest.exe
+	rm *.o ../fanbot/*.o fanbot.exe
 
 .PHONY: clean

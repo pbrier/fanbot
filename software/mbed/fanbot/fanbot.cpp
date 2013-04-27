@@ -7,9 +7,8 @@
 #include "USBHID.h"
 #include "serial_api.h"
 #include "pwmout_api.h"
-
 #include "pinmap.h"
-
+#include "IAP.h"
 
 // externals 
 extern int stdio_uart_inited;
@@ -49,26 +48,20 @@ DigitalIn ir_rx(P1_16);
 DigitalOut ir_tx(P1_13);
 PwmOut ir_pwm(P1_13);
 
+
+// IAP and EEPROM defines
+#define     MEM_SIZE        256
+#define     TARGET_ADDRESS   64
+IAP iap;
+
+#define FAN_STEPS 20 // nr of program steps
+
 volatile int read_res=0, send_res=0, counter=0;
 
 void tic_handler() {
     send_report.data[2] = counter++;
-     send_res = hid.send(&send_report);	
+    send_res = hid.send(&send_report);	
 }
-
-
-#define IAP_LOCATION 0x1fff1ff1
-typedef void (*IAP)(unsigned long [],unsigned long[]);
-IAP iap_entry=(IAP) IAP_LOCATION;
-
-void iap(void )
-{
-  unsigned long command[5];
-  unsigned long result[4];
-  command[0] = 57; // re-invoke ISP
-  iap_entry (command, result);
-};
-
 
 // Software UART send. mark is LOW space is HIGH
 #define BAUD 9600
@@ -148,6 +141,7 @@ void do_serial()
 
 
 int main(void) {
+  unsigned short int program[128]; // 256 bytes, need to be word aligned
 
 // enable IR transmitter
   ir_pwm.period(1.0/38000.0);
@@ -159,9 +153,8 @@ int main(void) {
 	
 	for(int l=0, p=1; l<7;l++, p|= (1<<l))
 	{
-	  wait(0.1);
 	  leds = p;
-	  wait(0.1);
+	  wait(0.15);
 	}
 	//wait(3);
 	hid.connect(false); // do not block
@@ -188,16 +181,14 @@ int main(void) {
 	{
 	  if ( button == 0 ) // button pressed == LOW 
 	  {
-	    if ( count++ > 50 ) // button pressed 5 seconds
-	      ; //iap();
-	    servo1.pulsewidth_us(700);
-	    servo2.pulsewidth_us(700);
-		leds=255;
-		wait(0.1);
-		leds = 0;
-	    servo1.pulsewidth_us(700 + 255);
-	    servo2.pulsewidth_us(700 + 255);
-		wait(0.1);
+        iap.read_eeprom( (char*)TARGET_ADDRESS, (char *)program, MEM_SIZE );
+		for(int i=0; i<FAN_STEPS; i++)
+		{
+		    leds = program[i] & 0xFF;
+		    servo1.pulsewidth_us(700 + (program[i]>>8 & 0xFF) );
+		    // leds = ((int)program[i]>>8) & 0xFF;
+			wait(0.1);
+		}
       }
 	  else
 	    count = 0;
@@ -205,10 +196,22 @@ int main(void) {
       if (hid.readNB(&recv_report)) 
 	  {
 	    read_res++;
-        leds = recv_report.data[0];
-		servo1.pulsewidth_us(700 + recv_report.data[1]);
-		servo2.pulsewidth_us(700 + recv_report.data[2]);
-		send_report.data[1] = button;		
+		switch ( recv_report.data[0] ) 
+		{
+		  case 0: // set outputs
+            leds = recv_report.data[1];
+		    servo1.pulsewidth_us(700 + recv_report.data[2]);
+		    servo2.pulsewidth_us(700 + recv_report.data[3]);
+		    send_report.data[1] = button;
+            break;
+		  case 1: // Save data to eeprom 
+		    for(int i=0; i<FAN_STEPS; i++)
+			  program[i] = ((unsigned short int)recv_report.data[1 + 2*i]) | ((unsigned short int)recv_report.data[2 + 2*i] << (unsigned short int)8);
+		     send_report.data[1] = iap.write_eeprom( (char*)program, (char*)TARGET_ADDRESS, MEM_SIZE );
+		    break;
+		  default: // unkown command
+		    break;
+        }			
       }
 	 // printf("send: %d receive: %d counter: %d\n", send_res, read_res, counter);
 	  wait_ms(1);

@@ -15,6 +15,7 @@
 
 #define FAN_VID	0x1234
 #define FAN_PID 0x006
+#define FAN_SIZE 64 // message size
 
 // Headers needed for sleeping.
 #ifdef _WIN32
@@ -45,6 +46,13 @@ int main(int argc, char* argv[])
 	{
 		printf("unable to open device (%X, %X)\n", FAN_VID, FAN_PID);
  		return 1;
+	}
+	
+	for(int i=1; i<argc; i++)
+	{
+	  if ( !strcmp(argv[i], "--verbose") ) verbose = 1;
+	  if ( !strcmp(argv[i], "--read") ) do_read = 1;
+	  if ( !strcmp(argv[i], "--nowrite") ) do_write = 0;	
 	}
 
   if ( verbose ) 
@@ -80,19 +88,18 @@ int main(int argc, char* argv[])
 
   }
 	
-	
-	// Write data to HID device
-	
+  // Write data to HID device (all numeric arguments)
   if ( do_write )
   {
 	buf[0] = 0;
+	int n=1;
 	for(int j = 1; j<argc; j++)
 	{
 	  int d;
-	  sscanf(argv[j], "%d", &d);
-	  buf[j] = d; 
+	  if ( sscanf(argv[j], "%d", &d) == 1 )
+	    buf[n++] = d; 
 	}
-	  
+
   	res = hid_write(handle, buf, 65);
 	  
 	if (res < 0) 
@@ -106,11 +113,14 @@ int main(int argc, char* argv[])
   {  
     buf[1] = 0;
     res = hid_read(handle, buf, sizeof(buf));
-    printf("\nresponse: %d, data=%d %d\n", res, buf[1], buf[2]);
+    printf("%d:", res);
+	for(int i=0; i<res; i++) 
+	  printf(" %d", buf[i]);
+	printf("\n");
   }
 	  
 	hid_close(handle); 
 	hid_exit();/* Free static HIDAPI objects. */
 	
-	return 0;
+	return res;
 }

@@ -1,12 +1,25 @@
 /*
  * fanbot.cpp
  * send data to fanbot HID device
+ * Peter Brier (peter.brier@kekketek.nl)
+ * Command line paramerers: data string, e.g. "1 2 3 4 5" 
  *
- * Command line paramerers: hex data string, e.g. FFAAEEDDEEFF
+ * Based on HIDAPI library. (http://github.com/signal11/hidapi/commits/master)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-
 #include <stdio.h>
 #include <wchar.h>
 #include <string.h>
@@ -28,7 +41,7 @@
 
 int main(int argc, char* argv[])
 {
-	int res, verbose = 0, do_read = 0, do_write=1;
+	int res, verbose = 0, do_read = 0, do_write=1, do_interactive = 0;
 	unsigned char buf[256];
 	#define MAX_STR 255
 	wchar_t wstr[MAX_STR];
@@ -53,8 +66,10 @@ int main(int argc, char* argv[])
 	  if ( !strcmp(argv[i], "--verbose") ) verbose = 1;
 	  if ( !strcmp(argv[i], "--read") ) do_read = 1;
 	  if ( !strcmp(argv[i], "--nowrite") ) do_write = 0;	
+	  if ( !strcmp(argv[i], "--interactive") ) do_interactive = 1;	
 	}
 
+  memset(buf, 0, sizeof(buf));
   if ( verbose ) 
 	{
 	// Read the Manufacturer String
@@ -119,8 +134,43 @@ int main(int argc, char* argv[])
 	printf("\n");
   }
 	  
-	hid_close(handle); 
-	hid_exit();/* Free static HIDAPI objects. */
+	  
+  if ( do_interactive ) 
+  {  
+    while ( 1 )
+	{
+	  char str[MAX_STR], *pch;
+	  int n=1;
+      buf[0] = 0;
+	  fgets(str , MAX_STR-1, stdin);
+	  if ( strlen(str) <= 1) 
+	    break;
+	  pch = strtok (str,",. ");
+      while (pch != NULL)
+	  {
+	     int d;
+	     if ( sscanf(pch, "%d", &d) == 1 )
+	       buf[n++] = d;
+         pch = strtok (NULL, ",. ");
+      }
+  	  res = hid_write(handle, buf, 65);
+	  
+	  if (res < 0) 
+	  {
+        printf("Unable to write(): %d\n", i);
+        printf("Error: %ls\n", hid_error(handle));
+	  }
+  
+      buf[1] = 0;
+      res = hid_read(handle, buf, sizeof(buf));
+      printf("%d:", res);
+	  for(int i=0; i<res; i++) 
+	    printf(" %d", buf[i]);
+	  printf("\n");
+    }
+  }  
+  hid_close(handle); 
+  hid_exit();/* Free static HIDAPI objects. */
 	
-	return res;
+  return res;
 }

@@ -1,3 +1,8 @@
+/*
+ * Fanbot controller
+ * (c) 2013 Peter Brier (peter.brier@kekketek.nl)
+ */
+
 
 /*
  * Led Class
@@ -64,13 +69,13 @@ class FanBot
   FanBot() 
   {
     led = new Led[7];
-    led[0] = new Led(30,30,color(0,255,0)); // left eye, green
-    led[1] = new Led(150,30,color(0,255,0)); // right eye, green
-    led[2] = new Led(50,120,color(255,255,0)); // left mouth, yellow
-    led[3] = new Led(70,127,color(255,0,0)); // red
+    led[0] = new Led(30,30,color(255,200,0)); // left eye, orange
+    led[1] = new Led(150,30,color(255,200,0)); // right eye, orange
+    led[2] = new Led(50,120,color(255,0,0)); // left mouth, red
+    led[3] = new Led(70,127,color(0,255,0)); // green
     led[4] = new Led(90,130,color(255,0,0)); // center: red
-    led[5] = new Led(110,127,color(255,0,0)); // red
-    led[6] = new Led(130,120,color(255,255,0)); // right mouth, yellow
+    led[5] = new Led(110,127,color(0,255,0)); // green
+    led[6] = new Led(130,120,color(255,0,0)); // right mouth, red
     button = new Led(90, 75, color(0) );
     for(int i=0; i<pose.length; i++) pose[i] = new Pose();
   }
@@ -137,7 +142,9 @@ class FanBot
   // mouse click handler
   void click(float x, float y)
   {
-    if ( mouseY < 10 ) fanBot.setServo((float)mouseX/width);
+    if ( mouseY < 10 ) 
+      fanBot.setServo((float)mouseX/width);
+
     if ( height - mouseY < 20) 
     {
        if ( (mouseX - width/2 ) < 0 )
@@ -145,14 +152,17 @@ class FanBot
        else 
          next();
     }
-    
+ 
     for(int i=0; i<led.length; i++)
       if ( led[i].intersect(x,y) )
         led[i].toggle();
-        
-    if ( button.intersect(x,y) ) play();
-        
-    update(); 
+    
+    store();
+    
+    if ( button.intersect(x,y) ) 
+      play();
+    else
+      update(); 
   }
   
   // Get Actual robot value

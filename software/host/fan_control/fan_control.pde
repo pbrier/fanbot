@@ -100,8 +100,8 @@ class FanBot
     if ( doPlay && (time++ > 6) )
     {
       time = 0;
-      next();
       update();
+      next();
       if ( frame == pose.length-1 ) 
       {
         doPlay = false;
@@ -199,7 +199,7 @@ class FanBot
   void play() 
   {
     save(); 
-    //doPlay = true; 
+    doPlay = true; 
     frame = 0; 
   }
   

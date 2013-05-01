@@ -84,6 +84,25 @@ class FanbotConfig():
         comm = cls.config.get('communication')
         comm['simulationIPPort'] = port
 
+
+    @classmethod
+    def getProxyPort(cls):
+        comm = cls.config.get('communication')
+        try:
+            result = comm.get('proxyPort')
+        except Exception as e:    
+            print 'getProxyPort Exception: ',e
+            result = '1235'
+        if not result: result = '12345'     
+        return result
+
+
+    @classmethod
+    def setProxyPort(cls,port):
+        comm = cls.config.get('communication')
+        comm['proxyPort'] = port
+
+    
     @classmethod
     def save(cls):
         print 'Saving config.yaml file  ......'

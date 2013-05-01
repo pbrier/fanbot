@@ -11,122 +11,134 @@ import array
 
 class HubSimulServer:
     HOST, PORT = "localhost", 1234
-    handler = None
     alive = True
-    SEND_DATA_FRAME = 0x1010
+    handlers = []
+    listener = None
     """
-        Message format Meaning
-    Byte 
-    0 .. 1 Start of message: Allways '#' + '#'
-    2 .. 3 Opcode 16 bit opcode. (LSB first)
-    4 .. 5 16 bit Length (LSB first) of subsequent data (excluding CRC)
-    6 .. [length + 6] 8 bit binary data (can be zero length)
-    [Length + 6] .. [Length + 7] 16 bit CRC (LSB first)
+        listener is the instance which will parse the received frames of data.
+        Listener must implement function:  createProtocolParser() 
+        This function will create and return an instance of a  parser which has at least function 
+        handleCommand(opcode,data = None)   
     """
-     
-    def __init__(self,handler):
-        HubSimulServer.handler = handler
+    def __init__(self,listener):
+
+        HubSimulServer.listener = listener
         self.alive = True
-        """Start the server  thread"""        
         self.thread = threading.Thread(target=self.serverThread)
         self.thread.setDaemon(1)
         self.thread.start()
 
+    def __del__( self ):
+        print "HubSimulServer destructor ..."
+        self.shutdown()
+
         
     def serverThread(self):
-        print "Starting socket server thread "
-        self.server = SocketServer.TCPServer((HubSimulServer.HOST, HubSimulServer.PORT), MyTCPHandler)
-        # Activate the server; this will keep running until you
-        # interrupt the program with Ctrl-C
-        self.server.serve_forever()
+        print "Starting socket server thread on port ", HubSimulServer.PORT
+        server = SocketServer.ThreadingTCPServer((HubSimulServer.HOST, HubSimulServer.PORT), MyTCPHandler)
+        server.serve_forever()
+        self.server = server
         
     def shutdown(self):
         HubSimulServer.alive = False
-        #self.server.shutdown()
+        self.server.shutdown()
+        self.server = None
+
+    def sendFrame(self,frame):
+        for handler in HubSimulServer.handlers:
+            handler.sendFrame(frame)
+
+
+
+
+
+
+
 
 class MyTCPHandler(SocketServer.BaseRequestHandler):
     """
     The RequestHandler class for our server.
 
-    It is instantiated once per connection to the server, and must
+    It is instantiated once per connection to the server, testand must
     override the handle() method to implement communication to the
     client.
     """
+    def setup(self):
+        print self.client_address, 'connected!'
+        HubSimulServer.handlers.append(self)
+        if HubSimulServer.listener:
+            self.parser = HubSimulServer.listener.createProtocolParser()
+            self.alive = True
+        else:
+            print 'No listener configured for this class'  
 
+                
+        
+        
+    def finish(self):
+        print self.client_address, 'disconnected!'
+        HubSimulServer.handlers.remove(self)
+        self.parser = None
+        self.alive = False
+
+    def sendFrame(self,frame):
+        try:
+            self.request.send(frame)
+        except Exception as e:
+            print "server handle:exception %s %s"% (e.__class__.__name__, e.message)
+            self.alive = False        
+        
     def handle(self):
         print "Client connected: %s" % self.client_address[0]
-        state = 0
-        calcChecksum = 0
-        checksum = 0 
-        rcvchecksum = 0 
-        opcode = 0
-        len = 0
-        idx = 0
-        payload = []
-        alive = True
-        while HubSimulServer.alive and alive:
+        frame = None
+        while HubSimulServer.alive and self.alive:
             try:
-                data = self.request.recv(1024)
-                print data
-                
-                for c in data:
-                    b = ord(c)
-                    if state == 0:
-                        checksum = 0
-                        if c == "#": 
-                            state = 1 
-                    elif state == 1:
-                        if c == "#": 
-                            state = 2
-                    elif state == 2:
-                        state = 3
-                        opcode = b
-                    elif state == 3:
-                        opcode += b << 8
-                        state = 4
-                    elif state == 4:
-                        state = 5
-                        len = b
-                    elif state == 5:
-                        len += b << 8
-                        state = 6
-                    elif state == 6:
-                        payload= array.array('B', [0] * len)
-                        idx = 1
-                        payload[0]= b
-                        state = 7
-                    elif state == 7:
-                        payload[idx]= b
-                        idx += 1
-                        if idx == len:
-                            state = 8
-                    elif state == 8:
-                        calcChecksum = checksum % 0x10000
-                        state = 9
-                        rcvchecksum = b
-                    elif state == 9:
-                        rcvchecksum += b << 8
-                        if calcChecksum == rcvchecksum:
-                            HubSimulServer.handler.handleClientRequest(opcode,payload)
-                        else:    
-                            print "checksum not correct  received: %d expected %d" %(rcvchecksum,calcChecksum)
-                        state = 0
-                    checksum += b
-                # just send back the same data, but upper-cased
-                self.request.send("ok")
+                frame = self.request.recv(1024)
             except Exception as e:
                 print "server handle:exception %s %s"% (e.__class__.__name__, e.message)
-                alive = False        
-        print "Client disconnected: %s" % self.client_address[0]
+                self.alive = False
+            if self.alive and self.parser:    
+                
+                try:
+                    self.parser.parseFrame(frame)
+                except Exception as e:
+                    print "parser :exception %s %s"% (e.__class__.__name__, e.message)
+                    raise e
+        print "MyTCPHandler forced to dye"
+
 
 if __name__ == "__main__":
     import time
 
-    class test:
-        def handleClientRequest(self,data):
-            print "test: ", data
+    class TestHubProtocol:
+        def __init__(self,transport):
+            self.transport = transport
+
+    class TestParserFactory:
+        def setServer(self,server):
+            self.server = server
+        def createProtocolParser(self):
+            """ create and return instance of HubProtocol parser""" 
+            return TestHubProtocolParser(self.server)     
+
+        
+    class TestHubProtocolParser:
+        
+        def __init__(self,server):
+            self.server = server
+            
+        def parseFrame(self,frame):
+            print "Received frame: %s" % frame
+            self.server.sendFrame("Received frame: " + frame)
+
 
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C
-    server = HubSimulServer(test())
+    factory = TestParserFactory()
+    server = HubSimulServer(factory)
+    protocol = TestHubProtocol(server)
+    factory.setServer(server)
+    
+    while True:
+        time.sleep(0.01)
     

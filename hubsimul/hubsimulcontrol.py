@@ -10,64 +10,86 @@ from hubsimulserver import HubSimulServer
 
 from hubsimulframe import  HubSimulFrame
 from bitmap import Bitmap
+from hubprotocol import HubProtocol,ParserFactory
 
 
 # Implementing HubSimulFrame
 class HubSimulControl(HubSimulFrame ):
-	def __init__( self, parent):
-		HubSimulFrame.__init__( self, parent )
-		
-		
-		panel = self.panelRawBitmap
-		sizer = panel.GetSizer()	
-		self.bitmap = Bitmap(panel,50,20) 
-		sizer.Add( self.bitmap, 1, wx.EXPAND )
-		
-		# start listeneing on port 1234
-		self.server = HubSimulServer(self)
+    HubCount = 42
+    
+    
+    def __init__( self, parent):
+        HubSimulFrame.__init__( self, parent )
+        
+        
+        panel = self.panelRawBitmap
+        sizer = panel.GetSizer()    
+        self.bitmap = Bitmap(panel,50,20) 
+        sizer.Add( self.bitmap, 1, wx.EXPAND )
+        
+        # start listeneing on port 1234
+        factory = ParserFactory()
+        server = HubSimulServer(factory)
+        self.protocol = HubProtocol(server)
+        self.protocol.addListener(self)
 
-		self.alive = threading.Event()
-		self.event = None
 
-		self.hubs = []
+        self.alive = threading.Event()
+        self.event = None
 
-		for i in range (42):
-			hub = HubSimul(i * 24)
-			self.hubs.append(hub)
-					
-		self.startThread()
+        self.hubs = []
+
+        for i in range (HubSimulControl.HubCount):
+            hub = HubSimul(i,self.protocol)
+            self.hubs.append(hub)
+                    
+        self.startThread()
 
         
-	def __del__( self ):
-		print "destructor ..."
-		self.server.shutdown()
-		
-	def handleClientRequest(self,opcode,data):
-		self.bitmap.fromCompressedBuffer(data)
-			
-		
-	def startThread(self):
-		
-		"""Start the wave  thread"""		
-		self.thread = threading.Thread(target=self.TribuneWaveThread)
-		self.thread.setDaemon(1)
-		self.alive.set()
-		self.thread.start()
+    def __del__( self ):
+        print "destructor ..."
+        self.server.shutdown()
+        self.server = None
 
-	def stopThread(self):
-		"""Stop the receiver thread, wait util it's finished."""
-		print "Stop thread ..."
-		self.alive.clear()		  #clear alive event for thread
-		if hasattr(self, 'thread') and self.thread != None:
-			self.thread.join()		  #wait until thread has finished
-			self.thread = None
-		print "Stop thread done ..."
-		
-	def TribuneWaveThread(self):
-		print "Starting thread TribuneWaveThread"
-		while(True):
-			time.sleep(1)
+    def handleCommand(self, opcode,payload):    
+        print " opcode %04x" % opcode
+        
+        if opcode == HubProtocol.command_sendframe:
+            wx.CallAfter(self.updateBitmapInGuiThread,payload)
+            self.protocol.sendAck()
+        else:    
+            for i in range (HubSimulControl.HubCount):
+                hub = self.hubs[i]
+                hub.handleCommand(opcode,payload)
+            
+            
+    def updateBitmapInGuiThread(self,payload):  
+        self.bitmap.fromCompressedBuffer(payload)
+        self.Refresh()
+            
+        
+    def startThread(self):
+        
+        """Start the wave  thread"""        
+        self.thread = threading.Thread(target=self.TribuneWaveThread)
+        self.thread.setDaemon(1)
+        self.alive.set()
+        self.thread.start()
 
-		
+    def stopThread(self):
+        """Stop the receiver thread, wait util it's finished."""
+        print "Stop thread ..."
+        self.alive.clear()          #clear alive event for thread
+        if hasattr(self, 'thread') and self.thread != None:
+            self.thread.join()          #wait until thread has finished
+            self.thread = None
+        print "Stop thread done ..."
+        
+    def TribuneWaveThread(self):
+        print "Starting thread TribuneWaveThread"
+        while(True):
+            time.sleep(1)
 
-			
+        
+
+            

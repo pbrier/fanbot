@@ -25,6 +25,7 @@ class Bitmap(BitmapCanvas):
                 self.setPixel(x, y, val)
                 val += 1
                 val %= 256
+        self.BitmapCanvasOnSize(None)
     
 
     def setPixel(self,x,y,val):

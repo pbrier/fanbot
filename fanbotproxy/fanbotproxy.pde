@@ -43,8 +43,8 @@ Server myServer;
 Client thisClient;
 
 // Screen size, cursor pointer and buffer
-int w = 42; // width
-int h = 24; // height
+int w = 50; // width
+int h = 20; // height
 int x = 0; // cursor x (0..w-1)
 int y = 0; // cursor y (0..h-1)
 char[] screen = new char[w*h]; // screen buffer
@@ -63,7 +63,7 @@ void setup() {
   myServer = new Server(this, port);
   for(int y=0; y<h; y++)
       for(int x=0; x<w; x++)
-        screen[y*w+x] = ( (y & 1) == 0 ? ' ' : '*' );
+        screen[y*w+x] = ' '; //( (y & 1) == 0 ? ' ' : '*' );
 } 
  
 
@@ -133,6 +133,5 @@ void serverEvent(Server someServer, Client someClient) {
     thisClient = someClient;
     x=0; y=0;
 }
-
 
 

@@ -2,7 +2,8 @@
 
 import wx
 import copy
-from fanbotcomm import FanbotComm
+import os
+
 
 
 
@@ -12,10 +13,10 @@ from fanbotframe import  PanelDrawIcon
 from bitmap import Bitmap
 
 # Implementing HubSimulFrame
-class IconDraw(PanelDrawIcon ):
+class DesignControl(PanelDrawIcon ):
     def __init__( self, parent):
         PanelDrawIcon.__init__( self, parent )
-        print 'IconDraw constructor  '
+        print 'DesignControl constructor  '
 
         self.brush = '1'
         self.drawMode = 0  
@@ -31,6 +32,7 @@ class IconDraw(PanelDrawIcon ):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.timerAnimate, self.timer)
         self.animateIdx = 0
+        self.initFileList()
 
  
                     
@@ -39,10 +41,7 @@ class IconDraw(PanelDrawIcon ):
         dc.BeginDrawing()
         dc.SetUserScale(self.scaleX, self.scaleY)
         dc.Clear()
-#        dc.ComputeScaleAndOrigin()
-#        dc.SetMapMode(wx.MM_POINTS)
-
-        dc.DrawBitmap(self.bitmap.getLargeBitmap(),0,0)
+        dc.DrawBitmap(self.bitmap.getBitmap(),0,0)
         dc.EndDrawing()
         
      
@@ -59,7 +58,7 @@ class IconDraw(PanelDrawIcon ):
 
             point = event.GetLogicalPosition(dc)
             if point.x < 0 or point.x >= 50 or point.y < 0 or point.y >= 20:
-            	print 'x,y out of bounds: ',point.x ,':',point.y    
+            	#print 'x,y out of bounds: ',point.x ,':',point.y    
                 return
             self.pointCurrent = point    
             #print "mouse event X : " ,point.x , " Y: ",point.y
@@ -73,6 +72,7 @@ class IconDraw(PanelDrawIcon ):
            canvas.SetCursor(cur)
            self.setPixel(point.x, point.y,self.brushColor)        
            # invalidate current canvas
+           self.Refresh()
 
             
         if event.LeftIsDown():
@@ -87,11 +87,86 @@ class IconDraw(PanelDrawIcon ):
                     for y in range (self.pointStartDrag.y,point.y):
                         self.setPixel(x, y,self.brushColor)
                                     
+            self.panelIconCanvas.Refresh()
                  
+    """ Panel drawDesign   """
+    def buttonPrevOnButtonClick( self, event ):
+        self.prevFrame()
+        self.labelFrame.SetLabel(self.getFrameCountAsString())
+    
+    def buttonNextOnButtonClick( self, event ):
+        self.nextFrame()
+        self.labelFrame.SetLabel(self.getFrameCountAsString())
+  
+    def buttonAddFrameOnButtonClick( self, event ):
+        self.addFrame()
+        self.labelFrame.SetLabel(self.getFrameCountAsString())
+        
 
+    def buttonDeleteFrameOnButtonClick( self, event ):
+        frnr = self.delFrame()
+        self.labelFrame.SetLabel(self.getFrameCountAsString())
 
-        if event:
-			self.Refresh()
+    def buttonAddOnButtonClick( self, event ):
+        wx.MessageBoxCaptionStr
+        dlg = wx.TextEntryDialog(
+                self, 'Filename: ',
+                'Enter filename', 'Python')
+
+        dlg.SetValue("test.gif")
+
+        if dlg.ShowModal() == wx.ID_OK:
+            fn = dlg.GetValue()
+            if not fn.find('.gif'):
+                fn = fn + '.gif'
+            full = 'data/' + fn 
+            self.setFilename(full) 
+            f = open(full,'w')
+            f.close()
+            self.saveCurrentFile()   
+      
+        dlg.Destroy()
+        self.listIcons.Append(fn)
+         
+    def buttonDeleteOnButtonClick( self, event ):
+        print 'buttonDeleteOnButtonClick'
+        idx = self.listIcons.GetSelection()
+        if idx ==  wx.NOT_FOUND:
+            return;
+        fn = self.listIcons.GetString(idx)
+        result = wx.MessageBox('File '+ fn +  ' wissen?', 'File wissen', 
+                               wx.OK | wx.CANCEL | wx.ICON_QUESTION)
+        if result == wx.OK:
+            os.remove('data/' + fn)
+            self.listIcons.Delete(idx)
+                
+    
+    def buttonSaveOnButtonClick( self, event ):
+        self.saveCurrentFile()
+    
+    def listIconsOnListBox( self, event ):
+        fname = event.GetString()
+        print 'selected: ', fname
+        self.loadFromFile("data/" + fname)
+        self.labelFrame.SetLabel(self.getFrameCountAsString())
+      
+    
+    def sliderAnimateOnScroll( self, event ):
+        pos = event.GetPosition()
+        self.animate(pos)
+        if pos == 0:
+            self.labelFrame.SetLabel(self.getFrameCountAsString())
+
+        
+        
+        
+        event.Skip()    
+    def initFileList(self):
+        for fname in os.listdir("data"):
+            if ".gif" in fname:
+                #print fname
+                self.listIcons.Append(fname)
+
 
     def toolBrush1OnToolClicked( self, event ):
         self.brush = '1'
@@ -104,11 +179,9 @@ class IconDraw(PanelDrawIcon ):
 
     
     def toolDrawLineOnToolClicked( self, event ):
-        print 'drawBox'
         self.drawMode = 1
 
     def toolDrawDotOnToolClicked( self, event ):
-        print 'drawDot'
         self.drawMode = 0
     
 
@@ -152,36 +225,35 @@ class IconDraw(PanelDrawIcon ):
                                    wx.OK | wx.CANCEL |wx.ICON_INFORMATION)
             if result == wx.OK:
                 self.saveCurrentFile()
-        self.bitmap.loadFromImage(fname)
+        self.bitmap.loadFromFile(fname)
         self.Refresh()
 
     def saveCurrentFile(self):
         self.bitmap.saveCurrentFile()
   
+    def getFilename(self):
+        return self.bitmap.filename 
+    def setFilename(self,fn):
+        self.bitmap.filename = fn 
 
     def delFrame(self):
         """delete frame at current index.  Do nothing if only one frame        """
-        nr = self.bitmap.delFrame()
+        self.bitmap.delFrame()
         self.Refresh()
-        return nr
 
     def addFrame(self):
         """add frame after the current index.  
-           return the frame number of the newly inserted  frame    
         """
-        nr = self.bitmap.addFrame()
+        self.bitmap.addFrame()
         self.Refresh()
-        return nr        
 
         
     def prevFrame(self):
-        """Go back to previous frame frame in animated GIF. 
-           return the frame number of the selected frame    
+        """Go back  to previous  frame in animated GIF. 
         """
-        nr = self.bitmap.prevFrame()
+        self.bitmap.prevFrame()
         self.Refresh()
-        return nr        
-
+ 
     def animate(self,speed):
         if speed == 0:
             self.timer.Stop()
@@ -192,21 +264,18 @@ class IconDraw(PanelDrawIcon ):
         self.animateIdx += 1
         if self.animateIdx >= self.bitmap.getFrameCount():
             self.animateIdx = 0
-        self.bitmap.setFrame(self.animateIdx)  
+        self.bitmap.setFrameNr(self.animateIdx)  
         self.Refresh()  
-        data = self.bitmap.getCompressedArray()
-        FanbotComm.sendCommand(1234,len(data),data)
+
             
     def getFrameCountAsString(self):
         return '%d/%d' % (self.bitmap.getFrameNr(),self.bitmap.getFrameCount() )    
         
     def nextFrame(self):
-        """Advance to next frame in animated GIF. If beyond the last, open a new frame
-           return the frame number of the selected frame    
+        """Advance to next frame in animated GIF. If beyond the last do nothing
         """
-        nr = self.bitmap.nextFrame()
+        self.bitmap.nextFrame()
         self.Refresh()
-        return nr        
         
     def setPixel(self,x,y,colour):
         if self.brush =='1':

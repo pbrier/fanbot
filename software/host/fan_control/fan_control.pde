@@ -181,7 +181,7 @@ class FanBot
     int s = (int)(servo * 255.0);
     if ( s < 0 ) s = 0;
     if ( s > 255 ) s = 255;
-    open("D:\\peterb\\git\\fanbot\\software\\hidapi-0.7.0\\windows\\fanbot 0 " + value() + " " +  s); 
+    open("fanbot 0 " + value() + " " +  s); 
   }
   
   // Save current program to hardware
@@ -191,7 +191,7 @@ class FanBot
     for(int i=0; i<pose.length; i++)
       pgm = pgm + " " + pose[i].leds + " " + (int)(256 *pose[i].servo);
     print(pgm + "\n");
-    open("D:\\peterb\\git\\fanbot\\software\\hidapi-0.7.0\\windows\\fanbot 1" + pgm); 
+    open(" 1" + pgm); 
   }
   
   

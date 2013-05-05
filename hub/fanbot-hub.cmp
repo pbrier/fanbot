@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 5/5/2013 9:31:26 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 5/5/2013 11:16:50 PM
 
 BeginCmp
 TimeStamp = /51190DDB;
@@ -158,7 +158,7 @@ BeginCmp
 TimeStamp = /51190EA6;
 Reference = D1;
 ValeurCmp = GREEN;
-IdModule  = LED-0805;
+IdModule  = Led_PLCC2_3528;
 EndCmp
 
 BeginCmp
@@ -172,14 +172,14 @@ BeginCmp
 TimeStamp = /51191E47;
 Reference = D3;
 ValeurCmp = ORANGE;
-IdModule  = LED-0805;
+IdModule  = Led_PLCC2_3528;
 EndCmp
 
 BeginCmp
 TimeStamp = /511922D5;
 Reference = D4;
 ValeurCmp = RED;
-IdModule  = LED-0805;
+IdModule  = Led_PLCC2_3528;
 EndCmp
 
 BeginCmp
@@ -193,21 +193,14 @@ BeginCmp
 TimeStamp = /511BFBEC;
 Reference = D6;
 ValeurCmp = GREEN;
-IdModule  = LED-0805;
+IdModule  = Led_PLCC2_3528;
 EndCmp
 
 BeginCmp
 TimeStamp = /511BFEBC;
 Reference = D7;
 ValeurCmp = RED;
-IdModule  = LED-0805;
-EndCmp
-
-BeginCmp
-TimeStamp = /5133D0BF;
-Reference = D8;
-ValeurCmp = DIODE;
-IdModule  = do214ab;
+IdModule  = Led_PLCC2_3528;
 EndCmp
 
 BeginCmp

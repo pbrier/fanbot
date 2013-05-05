@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 5/5/2013 10:57:47 PM
+EESchema Schematic File Version 2  date 5/5/2013 11:23:17 PM
 LIBS:k_lpc1100
 LIBS:kekketek
 LIBS:w_connectors
@@ -418,8 +418,6 @@ Wire Wire Line
 Wire Wire Line
 	15250 6650 15250 6750
 Wire Wire Line
-	2900 10200 2900 10350
-Wire Wire Line
 	4450 900  3550 900 
 Wire Wire Line
 	3550 1000 4450 1000
@@ -449,9 +447,7 @@ Wire Wire Line
 Wire Wire Line
 	6550 10200 6550 10250
 Connection ~ 6400 10200
-Connection ~ 2900 10200
 Connection ~ 3300 10750
-Connection ~ 2900 10750
 Wire Wire Line
 	3300 10600 3300 10750
 Wire Wire Line
@@ -1127,15 +1123,6 @@ F 1 "GREEN" H 9750 1350 50  0000 C CNN
 $EndComp
 Text Notes 750  10900 0    60   ~ 0
 Large Cs located close to each USB connector rows
-$Comp
-L CAPAPOL C16
-U 1 1 511BC97B
-P 2900 10550
-F 0 "C16" H 2950 10650 50  0000 L CNN
-F 1 "10000uF" H 2950 10450 50  0000 L CNN
-	1    2900 10550
-	1    0    0    -1  
-$EndComp
 Text Label 14750 6750 2    60   ~ 0
 D24
 Text Label 14750 6250 2    60   ~ 0

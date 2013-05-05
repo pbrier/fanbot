@@ -1,4 +1,4 @@
-update=5/5/2013 8:16:51 PM
+update=5/5/2013 11:02:32 PM
 version=1
 last_client=cvpcb
 [general]
@@ -43,6 +43,7 @@ LibName19=dip_sockets
 LibName20=w_conn_screw
 LibName21=w_switch
 LibName22=w_smd_lqfp
+LibName23=w_smd_leds
 LibDir=../../kicad-lib;../../kicad-lib/walter
 [eeschema]
 version=1

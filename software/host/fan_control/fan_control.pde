@@ -191,7 +191,7 @@ class FanBot
     for(int i=0; i<pose.length; i++)
       pgm = pgm + " " + pose[i].leds + " " + (int)(256 *pose[i].servo);
     print(pgm + "\n");
-    open(" 1" + pgm); 
+    open("fanbot 1" + pgm); 
   }
   
   

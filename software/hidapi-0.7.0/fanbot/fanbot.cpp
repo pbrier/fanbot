@@ -38,10 +38,12 @@
 #endif
 
 
-
+/**
+*** Main()
+**/
 int main(int argc, char* argv[])
 {
-	int res, verbose = 0, do_read = 0, do_write=1, do_interactive = 0;
+	int res, verbose = 0, do_read = 0, do_write=1, do_interactive = 0, vid = FAN_VID, pid = FAN_PID;
 	unsigned char buf[256];
 	#define MAX_STR 255
 	wchar_t wstr[MAX_STR];
@@ -53,22 +55,40 @@ int main(int argc, char* argv[])
 	UNREFERENCED_PARAMETER(argv);
 	#endif
 
-	handle = hid_open(FAN_VID, FAN_PID, NULL);
-
-	if (!handle) 
+	if ( argc == 1 )
 	{
-		printf("unable to open device (%X, %X)\n", FAN_VID, FAN_PID);
- 		return 1;
+	  printf("fanbot: control fanbot via USB HID communication\n" 
+	   "kekbot.org - rev 1.0 - " __DATE__ " " __TIME__ "\n"
+	   "USE: \n"
+	   "  fanbot [options] [data]\n"
+	   "  --vid=0xABCD      VID to use\n"
+	   "  --pid=0xABCD      PID to use\n"
+	   "  --verbose         Show more information\n"
+	   "  --read            Perform a read after write, and display the data\n"
+	   "  --nowrite         Only read, do not write data\n"
+	   "  --interactive     Read data from stdin and write to stdout\n"
+	  );
+	  exit(1);
 	}
 	
 	for(int i=1; i<argc; i++)
 	{
+      if ( !strncmp(argv[i], "--vid=", 6) ) sscanf(argv[i]+6, "%X",  &vid);
+      if ( !strncmp(argv[i], "--pid=", 6) ) sscanf(argv[i]+6, "%X",  &pid);	 	 
 	  if ( !strcmp(argv[i], "--verbose") ) verbose = 1;
 	  if ( !strcmp(argv[i], "--read") ) do_read = 1;
 	  if ( !strcmp(argv[i], "--nowrite") ) do_write = 0;	
 	  if ( !strcmp(argv[i], "--interactive") ) do_interactive = 1;	
 	}
 
+	handle = hid_open(vid, pid, NULL);
+
+	if (!handle) 
+	{
+		printf("unable to open device (0x%X, 0x%X)\n", vid, pid);
+ 		return 1;
+	}
+	
   memset(buf, 0, sizeof(buf));
   if ( verbose ) 
 	{

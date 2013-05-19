@@ -13,12 +13,12 @@ CXX=g++
 COBJS=hid.o
 CPPOBJS=../fanbot/fanbot.o
 OBJS=$(COBJS) $(CPPOBJS)
-CFLAGS=-I../hidapi -g -c
+CFLAGS=-I../hidapi -g -c 
 LIBS= -lsetupapi
 
 
 hidtest: $(OBJS)
-	g++ -g $^ $(LIBS) -o fanbot
+	g++ -g $^ $(LIBS) --static -o fanbot
 
 $(COBJS): %.o: %.c
 	$(CC) $(CFLAGS) $< -o $@

@@ -1,0 +1,14 @@
+Opmerkingen Hub PCB rev1
+- USB connector GND verkeerde pin (zit op 4 i.p.v. 5) #OK
+- Drain/Source van FET omgedraaid #OK
+- Alle weerstanden 100R en 1k5, 22k #OK
+- RJ45 footprint checken (gaten dichter bij elkaar)
+- LEDS 0805 footprint maken #OK
+- grote C's through hole #OK
+- Gaten power connectoren dichter bij rand (of D2 verder weg van P1) #OK
+- Footprint isolator NOK (moet wide SO16 zijn) #OK
+- Pull down for USB_VBUS input (otherwise USB bootloader is always activated if P0_1 is high at reset, instead of serial ISP) #OK
+
+- D16 (PIO0_19) is default Rs232 TX (D15, PIO0_18 is RX) mogelijk omwisselen met RS485 TX/RX #OK (RX/TX op header)
+- RS485 nRE verbinden met DE ? anders default geen RX #OK
+- Logo's erop (supported by KekkeTek, Prodrive, AME, QPI)

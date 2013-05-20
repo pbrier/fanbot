@@ -2,7 +2,7 @@
  * fanbot.cpp
  * send data to fanbot HID device
  * Peter Brier (peter.brier@kekketek.nl)
- * Command line paramerers: data string, e.g. "1 2 3 4 5" 
+ * Command line parameters: data string, e.g. "1 2 3 4 5" sent as decimal data in a fixed length report 
  *
  * Based on HIDAPI library. (http://github.com/signal11/hidapi/commits/master)
  *

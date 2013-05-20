@@ -1,0 +1,5 @@
+Issues proto-1:
+
+opmerkingen: c7 te dicht bij switch?
+
+Footprint/schema probleem USB connector: GND is PIN 5 (i.p.v. pin 4)

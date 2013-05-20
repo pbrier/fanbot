@@ -1,0 +1,151 @@
+eeschema (2012-01-19 BZR 3256)-stable  >> Creation date: 3/31/2013 8:59:51 PM
+
+#Cmp ( order = Reference )
+| C1         10uF        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| C2         100nF       ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| C3         100nF       ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| C4         100nF       ; 0805        ; 1759167     ; 0.01        ; MUTLICOMP-MCCA000296
+| C6         10uF        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| C7         100nF       ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| C8         10uF        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| C10        100nF       ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| C11        22pF        ;             ; 1759271     ; 0.01        ; MULTICOMP-MCCA000392
+| C12        22pF        ;             ; 1759271     ; 0.01        ; MULTICOMP-MCCA000392
+| C13        18pF        ;             ; 1759194     ; 0.01        ; MULTICOMP-MCCA000321 
+| C14        18pF        ;             ; 1759194     ; 0.01        ; MULTICOMP-MCCA000321 
+| C17        10uF        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| D1         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| D2         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| D3         IR LED 940nm; 0603        ; 2290428     ; 0.15        ; KINGBRIGHT-KP-2012F3C
+| D4         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| D5         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| D6         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| D7         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| D8         RED         ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| JP1        USB-B       ;             ; 1568026     ; 0.58        ; Molex 47346-0001 
+| K1         CONN_3      ; SIL3        ; 1593427     ; 0.07        ; MULTICOMP-MC34747 
+| K2         CONN_3      ; SIL3        ; 1593427     ; 0.07        ; MULTICOMP-MC34747 
+| P1         CONN_4      ;             
+| P2         CONN_6      ;             
+| P3         CONN_6      ;             
+| P4         CONN_5      ;             
+| P5         CONN_4      ;             
+| P6         CONN_6      ;             
+| P7         CONN_4      ;             
+| P8         CONN_4      ;             
+| R1         220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R2         43k         ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| R3         33R         ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| R4         33R         ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| R5         33R         ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| R6         4.7k        ; 0805        ; 2074469     ; 0.01        ; MULTICOMP-MCSR08X4701FTL 
+| R7         4.7k        ; 0805        ; 2074469     ; 0.01        ; MULTICOMP-MCSR08X4701FTL 
+| R8         33R         ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| R9         220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R10        100R        ; 0805        ; 9332375     ; 0.01        ; MULTICOMP-MC 0.1W 0805 1% 100R 
+| R11        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R12        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R13        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R14        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R15        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R16        43k         ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| R17        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R18        4.7k        ; 0805        ; 2074469     ; 0.01        ; MULTICOMP-MCSR08X4701FTL 
+| R19        1k5         ; 0805        ; 2074373     ; 0.01        ; MULTICOMP-MCSR08X1501FTL 
+| R20        43k         ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| R21        220R        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| R23        43k         ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| SW1        Tactile push; KSS2        ; 1437640     ; 0.21        ; C&K Components - KSS241G LFS
+| TP1        CONN_1      ;             
+| TP2        CONN_1      ;             
+| TP3        CONN_1      ;             
+| TP4        CONN_1      ;             
+| TP5        CONN_1      ;             
+| TP6        CONN_1      ;             
+| TP7        CONN_1      ;             
+| TP8        CONN_1      ;             
+| TP9        CONN_1      ;             
+| TP10       CONN_1      ;             
+| TP11       CONN_1      ;             
+| TP12       CONN_1      ;             
+| U1         NX1117CE33Z ; SOT223      ; 2057285     ; 0.25        ; NXP-NX1117CE33Z
+| U2         LPC11U24FBD48/301; 48LQFP      ; 2069972     ; 2.9         ; NXP-LPC11U24FBD48/301
+| U3         GP1UX310QS  ; SIL3        ; 1243867     ; 0.5         ; SHARP-GP1UX310QS
+| X1         12MHz       ; HC49        ; 5381046     ; 0.2         ; IQD-XTAL003210- HC49/4HSMX 
+#End Cmp
+
+#Cmp ( order = Value )
+| 100nF        C2        ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| 100nF        C3        ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| 100nF        C4        ; 0805        ; 1759167     ; 0.01        ; MUTLICOMP-MCCA000296
+| 100nF        C7        ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| 100nF        C10       ; 08085       ; 1759167     ; 0.01        ; MULTICOMP-MCCA000296 
+| 100R         R10       ; 0805        ; 9332375     ; 0.01        ; MULTICOMP-MC 0.1W 0805 1% 100R 
+| 10uF         C1        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| 10uF         C6        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| 10uF         C8        ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| 10uF         C17       ; 0805        ; 1759136     ; 0.05        ; MULTICOMP-MCCA000268 
+| 12MHz        X1        ; HC49        ; 5381046     ; 0.2         ; IQD-XTAL003210- HC49/4HSMX 
+| 18pF         C13       ;             ; 1759194     ; 0.01        ; MULTICOMP-MCCA000321 
+| 18pF         C14       ;             ; 1759194     ; 0.01        ; MULTICOMP-MCCA000321 
+| 1k5          R19       ; 0805        ; 2074373     ; 0.01        ; MULTICOMP-MCSR08X1501FTL 
+| 220R         R1        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R9        ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R11       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R12       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R13       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R14       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R15       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R17       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 220R         R21       ; 0805        ; 9332804     ; 0.04        ; MULTICOMP   
+| 22pF         C11       ;             ; 1759271     ; 0.01        ; MULTICOMP-MCCA000392
+| 22pF         C12       ;             ; 1759271     ; 0.01        ; MULTICOMP-MCCA000392
+| 33R          R3        ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| 33R          R4        ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| 33R          R5        ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| 33R          R8        ; 0805        ; 9233822     ; 0.005       ; PHYCOMP-RC0805JR-0733RL
+| 4.7k         R6        ; 0805        ; 2074469     ; 0.01        ; MULTICOMP-MCSR08X4701FTL 
+| 4.7k         R7        ; 0805        ; 2074469     ; 0.01        ; MULTICOMP-MCSR08X4701FTL 
+| 4.7k         R18       ; 0805        ; 2074469     ; 0.01        ; MULTICOMP-MCSR08X4701FTL 
+| 43k          R2        ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| 43k          R16       ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| 43k          R20       ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| 43k          R23       ; 0805        ; 2073781     ; 0.01        ; MULTICOMP-MCMR08X4702FTL (1%)
+| CONN_1       TP1       ;             
+| CONN_1       TP2       ;             
+| CONN_1       TP3       ;             
+| CONN_1       TP4       ;             
+| CONN_1       TP5       ;             
+| CONN_1       TP6       ;             
+| CONN_1       TP7       ;             
+| CONN_1       TP8       ;             
+| CONN_1       TP9       ;             
+| CONN_1       TP10      ;             
+| CONN_1       TP11      ;             
+| CONN_1       TP12      ;             
+| CONN_3       K1        ; SIL3        ; 1593427     ; 0.07        ; MULTICOMP-MC34747 
+| CONN_3       K2        ; SIL3        ; 1593427     ; 0.07        ; MULTICOMP-MC34747 
+| CONN_4       P1        ;             
+| CONN_4       P5        ;             
+| CONN_4       P7        ;             
+| CONN_4       P8        ;             
+| CONN_5       P4        ;             
+| CONN_6       P2        ;             
+| CONN_6       P3        ;             
+| CONN_6       P6        ;             
+| GP1UX310QS   U3        ; SIL3        ; 1243867     ; 0.5         ; SHARP-GP1UX310QS
+| IR LED 940nm D3        ; 0603        ; 2290428     ; 0.15        ; KINGBRIGHT-KP-2012F3C
+| LPC11U24FBD48/301 U2        ; 48LQFP      ; 2069972     ; 2.9         ; NXP-LPC11U24FBD48/301
+| NX1117CE33Z  U1        ; SOT223      ; 2057285     ; 0.25        ; NXP-NX1117CE33Z
+| RED          D1        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| RED          D2        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| RED          D4        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| RED          D5        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| RED          D6        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| RED          D7        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| RED          D8        ; LED0805     ; 1830412     ; 0.063       ; AVAGO-HSMJ-A100-R40J1
+| Tactile push SW1       ; KSS2        ; 1437640     ; 0.21        ; C&K Components - KSS241G LFS
+| USB-B        JP1       ;             ; 1568026     ; 0.58        ; Molex 47346-0001 
+#End Cmp
+
+#End List

@@ -1,0 +1,37 @@
+EESchema-DOCLIB  Version 2.0  Date: 4/30/2013 7:16:06 PM
+#
+$CMP 78L05
+D Linear Regulator +5V
+K POWER REGUL
+F regulator\lm78lxx.pdf
+$ENDCMP
+#
+$CMP ADM2484
+D RS485 tranciever
+K rs485
+$ENDCMP
+#
+$CMP ISO3086T
+D RS485 isolated tranciever
+K rs485 isolated
+$ENDCMP
+#
+$CMP LM7805
+D Linear Regulator +5V
+K POWER REGUL
+F regulator\lm78xx.pdf
+$ENDCMP
+#
+$CMP LM7812
+D Linear Regulator +12V
+K POWER REGUL
+F regulator\lm78xx.pdf
+$ENDCMP
+#
+$CMP NX1117C
+D Linear Regulator +5V
+K POWER REGUL
+F regulator\lm78xx.pdf
+$ENDCMP
+#
+#End Doc Library

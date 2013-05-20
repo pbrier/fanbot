@@ -1,0 +1,33 @@
+        0.1R/1A;  2;         SM1812;"FB1, FB2";9526897
+          1.25A;  6;        SM1812E;"F1, F2, F3, F13, F17, F21";1836775;0.34;LITTELFUSE  - 1812L125/16DR
+          100nF; 10;         SM0805;"C1, C3, C4, C6, C7, C11, C12, C15, C18, C23";1759167
+           10uF;  4;         SM0805;"C5, C8, C9, C10";1759136
+           120R; 31;         SM0805;"R1, R2, R3, R6, R7, R8, R11, R12, R19, R20, R21, R22, R23, R24, R25, R26, R27, R28, R29, R30, R31, R32, R33, R34, R35, R36, R37, R38, R39, R43, R46"
+          12MHz;  1;crystal_hc-49/smd;"X1";9713344
+           18pF;  4;         SM0805;"C13, C14, C21, C22";1759194
+            1k5;  8;         SM0805;"R4, R5, R9, R10, R15, R16, R40, R41";2074373
+            22k;  2;         SM0805;"R13, R14"
+            33R;  2;         SM0805;"R17, R18"
+         4700uF;  3;     CP_13x21mm;"C2, C19, C20";1834100; 0.4
+           5.6V;  1;      SM1206POL;"VR1";1189317 ; 0.6;AVX - VC120605D150DP 	
+          BSS84;  1;          SOT23;"Q1";1510765 ; 0.1;NXP -MOSFET, P, SOT-23 
+         CONN_4;  4;    pin_strip_4;"P3, P7, P8, P9"
+         CONN_5;  2;    pin_strip_5;"P4, P6"
+         CONN_6;  1;    pin_strip_6;"P5"
+          DIODE;  1;        to220-2;"D2";1467550;  .3
+        DIPS_02;  1;      dip_2-300;"SW4"
+          GREEN;  2;       Led_1206;"D1, D6"
+       ISO3086T;  1;        soic-16;"U2";2057088
+         JUMPER;  1;    pin_strip_2;"JP1"
+LPC11U24FBD48/301;  1;         lqfp48;"U4"
+   NX1117CE33Z ;  1;         SOT223;"U1";2057285 ;0.25
+   NX1117CE50Z ;  1;         SOT223;"U3";2057286 ;0.27;NXP - NX1117CE50Z 
+         ORANGE;  1;       Led_1206;"D3"
+          POWER;  2;mstba_2,5/2-g-5,08;"P1, P2"
+            RED;  2;       Led_1206;"D4, D7"
+         RJ45IN;  1;         RJ45_8;"J13";2135979
+        RJ45OUT;  1;         RJ45_8;"J14";2135979
+S07B-GS08  (>1A);  1;         SM1812;"D5";1864884 ;0.06;VISHAY SEMICONDUCTOR - S07B-GS08 - DIODE, SWITCH, 100V, 0.7A.DO-219AB 
+           SPST;  2;       PCB_PUSH;"SW1, SW2";1656423
+            USB;  1;conn_usb_B_micro_smd;"J15"
+         USBA-D; 12;         USBA-D;"J1, J2, J3, J4, J5, J6, J7, J8, J9, J10, J11, J12";0.28;USB-AW-2

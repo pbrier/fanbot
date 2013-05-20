@@ -1,0 +1,12 @@
+Issues proto-1:
+
+1) opmerkingen: R20 & C7 te dicht bij switch? gaat dat goed met bestucken?
+
+2) Footprint/schema probleem USB connector: GND is PIN 5 (i.p.v. pin 4 die nu aangesloten zit)
+
+3) + en - aangeven bij D3 op front silkscreen
+
+4)
+
+
+

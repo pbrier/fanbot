@@ -1,4 +1,4 @@
-EESchema Schematic File Version 2  date 5/19/2013 10:12:07 PM
+EESchema Schematic File Version 2  date 5/20/2013 6:36:12 PM
 LIBS:k_lpc1100
 LIBS:kekketek
 LIBS:w_connectors
@@ -41,7 +41,7 @@ $Descr A3 16535 11700
 encoding utf-8
 Sheet 1 1
 Title "Fanbot power hub CC-BY-SA-NC-3.0"
-Date "19 may 2013"
+Date "20 may 2013"
 Rev "3"
 Comp "KekkeTek"
 Comment1 "peter@kekketek.nl"
@@ -49,29 +49,27 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L CONN_5 P4
-U 1 1 5197571A
-P 9150 2300
-F 0 "P4" V 9100 2300 50  0000 C CNN
-F 1 "CONN_5" V 9200 2300 50  0000 C CNN
-F 2 "pin_strip_5" V 9300 2300 50  0001 C CNN
-	1    9150 2300
-	1    0    0    -1  
-$EndComp
-Text Label 6800 9750 2    60   ~ 0
-ISP_TXD
-Text Label 6800 9650 2    60   ~ 0
-ISP_RXD
+Connection ~ 2200 10750
+Wire Wire Line
+	2200 10500 2200 10750
+Connection ~ 1400 10750
+Wire Wire Line
+	1400 10500 1400 10750
+Connection ~ 2350 10750
+Wire Wire Line
+	2350 10700 2350 10750
+Connection ~ 3000 10750
+Wire Wire Line
+	3000 10700 3000 10750
+Connection ~ 2350 10200
+Wire Wire Line
+	2350 10200 2350 10300
 Wire Wire Line
 	6800 9850 6800 9900
 Wire Wire Line
 	2650 6300 2350 6300
 Wire Wire Line
 	12250 9100 11850 9100
-Connection ~ 1600 10200
-Wire Wire Line
-	1600 10200 1600 10250
 Wire Wire Line
 	11150 8200 11150 8700
 Wire Notes Line
@@ -315,12 +313,6 @@ Wire Wire Line
 	5600 10700 4450 10700
 Wire Wire Line
 	4450 10700 4450 10650
-Connection ~ 2450 10750
-Wire Wire Line
-	2450 10850 2450 10600
-Connection ~ 1850 10750
-Wire Wire Line
-	2150 10750 2150 10600
 Connection ~ 2450 10200
 Wire Wire Line
 	13600 1800 13600 1850
@@ -368,10 +360,6 @@ Wire Wire Line
 	15250 1800 15250 1850
 Wire Wire Line
 	15250 1300 15250 1350
-Connection ~ 2150 10200
-Wire Wire Line
-	1850 10750 1850 10700
-Connection ~ 2150 10750
 Connection ~ 4850 10700
 Wire Wire Line
 	6750 2200 6000 2200
@@ -387,7 +375,6 @@ Wire Wire Line
 	4600 2700 4600 2900
 Wire Wire Line
 	2700 2350 2700 2400
-Connection ~ 1850 10200
 Wire Wire Line
 	5600 10200 5600 10250
 Connection ~ 5600 10200
@@ -520,7 +507,7 @@ Wire Wire Line
 	15150 3000 15250 3000
 Connection ~ 15200 3000
 Wire Wire Line
-	3750 10750 1200 10750
+	1200 10750 3750 10750
 Wire Wire Line
 	3350 2150 3350 2350
 Wire Wire Line
@@ -588,9 +575,6 @@ Connection ~ 4450 10200
 Wire Wire Line
 	3750 10200 1200 10200
 Wire Wire Line
-	1600 10650 1600 10750
-Connection ~ 1600 10750
-Wire Wire Line
 	12250 8600 11850 8600
 Connection ~ 11850 8600
 Wire Wire Line
@@ -598,6 +582,46 @@ Wire Wire Line
 Connection ~ 6400 2600
 Wire Wire Line
 	2350 6200 2650 6200
+Wire Wire Line
+	3750 10750 3750 10850
+Wire Wire Line
+	2650 10200 2650 10300
+Connection ~ 2650 10200
+Wire Wire Line
+	2650 10700 2650 10750
+Connection ~ 2650 10750
+Wire Wire Line
+	1800 10200 1800 10300
+Connection ~ 1800 10200
+Connection ~ 3000 10200
+$Comp
+L DOUBLE_SCH_KCOM D2
+U 1 1 519A4C4D
+P 1800 10500
+F 0 "D2" H 1950 10375 60  0000 C CNN
+F 1 "10A/35V" H 1800 10650 60  0000 C CNN
+F 2 "TO220" H 1800 10500 60  0001 C CNN
+F 3 "http://www.farnell.com/datasheets/1697464.pdf" H 1800 10500 60  0001 C CNN
+F 4 "1625163" H 1800 10500 60  0001 C CNN "Farnell"
+F 5 "0.3" H 1800 10500 60  0001 C CNN "PRICE"
+F 6 "MULTICOMP-MBRF1035CT " H 1800 10500 60  0001 C CNN "MFG"
+	1    1800 10500
+	1    0    0    1   
+$EndComp
+$Comp
+L CONN_5 P4
+U 1 1 5197571A
+P 9150 2300
+F 0 "P4" V 9100 2300 50  0000 C CNN
+F 1 "CONN_5" V 9200 2300 50  0000 C CNN
+F 2 "pin_strip_5" V 9300 2300 50  0001 C CNN
+	1    9150 2300
+	1    0    0    -1  
+$EndComp
+Text Label 6800 9750 2    60   ~ 0
+ISP_TXD
+Text Label 6800 9650 2    60   ~ 0
+ISP_RXD
 $Comp
 L GND #PWR01
 U 1 1 51974BAB
@@ -920,19 +944,6 @@ MOSI
 Text Label 11350 3800 2    60   ~ 0
 MISO
 $Comp
-L DIODE D2
-U 1 1 51841F0E
-P 1600 10450
-F 0 "D2" H 1600 10550 40  0000 C CNN
-F 1 "DIODE" H 1600 10350 40  0000 C CNN
-F 2 "to220-2" H 1600 10500 60  0001 C CNN
-F 3 "http://www.st.com/web/en/resource/technical/document/datasheet/CD00001323.pdf" H 1600 10450 60  0001 C CNN
-F 4 "1467550" H 1600 10450 60  0001 C CNN "Farnell"
-F 5 ".3" H 1600 10450 60  0001 C CNN "PRICE"
-	1    1600 10450
-	0    -1   -1   0   
-$EndComp
-$Comp
 L +5V #PWR014
 U 1 1 518032AD
 P 14200 5000
@@ -1205,7 +1216,7 @@ F 2 "Led_1206" H 9750 1450 50  0001 C CNN
 	1    9750 1450
 	0    1    1    0   
 $EndComp
-Text Notes 750  10900 0    60   ~ 0
+Text Notes 1200 10900 0    60   ~ 0
 Large Cs located close to each USB connector rows
 Text Label 14750 6750 2    60   ~ 0
 D24
@@ -2231,15 +2242,15 @@ $EndComp
 $Comp
 L VR VR1
 U 1 1 51191091
-P 1850 10450
-F 0 "VR1" V 1930 10450 50  0000 C CNN
-F 1 "5.6V" V 1850 10450 50  0000 C CNN
-F 2 "SM1206POL" H 1850 10450 60  0001 C CNN
-F 3 "http://www.farnell.com/datasheets/18244.pdf" H 1850 10450 60  0001 C CNN
-F 4 "1189317 " H 1850 10450 60  0001 C CNN "Farnell"
-F 5 "0.6" H 1850 10450 60  0001 C CNN "PRICE"
-F 6 "AVX - VC120605D150DP 	" H 1850 10450 60  0001 C CNN "MFG"
-	1    1850 10450
+P 3000 10450
+F 0 "VR1" V 3080 10450 50  0000 C CNN
+F 1 "5.6V" V 3000 10450 50  0000 C CNN
+F 2 "SM1206POL" H 3000 10450 60  0001 C CNN
+F 3 "http://www.farnell.com/datasheets/18244.pdf" H 3000 10450 60  0001 C CNN
+F 4 "1189317 " H 3000 10450 60  0001 C CNN "Farnell"
+F 5 "0.6" H 3000 10450 60  0001 C CNN "PRICE"
+F 6 "AVX - VC120605D150DP 	" H 3000 10450 60  0001 C CNN "MFG"
+	1    3000 10450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -2273,10 +2284,10 @@ $EndComp
 $Comp
 L GND #PWR044
 U 1 1 51190E77
-P 2450 10850
-F 0 "#PWR044" H 2450 10850 30  0001 C CNN
-F 1 "GND" H 2450 10780 30  0001 C CNN
-	1    2450 10850
+P 3750 10850
+F 0 "#PWR044" H 3750 10850 30  0001 C CNN
+F 1 "GND" H 3750 10780 30  0001 C CNN
+	1    3750 10850
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -2292,24 +2303,24 @@ $EndComp
 $Comp
 L CAPAPOL C2
 U 1 1 51190DF9
-P 2450 10400
-F 0 "C2" H 2500 10500 50  0000 L CNN
-F 1 "4700uF" H 2500 10300 50  0000 L CNN
-F 2 "CP_13x21mm" H 2500 10400 50  0001 C CNN
-F 4 "1834100" H 2450 10400 60  0001 C CNN "Farnell"
-F 5 "0.4" H 2450 10400 60  0001 C CNN "PRICE"
-	1    2450 10400
+P 2650 10500
+F 0 "C2" H 2700 10600 50  0000 L CNN
+F 1 "4700uF" H 2700 10400 50  0000 L CNN
+F 2 "CP_13x21mm" H 2700 10500 50  0001 C CNN
+F 4 "1834100" H 2650 10500 60  0001 C CNN "Farnell"
+F 5 "0.4" H 2650 10500 60  0001 C CNN "PRICE"
+	1    2650 10500
 	1    0    0    -1  
 $EndComp
 $Comp
 L C C1
 U 1 1 51190DDB
-P 2150 10400
-F 0 "C1" H 2200 10500 50  0000 L CNN
-F 1 "100nF" H 2200 10300 50  0000 L CNN
-F 2 "SM0805" H 2200 10400 50  0001 C CNN
-F 4 "1759167" H 2150 10400 60  0001 C CNN "Farnell"
-	1    2150 10400
+P 2350 10500
+F 0 "C1" H 2400 10600 50  0000 L CNN
+F 1 "100nF" H 2400 10400 50  0000 L CNN
+F 2 "SM0805" H 2400 10500 50  0001 C CNN
+F 4 "1759167" H 2350 10500 60  0001 C CNN "Farnell"
+	1    2350 10500
 	1    0    0    -1  
 $EndComp
 $Comp

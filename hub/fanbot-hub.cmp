@@ -1,4 +1,4 @@
-Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 5/19/2013 12:08:44 PM
+Cmp-Mod V01 Created by CvPcb (2012-01-19 BZR 3256)-stable date = 5/20/2013 6:24:54 PM
 
 BeginCmp
 TimeStamp = /51190DDB;
@@ -155,10 +155,10 @@ IdModule  = Led_1206;
 EndCmp
 
 BeginCmp
-TimeStamp = /51841F0E;
+TimeStamp = /519A4C4D;
 Reference = D2;
-ValeurCmp = DIODE;
-IdModule  = to220-2;
+ValeurCmp = 10A/35V;
+IdModule  = to220;
 EndCmp
 
 BeginCmp

@@ -76,6 +76,29 @@ volatile int read_res=0, send_res=0, counter=0;
 int serial_nr = 0; // the robot serial# (from LPC device)
 char name_string[NAME_SIZE]; // the robot name (read from EEPROM)
 
+// Prototypes
+void set_servo(char n, int val);
+
+class Watchdog {
+public:
+    void kick(float s) {
+     __disable_irq();
+        LPC_WWDT->CLKSEL = 0x1;                // Set CLK src to PCLK
+        //uint32_t clk = 6000/2;    // WD has a fixed /4 prescaler, PCLK default is /4 
+        LPC_WWDT->TC = 0xFF; // s * (float)clk;         
+        LPC_WWDT->MOD = 0x3;                   // Enabled and Reset        
+        kick();
+         __enable_irq();
+    }
+    
+    void kick() {
+        LPC_WWDT->FEED = 0xAA;
+        LPC_WWDT->FEED = 0x55;
+    }
+};
+ 
+Watchdog w;
+
 
 // USB send Tick handler, send a report (every 100 msec)
 // The report format is:
@@ -89,24 +112,38 @@ char name_string[NAME_SIZE]; // the robot name (read from EEPROM)
 // 7: n.a.
 // 8..11: Serial #
 // 12 .. 44: Name (content of memory 1)
+// 48: Memory index
+// 49: Memory content (led state)
+// 50: Memory content (servo state)
+
 void tic_handler() 
 {
+  static int idx = 0; // program memory index
+  
   send_report.data[2] = counter++;
   send_report.data[3] = (button == 0 ? 1 : 0); 
   send_report.data[4] = leds;
   send_report.data[5] = pos1; 
   send_report.data[6] = pos2;
-  send_res = hid.send(&send_report);	
+  send_report.data[48] = idx;
+  send_report.data[49] = program[idx] & 0xFF;
+  send_report.data[50] = program[idx] >> 8;
+  
+  if ( hid.configured() )
+    send_res = hid.send(&send_report);	
+ 
+  if ( ++idx >= FAN_STEPS ) idx = 0;
  
   // The program sequencer:
-  if ( counter % 2 == 0 ) // every 200 msec
+  if ( counter % 4 == 0 ) // every 200 msec
   {  
+    if ( prog_step < 0 || prog_step > FAN_STEPS ) prog_step = 0;
     if ( loop_count > 0 )
     {
       leds = program[prog_step] & 0xFF;
-      servo1.pulsewidth_us(700 + (program[prog_step]>>8 & 0xFF) );
+      set_servo('A', program[prog_step]>>8);
       prog_step++;
-      if ( prog_step >= FAN_STEPS )
+      if ( prog_step >= FAN_STEPS || program[prog_step] == 0 )
       {
         loop_count--;
         prog_step = 0;
@@ -154,7 +191,6 @@ void tx_nibble(DigitalOut &p, const int n)
 // If a sequence was already playing we just set the loop_count, so the sequence will continue without stopping
 void play(int n)
 {
-  iap.read_eeprom( (char*)PROGRAM_ADDRESS, (char *)program, MEM_SIZE );
   if ( loop_count == 0)
     loop_count = n;
 }
@@ -167,7 +203,7 @@ void stop()
 }
 
 // Set servo position (clamped to range for Fanbot)
-void set_servo(char n, int val)
+void inline set_servo(char n, int val)
 {
   PwmOut *p = (n == 'A' ? &servo1 : &servo2 );
   int a = (val ? 500 : 0);  
@@ -208,13 +244,16 @@ void do_serial()
   
   pwmout_init(&_pwm, P0_18);
   pwmout_init(&_pwm, P0_19);
+  leds = 127;
   
   while( 1 )
   {
 
     if ( button == 0 )
+    {
+      leds = 1;
       play(1);
-    
+    }
     if ( serial_readable( &stdio_uart ) )
     {
       char c = 0;
@@ -282,7 +321,7 @@ int main(void) {
  
   // Read serial# from device eeprom
   serial_nr = iap.read_serial();
-
+  
   // Fill send_report
   send_report.length = 64;  // Note: 1st byte is index, next 64 is data, so buffer needs to be 65 elements
   memset(send_report.data, 0, sizeof(send_report.data) );
@@ -290,6 +329,8 @@ int main(void) {
   
   // Read name from EEPROM and store it in name string and send report
   read_name();
+  iap.read_eeprom( (char*)PROGRAM_ADDRESS, (char *)program, MEM_SIZE );
+  
    
   // enable IR transmitter
   ir_pwm.period(1.0/38000.0);
@@ -302,31 +343,29 @@ int main(void) {
   // Set the servo update period
   servo1.period_ms(15);
   servo2.period_ms(15);
+	set_servo('A', 0);
+  set_servo('B', 0);
 	
-	
+  // Say 'hello'
 	for(int l=0, p=1; l<7;l++, p|= (1<<l))
 	{
 	  leds = p;
-	  wait(0.15);
+	  wait(0.1);
 	}
-	//wait(3);
+
+  // Connect to USB
 	hid.connect(false); // do not block
- 	
-  set_servo('A', 0);
-  set_servo('B', 0);
-  
-	
-  
 	for(int i=0; i<7 && !hid.configured(); i++)
 	{
-	  wait(0.1);
+	  wait(0.15);
 	  leds = 1<<i;
-	  wait(0.1);
+	  wait(0.15);
 	}	 
+  tic.attach(tic_handler, 0.05);
+	
   if ( !hid.configured() )
     do_serial();
-  tic.attach(tic_handler, 0.1);
-	
+  
   while (1)
 	{
 	  if ( button == 0 ) // button pressed == LOW 
@@ -352,7 +391,10 @@ int main(void) {
           if (  recv_report.data[1] == 0 )  
             recv_report.data[1] = 1;
           play( recv_report.data[1] );          
-          break;          
+          break;
+        case 4: // Stop
+         stop();        
+          break;           
         case 3: // Save name to eeprom 
           memcpy(&program, &recv_report.data[1], NAME_SIZE);
           send_report.data[1] = iap.write_eeprom( (char*)program, (char*)NAME_ADDRESS, MEM_SIZE );

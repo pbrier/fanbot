@@ -119,7 +119,9 @@ public:
         LPC_WWDT->CLKSEL = 0x1;                // Set CLK src to PCLK
         //uint32_t clk = 6000/2;    // WD has a fixed /4 prescaler, PCLK default is /4 
         LPC_WWDT->TC = 0xFFF; // s * (float)clk;         
-        LPC_WWDT->MOD = 0x3;                   // Enabled and Reset        
+        LPC_WWDT->MOD = 0x3;                   // Enabled and Reset    
+        LPC_WWDT->FEED = 0xAA;
+        LPC_WWDT->FEED = 0x55;        
         kick();
          __enable_irq();
     }

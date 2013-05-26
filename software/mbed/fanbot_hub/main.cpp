@@ -22,12 +22,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 */
 
 #include "mbed.h"
 #include "USBSerial.h"
 #include "pinmap.h"
 #include "serial_api.h"
+#include "IAP.h"
 
 // externals from serial_api
 extern int stdio_uart_inited;
@@ -72,6 +74,26 @@ static PinName hub_pin[] = {
   P1_24, //D23
   P0_7,  //D24
 };
+
+
+// EEPROM globals and functions
+#define CONFIG_ADDRESS       0  // EEPROM starting address for config data
+IAP iap;
+unsigned short int config[128]; // buffer for EEPROM, 256 bytes, need to be word aligned, nr of of bytes, needs to be 256, 512 or 1024
+int serial_nr = 0; // serial nr
+
+void inline read_config()
+{
+  serial_nr = iap.read_serial();
+  iap.read_eeprom( (char*)CONFIG_ADDRESS, (char *)config, sizeof(config) );
+}
+
+void inline write_config()
+{
+ iap.write_eeprom( (char*)config, (char*)CONFIG_ADDRESS, sizeof(config) );
+}
+
+
 
 // Software UART send. mark is LOW space is HIGH
 void send(DigitalInOut  &pin, char c)
@@ -274,8 +296,12 @@ void rs485_comm()
 *** Main function
 **/
 int main(void) {
- // iotest();
- //rs485_test();
- rs485_comm();
+  switch ( select_function() )
+  {
+    case 0: iotest(); break;
+    case 1: rs485_test(); break;
+    case 2: rs485_comm(); break;
+    default: reset(); break;
+  }
 }
 

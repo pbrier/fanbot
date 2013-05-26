@@ -57,7 +57,7 @@ class Led
 
 /*
  * Pose Class
- * A single pose
+ * A single pose (note servo "0" is off, "1" is left and "255" is right
  */
 class Pose
 {
@@ -135,6 +135,8 @@ class FanBot
   {
      for(int i=0; i<led.length; i++)
        led[i].isOn = (pose[frame].leds & 1<<i) > 0;
+     if ( pose[frame].servo == 0 )  // Copy servo position if not yet set
+       pose[frame].servo = servo;
      servo = pose[frame].servo;
   }
   
@@ -158,7 +160,7 @@ class FanBot
   void click(float x, float y)
   {
     if ( mouseY < 10 ) 
-      fanBot.setServo((float)mouseX/width);
+      fanBot.setServo(0.001+(float)mouseX/width);
 
     if ( height - mouseY < 20) 
     {

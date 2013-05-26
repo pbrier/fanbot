@@ -213,11 +213,9 @@ void inline set_servo(char n, int val)
 // get value, wait max 30msec
 int get_val()
 {
-  char c = 0;
   for(int i=0; i<30 && !serial_readable( &stdio_uart );i++ )
     wait(0.001);
-  c = serial_getc(&stdio_uart); 
-  return (int)(c-'0');
+  return serial_getc(&stdio_uart); 
 }
 
 /**
@@ -226,6 +224,7 @@ int get_val()
 *** 'p' Play sequence
 *** 's' Stop
 *** 'L' [val]  select LED value (0..127)
+*** 'l' [val]  select LED number (0..7)
 *** 'A' [val]  arm position [servo 1] (0 is off, 1=left, 127=center, 255=right)
 *** 'B' [val]  arm position [servo 2] (same as servo 1)
 *** 'n' Report serial nr (send as 8 digit HEX  number)
@@ -283,7 +282,11 @@ void do_serial()
           break;
         case 'L': // led value
           stop();
-          leds = 1<<get_val();
+          leds = get_val();
+          break;
+        case 'l': // led number
+          stop();
+          leds = get_val() - '0';
           break;
         case 'A': // first servo
         case 'B': // second servo

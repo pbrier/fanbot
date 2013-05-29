@@ -22,6 +22,19 @@
 #include <windows.h>
 #include <stdio.h>
   
+
+enum HubOpcodes { 
+  REQUEST_ID,
+  TAG_ID,
+  PLAY_FRAME,
+  LED_FRAME,
+  POS_FRAME,
+  REQUEST_STATUS,
+  CONFIG_FRAME,
+  ID_REPORT,
+  STATUS_REPORT,
+  RESET = 0xDEAD,
+};
   
 // Send data frame with the syntax '#' '#' [Opcode LSB] [Opcode MSB] [Length LSB] [Length MSB] [DATA 0] ... [Data N] [Checksum LSB] [Checksum MSB] 
   
@@ -35,20 +48,18 @@ int SendData(HANDLE hSerial, unsigned short int opcode, unsigned char *buffer, u
   buf[1] = '#';
   buf[2] = opcode & 0xFF;
   buf[3] = opcode >> 8;
-  buf[4] = length && 0xFF;
+  buf[4] = length & 0xFF;
   buf[5] = length >> 8;
   
-  for(int i=0; i<6; i++)
+  for(int i=2; i<6; i++)
     checksum += buf[i];
   
-  for( int i=0; i<6; i++ )
-  {
-    WriteFile(hSerial, &buf[i], 1, &tx_bytes, NULL);
-    if ( tx_bytes != 1 ) return -1;  
-  }
+  WriteFile(hSerial, buf, 6, &tx_bytes, NULL);
+  if ( tx_bytes != 6 ) return -1;  
+ 
   for(int i=0; i<length; i++)
     checksum += buffer[i];
-  
+      
   WriteFile(hSerial, buffer, length, &tx_bytes, NULL);
   if ( tx_bytes != length ) return -1;
   
@@ -56,12 +67,14 @@ int SendData(HANDLE hSerial, unsigned short int opcode, unsigned char *buffer, u
   buf[1] = checksum >> 8;
 
   WriteFile(hSerial, buf, 2, &tx_bytes, NULL);
-  if ( tx_bytes != 2 ) return -1;
+  if ( tx_bytes != 2 ) return -1;  
   return 0;
   
 }
 
-  
+/**
+*** main()
+**/
 int main(int argc, char *argv[])
 {
     // Declare variables and structures
@@ -76,7 +89,8 @@ int main(int argc, char *argv[])
     HANDLE hSerial;
     DCB dcbSerialParams = {0};
     COMMTIMEOUTS timeouts = {0};
- 
+    DWORD rx_bytes=0;
+     
     // Parse command line arguments
     int argn = 1;
     strcpy(buffer, "");
@@ -221,12 +235,17 @@ int main(int argc, char *argv[])
         return 1;
     }
      
+    
+    // flush input buffer    
+    //ReadFile(hSerial,  buffer, sizeof(buffer), &rx_bytes, NULL);
+       
+       
     // Send data frame with the syntax '#' '#' [Opcode LSB] [Opcode MSB] [Length LSB] [Length MSB] [DATA 0] ... [Data N] [Checksum LSB] [Checksum MSB] 
     printf("Result: size=%d, result=%d\n", m, SendData(hSerial, 0xFF01, text_to_send, m)); 
     
-    Sleep(1000);
+    Sleep(100);
     memset(buffer,0,sizeof(buffer));
-    DWORD rx_bytes=0;
+
     ReadFile(hSerial,  buffer, sizeof(buffer), &rx_bytes, NULL);
     int val = buffer[0];
     val += buffer[1] << 8;

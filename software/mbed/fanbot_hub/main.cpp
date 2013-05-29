@@ -80,20 +80,35 @@ static PinName hub_pin[] = {
 #define CONFIG_ADDRESS       0  // EEPROM starting address for config data
 IAP iap;
 unsigned short int config[128]; // buffer for EEPROM, 256 bytes, need to be word aligned, nr of of bytes, needs to be 256, 512 or 1024
-int serial_nr = 0; // serial nr
-unsigned short checksum; // communication checksum, sum of all characters in frame, excluding pre-abmle and checksum
+unsigned int serial_nr = 0, serial_nr_rx; // serial nr and recieved serial # (for addressing)
+unsigned char tagged = 0; // are we tagged?
+unsigned short int checksum; // communication checksum, sum of all characters in frame, excluding pre-abmle and checksum
+unsigned int port_state[24]; // 0 if port not used, serial number of connected device if port is used
+unsigned short int port_cmd[24]; // 0: no command
+unsigned short int arg[24]; // arguments for the opcodes
 
+/**
+*** read config()
+*** Read serial number and EEPROM values
+*** Config format in EEPROM: 
+*** Entry 0..23: Bit offset of the 24 outputs (16 bit values)
+***
+**/
 void inline read_config()
 {
   serial_nr = iap.read_serial();
   iap.read_eeprom( (char*)CONFIG_ADDRESS, (char *)config, sizeof(config) );
 }
 
+
+/**
+*** write_config()
+*** Store the (updated) configuration in EEPROM
+**/
 void inline write_config()
 {
- iap.write_eeprom( (char*)config, (char*)CONFIG_ADDRESS, sizeof(config) );
+  iap.write_eeprom( (char*)config, (char*)CONFIG_ADDRESS, sizeof(config) );
 }
-
 
 
 // Software UART send. mark is LOW space is HIGH
@@ -192,6 +207,7 @@ public:
   }
 }
 
+
 /**
 *** Send test string over RS485 and echo received chars
 **/
@@ -281,70 +297,146 @@ void single_comm(DigitalInOut &pin)
 }
 
 
+#define RX_TIMEOUT 100
+// Read n data bytes, if buf == NULL, the data is read, but not stored. Return the number of bytes read
+unsigned short read_data(unsigned char *buf, unsigned short length)
+{
+  unsigned short int i, j=length;
+  unsigned char c;
+  while ( length )
+  {
+    for(i=0; i<RX_TIMEOUT && !usb.available(); i++ ) 
+      wait(0.01);
+    if ( i == RX_TIMEOUT ) return 0;
+    c = usb.getc();
+    if ( buf != NULL ) *buf++ = c;
+    checksum += c;
+    length--;  
+  }
+  return j;
+}
+
+
+// Write data on the bus
+unsigned short write_data(unsigned char *buf, unsigned short length)
+{
+  while(length--)
+    usb.putc(*buf++);
+}
+
 /**
 *** getint()
 *** receive 16-bit integer from serial port
 **/
-#define RX_TIMEOUT 100
 unsigned short getint(unsigned short *v)
 {
   unsigned short int i;
-  unsigned char c;
-  for(i=0; i<RX_TIMEOUT && !usb.available(); i++ ) 
-    wait(0.01);
-  if ( i == RX_TIMEOUT ) return 0;
-  c = usb.getc();
-  checksum += c;
-  *v = c;
-  for(i=0; i<RX_TIMEOUT && !usb.available(); i++ ) 
-    wait(0.01);
-  if ( i == RX_TIMEOUT ) return 0;
-  c = usb.getc();
-  checksum += c;
-  *v = *v + ((unsigned short int)c)<<8;
+  unsigned char c[2];
+  if ( read_data(c, 2) != 2 ) return 0;
+  *v = c[0] + (c[1] << 8);
   return 1;
 }
 
 
- unsigned short int execute_opcode(unsigned short int opcode)
- {
-   for(int i = 0; i< 10; i++)
-   {
-     led_b = i & 1;
-     wait(0.1);
-   }
-   return 1;
- }
- 
- 
+/**
+*** getint32()
+*** receive 32-bits integer from serial port
+**/
+unsigned short getint32(unsigned int *v)
+{
+  unsigned short int i;
+  unsigned char c[4];
+  if ( read_data(c, 4) != 4 ) return 0;
+  *v = c[0] + (c[1] << 8) + (c[2] <<16) + (c[3] << 24);
+  return 1;
+}
+
+// Opcodes
+enum HubOpcodes { 
+  REQUEST_ID,
+  TAG_ID,
+  PLAY_FRAME,
+  LED_FRAME,
+  POS_FRAME,
+  REQUEST_STATUS,
+  CONFIG_FRAME,
+  ID_REPORT,
+  STATUS_REPORT,
+  RESET = 0xDEAD,
+};
+
+ // Read and process data according to specified opcode and length
+ // Process data on the fly. 
+ // Only use this data if the checksum is correct (calculated after all data is recieved)
  unsigned short int process_opcode(unsigned short int opcode, unsigned short int length)
  {
-   unsigned short int i;
-   unsigned char c;
-   
-   usb.putc(opcode & 0xFF);
-   usb.putc(opcode >> 8);
-   usb.putc(length & 0xFF);
-   usb.putc(length >> 8);
-    
-   while ( length )
+   unsigned short bit;  
+   switch ( opcode )
    {
-     for(i=0; i<RX_TIMEOUT && !usb.available(); i++ ) 
-       wait(0.01);
-     if ( i == RX_TIMEOUT ) return 0;
-     c = usb.getc();
-     checksum += c;
-     length--;  
-   }
+     case REQUEST_ID: // no arguments
+       break;
+     case RESET: // 4 bytes argument (serial #)
+     case REQUEST_STATUS: 
+     case TAG_ID: 
+       if ( !getint32(&serial_nr_rx) ) return 0; 
+       break;
+     case PLAY_FRAME: // 1 bit per port
+     case LED_FRAME: // 1 bit per port
+     case POS_FRAME: // 2 bits per port
+       break;
+     case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
+       if ( !getint32(&serial_nr_rx) ) return 0; 
+       if ( read_data((unsigned char *)arg, 24*2) != 48 ) return 0;
+       break;
+     default: // unknown opcode, just absorb the data
+       if ( read_data(NULL, length) != length ) return 0;
+   };
+   
    return 1;
  }
  
+ 
+// Execute the received opcode (this only happens if the received checksum was correct)
+ unsigned short int execute_opcode(unsigned short int opcode)
+ {
+    switch ( opcode )
+   {
+     case REQUEST_ID:
+       if ( !tagged ) 
+       {
+         wait_us( rand() & 0xFFFFF  ); // random 0..1 sec delay time
+         write_data((unsigned char*)&serial_nr, 4);
+       }
+       break;
+     case TAG_ID:
+       if ( serial_nr_rx == serial_nr ) tagged = 1; 
+       break;
+     case REQUEST_STATUS:
+       if ( serial_nr_rx == serial_nr )
+         write_data((unsigned char*)port_state, sizeof(port_state)); 
+       break;
+     case RESET:
+       if ( serial_nr_rx == 0 || serial_nr_rx == serial_nr )
+         tagged = 0;
+       break;
+     default: // unknown opcode, flash lights
+       for(int i = 0; i< 4; i++)
+       {
+         led_b = i & 1;
+         wait(0.1);
+       }
+       break;
+   };
+   return 1;
+ }
+ 
+
  
 /**
 *** HUB Communication
 *** Receive commands via serial port
 *** Protocol: '#' '#' [Opcode LSB] [Opcode MSB] [Length LSB] [Length MSB] [DATA 0] .. [Data N] [Checksum LSB] [Checksum MSB]
-*** Checksum is 16 bit unisgned sum of [Opcode LSB] to [Data N]
+*** Checksum is 16 bit unisgned sum of bytes [Opcode LSB] to [Data N]
 *** Only execute opcode is checksum is correct
 *** All data is received non blocking, with a timeout of 100 msec, if no data is received for 100 msec, the communication state is reset
 **/
@@ -359,6 +451,7 @@ void hub_comm()
     {
       case 0: 
         led_a = 0;
+        led_b = 0;
         c = usb.getc();
         if ( c == '#' && c1 == '#' )
         {
@@ -379,22 +472,22 @@ void hub_comm()
       case 3: // receive data
         state = (process_opcode(opcode, length) ? 4 : 0);
         break;
-      case 4:
-        led_b = 1;
+      case 4: // check the checksum, restart comm. state if incorrect
+        int c = checksum;
         state = (getint(&rx_checksum) ? 5 : 0); 
+        if ( c != rx_checksum ) state = 0;
         break;
-      case 5:
+      case 5: // execute the function
         led_b = 1;
-        if ( checksum == rx_checksum ) 
-          execute_opcode(opcode);
-        led_b = 0;
+        execute_opcode(opcode);  
       default:
         state = 0;
         break;
     }
   }
 }
-       
+
+  
 /**
 *** Receive via USB virtual COM port and send to all ports
 **/

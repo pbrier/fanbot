@@ -52,11 +52,9 @@ class HubSimulControl(HubSimulFrame ):
         self.server = None
 
     def handleCommand(self, opcode,payload):    
-        print " opcode %04x" % opcode
-        
-        if opcode == HubProtocol.command_sendframe:
+        if opcode == HubProtocol.LED_FRAME:
             wx.CallAfter(self.updateBitmapInGuiThread,payload)
-            self.protocol.sendAck()
+
         else:    
             for i in range (HubSimulControl.HubCount):
                 hub = self.hubs[i]

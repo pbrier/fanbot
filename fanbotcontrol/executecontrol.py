@@ -6,6 +6,7 @@ from fanbotframe import PanelExecute
 import os
 import wx.lib.evtmgr as em
 import fanbotevent
+from fanbotconfig import FanbotConfig
 
 
 from fanbotframe import  PanelDrawIcon
@@ -25,7 +26,7 @@ class ExecuteControl(PanelExecute ):
         self.Bind(wx.EVT_TIMER, self.timerAnimate, self.timer)
         self.animateIdx = 0
         self.repeat = False
-        self.bitmap = Bitmap(50,20)
+        self.bitmap = Bitmap(FanbotConfig.width,FanbotConfig.height)
         self.initFileList('.gif')   
         self.scaleX = 1
         self.scaleY = 1
@@ -130,9 +131,9 @@ class ExecuteControl(PanelExecute ):
         fname = event.GetString()
         print 'selected: ', fname
         if fname.endswith('.bmp'):
-            self.bitmap = Banner(50,20,"data/" + fname)
+            self.bitmap = Banner(FanbotConfig.width,FanbotConfig.height,"data/" + fname)
         if fname.endswith('.gif'):
-            self.bitmap = Bitmap(50,20,"data/" + fname)
+            self.bitmap = Bitmap(FanbotConfig.width,FanbotConfig.height,"data/" + fname)
     
         self.animateIdx = 0;
         if 0 ==  self.sliderSpeed.GetValue():

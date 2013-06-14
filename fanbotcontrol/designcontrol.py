@@ -3,7 +3,7 @@
 import wx
 import copy
 import os
-
+from fanbotconfig import FanbotConfig
 
 
 
@@ -23,7 +23,7 @@ class DesignControl(PanelDrawIcon ):
         self.brushColor = 0xFFFF;
         self.scaleX = 1
         self.scaleY = 1
-        self.bitmap = Bitmap(50,20)
+        self.bitmap = Bitmap(FanbotConfig.width,FanbotConfig.height)
         self.pointCurrent = wx.Point(0,0)
         self.pointStartDrag = None
         self.pointEndDrag = None
@@ -57,7 +57,7 @@ class DesignControl(PanelDrawIcon ):
             dc.SetUserScale(self.scaleX, self.scaleY)
 
             point = event.GetLogicalPosition(dc)
-            if point.x < 0 or point.x >= 50 or point.y < 0 or point.y >= 20:
+            if point.x < 0 or point.x >= FanbotConfig.width or point.y < 0 or point.y >= FanbotConfig.height:
             	#print 'x,y out of bounds: ',point.x ,':',point.y    
                 return
             self.pointCurrent = point    

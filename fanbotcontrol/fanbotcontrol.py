@@ -17,6 +17,7 @@ from fanbotconfig import FanbotConfig
 from fanbotserial import FanbotSerial
 import fanbotevent
 from executecontrol import ExecuteControl
+import time
 
 class FanbotControl (FanbotFrame) :
     
@@ -92,18 +93,18 @@ class FanbotControl (FanbotFrame) :
     
     def buttonConnectRealOnButtonClick( self, event ):
         serialname = self.comboSerialPorts.GetValue()
-        FanbotConfig.setSerialport(serialname)
         if self.buttonConnectReal.GetLabel() == 'connect':
+            FanbotConfig.setSerialport(serialname)
             try:
                 factory = ParserFactory()             # Parser factory can create a parser object
                 self.serial = FanbotSerial(factory);
                 self.serial.open(serialname,115200)
                 self.remote.setTransport(self.serial)
-                print "Opened serial port ", serialname
                 self.buttonConnectReal.SetLabel('disconnect')
-            except     SerialException:
-                print "Unable to open serial port ..."
-                dlg = wx.MessageDialog(self, 'Select another port. or exit program with <Cancel>!',
+                FanbotConfig.setSerialport(serialname)
+            except     SerialException as e:
+                print "Unable to open serial port ...error:", e.message
+                dlg = wx.MessageDialog(self, e.message +' Select another port. or exit program with <Cancel>!',
                                    'Unable to open serial port %s'%serialname ,
                                    wx.OK| wx.CANCEL | wx.ICON_QUESTION
                                    )
@@ -113,6 +114,8 @@ class FanbotControl (FanbotFrame) :
                     exit(1)
         else:
             self.serial.close()
+            self.serial = None
+            self.remote.setTransport(None)
             self.buttonConnectReal.SetLabel('connect')
             print 'now disconnected'
     
@@ -132,10 +135,10 @@ class FanbotControl (FanbotFrame) :
                 self.buttonConnectSimul.SetLabel('disconnect')
                 print 'now connected'       
             except Exception as e:
-                dlg = wx.MessageDialog(self, e.message ,
-                               e.message ,
-                               wx.OK| wx.CANCEL | wx.ICON_WARNING
-                               )
+                dlg = wx.MessageDialog(self, 'Select another port. or exit program with <Cancel>!',
+                                   'Unable to open connection to simulator at %s:%s'%(host,port),
+                                   wx.OK| wx.CANCEL | wx.ICON_QUESTION)
+                
                 result = dlg.ShowModal() 
                 dlg.Destroy()
                 if wx.ID_OK  !=result:
@@ -143,10 +146,26 @@ class FanbotControl (FanbotFrame) :
             
         else:
             self.socket.closeSocket()
+            self.socket = None
+            self.remote.setTransport(None)
             self.buttonConnectSimul.SetLabel('connect')
             print 'now disconnected'
                 
-            
+    def buttonSaveOnButtonClick( self, event ):
+        host = self.textSimulation.GetValue()
+        FanbotConfig.setSimulationIP(host)
+
+        port = self.textPort.GetValue()
+        FanbotConfig.setSimulationIPPort(port)
+ 
+        proxy = self.textProxyPort.GetValue()
+        FanbotConfig.setProxyPort(proxy)
+
+        serialname = self.comboSerialPorts.GetValue()
+        FanbotConfig.setSerialport(serialname)
+
+        
+        FanbotConfig.save()
             
        
         
@@ -157,6 +176,7 @@ class FanbotControl (FanbotFrame) :
                 s = Serial(i)
                 self.comboSerialPorts.Append(s.portstr)
                 s.close()   # explicit close 'cause of delayed GC in java
+                s = None
             except SerialException:
                 pass
             
@@ -168,10 +188,10 @@ class FanbotControl (FanbotFrame) :
         host = FanbotConfig.getSimulationIP()
         port = FanbotConfig.getSimulationIPPort()
         self.textSimulation.SetValue(host)
-        self.textPort.SetValue(port)
+        self.textPort.SetValue(str(port))
         
         self.proxyPort = FanbotConfig.getProxyPort() 
-        self.textProxyPort.SetValue(self.proxyPort)
+        self.textProxyPort.SetValue(str(self.proxyPort))
         simulation = FanbotConfig.getSimulation()
         self.handleSelection(simulation)
         if simulation:
@@ -192,10 +212,6 @@ class FanbotControl (FanbotFrame) :
         self.buttonConnectReal.Enable(real)
         self.buttonConnectSimul.Enable(simul)
 
-    def textProxyPortOnLeaveWindow( self, event ):
-        proxy = self.textProxyPort.GetValue()
-        FanbotConfig.setProxyPort(proxy)
-        FanbotConfig.save()
 
     def __del__( self ):
         FanbotConfig.save()

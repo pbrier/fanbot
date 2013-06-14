@@ -91,7 +91,7 @@ int read_program(hid_device* handle, unsigned char *program)
   for(int j=0;j<100; j++) 
   {
     res = hid_read_timeout(handle, hid_buf, sizeof(hid_buf), 100);
-    printf(".\n");
+   // printf(".\n");
     if ( res < 0 )
     {
       return res;
@@ -174,7 +174,8 @@ int main(int argc, char* argv[])
     if ( verbose ) printf("Wait for connection...\n");
     handle = hid_open(vid, pid, NULL);
     if ( handle ) break; // we have a connection
-    Sleep(500);    
+    // Sleep(500);    
+    usleep(1000*100);
   }
   hid_flush(handle);
   

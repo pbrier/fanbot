@@ -87,6 +87,7 @@ unsigned int port_state[24]; // 0 if port not used, serial number of connected d
 unsigned short int port_cmd[24]; // 0: no command
 unsigned short int arg[24]; // arguments for the opcodes
 
+
 /**
 *** read config()
 *** Read serial number and EEPROM values
@@ -209,29 +210,35 @@ public:
 
 
 /**
-*** Send test string over RS485 and echo received chars
+*** Initialize UART and set as RS485 halve duplex with automatic transmit enable
 **/
-void rs485_test()
+void rs485_init()
 {
-  char buf[128];
-  int n=0;
-  //DigitalOut de(P0_17);
-  DigitalOut de(NC);
   serial_init( &stdio_uart, P1_13, P1_14); // pins: tx, rx
   LPC_USART->RS485CTRL |= (1<<4) | (1<<5); // Enable bit4: Automatic Direction control
   pin_function(P0_17,1); // RTS
+}
+
+
+/**
+*** Send test string over RS485 and echo received chars from RS485
+**/
+void rs485_test()
+{
+  char buf[32];
+  int n=0;
+  //DigitalOut de(P0_17);
+  rs485_init();
   memset(buf,0,sizeof(buf));
   printf("Hello World!\n");
   while( button )
   {    
-    de = 0;
-    while ( serial_readable( &stdio_uart ) && n >= 0 )
+
+    while ( serial_readable( &stdio_uart ) && n >= 0 && n < (sizeof(buf) - 1) )
     {     
      led_a = 1;
      buf[n] = serial_getc(&stdio_uart);
-     de = 1;
      serial_putc(&stdio_uart, buf[n]);
-     de = 0;
      if ( buf[n] == '\r' ) 
        n = -1;
      else
@@ -241,7 +248,6 @@ void rs485_test()
     {     
       led_a = 0;
       n = 0;
-      de = 1; // driver enable
       printf("Hello World!\n");
       printf(buf);
       memset(buf,0,sizeof(buf));
@@ -249,6 +255,30 @@ void rs485_test()
   }
 }
 
+
+/**
+*** Send all data from USB to RS485 and vice versa
+**/
+void rs485_comm()
+{
+  rs485_init();
+  while( button )
+  {    
+    led_a = 0;
+    led_b = 0;
+    if ( serial_readable( &stdio_uart ) )
+    {
+      led_a = 1;
+      usb.putc( serial_getc(&stdio_uart) );
+    }
+    if ( usb.available () )
+    {
+      led_b = 1;
+      serial_putc(&stdio_uart, usb.getc());
+    }
+  }
+  
+}
 
 
 
@@ -401,21 +431,28 @@ enum HubOpcodes {
  {
     switch ( opcode )
    {
-     case REQUEST_ID:
+     case REQUEST_ID: // Send our ID on the bus if we where not tagged already, after a random time
        if ( !tagged ) 
        {
          wait_us( rand() & 0xFFFFF  ); // random 0..1 sec delay time
          write_data((unsigned char*)&serial_nr, 4);
        }
        break;
-     case TAG_ID:
-       if ( serial_nr_rx == serial_nr ) tagged = 1; 
+     case TAG_ID: // Indicate we are tagged and do not need to send our ID again
+       if ( serial_nr_rx == serial_nr ) 
+         tagged = 1; 
        break;
-     case REQUEST_STATUS:
+     case REQUEST_STATUS: // send status frame
        if ( serial_nr_rx == serial_nr )
          write_data((unsigned char*)port_state, sizeof(port_state)); 
        break;
-     case RESET:
+     case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
+       if ( serial_nr_rx == serial_nr )
+       {
+       
+       }
+       break;
+     case RESET: // Reset the tagged state
        if ( serial_nr_rx == 0 || serial_nr_rx == serial_nr )
          tagged = 0;
        break;
@@ -491,7 +528,7 @@ void hub_comm()
 /**
 *** Receive via USB virtual COM port and send to all ports
 **/
-void rs485_comm()
+void usb_comm()
 {
   static int i;
   char c=0;
@@ -655,12 +692,12 @@ int main(void) {
   {
     switch ( select_function(7) )
     {
-      case 0: // no selection
+      case 99: // no selection
       case 1: hub_comm(); break;
       case 2: iotest(); break;
       case 3: led_test(); break;
       case 4: rs485_test(); break;
-      case 5: rs485_comm(); break;
+      case 0: rs485_comm(); break;
       case 6: play_test(); break;
       case 7: servo_test(); break;
       default: break;

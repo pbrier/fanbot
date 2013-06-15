@@ -24,15 +24,14 @@ class HubSimul :
         """all ids of connected fnabots, leave one disconnected for test"""    
         idx = 4
         for i in range(24):
-            if i != startindex:
-                self.status[idx] =  self.id[3] 
-                idx += 1
-                self.status[idx] =  self.id[3]
-                idx += 1
-                self.status[idx] =  self.id[3]
-                idx += 1
-                self.status[idx] =  i
-                idx += 1
+            self.status[idx] =  self.id[3] 
+            idx += 1
+            self.status[idx] =  self.id[3]
+            idx += 1
+            self.status[idx] =  self.id[3]
+            idx += 1
+            self.status[idx] =  i
+            idx += 1
         """software revisision"""    
         self.status[idx] =  1
         idx += 1
@@ -41,6 +40,16 @@ class HubSimul :
         self.status[idx] =  3
         idx += 1
         self.status[idx] =  4
+
+        """one fanbot is missing ...."""
+        if startindex < 23:
+            missing = 4 + 4* startindex
+        else:
+            missing = 4    
+        self.status[missing + 0] = 0     
+        self.status[missing + 1] = 0     
+        self.status[missing + 2] = 0     
+        self.status[missing + 3] = 0     
 
 
 

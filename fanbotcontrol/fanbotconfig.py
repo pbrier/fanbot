@@ -124,15 +124,7 @@ class FanbotConfig():
             hubs[id] = result    
         return result
 
-    @classmethod
-    def setHubConfig(cls,id, config = None):
-        """ Return array with config data (24 x 16 bit). 
-        Id is a string with hexadecimal representation of ID
-        config is an aray with 24  (16 bit signed) integers"""
-        hubs = cls.config.get('hubs')
-        cls.getHubConfig(id) # force creation of config if it does not exist
-        if config:
-            hubs[id] = config
+
 
     
     @classmethod
@@ -176,8 +168,6 @@ class FanbotConfig():
 if __name__ == '__main__':
     print 'Dumping yaml config document:'
     FanbotConfig.load()
-#    FanbotConfig.setHubConfig('0x1234' )
-#    FanbotConfig.setHubConfig('0x5678' )
     FanbotConfig.dump()
     FanbotConfig.save()
     

@@ -26,6 +26,9 @@ class FanbotSerial:
         self.listener = listener
         self.thread = None
 
+    def __del__( self ):
+        print "FanbotSerial destructor ..."
+        self.close()
 
     def sendFrame(self,frame):
         print "Serial: sendframe"

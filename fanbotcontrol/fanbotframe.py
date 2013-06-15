@@ -64,7 +64,7 @@ class FanbotFrame ( wx.Frame ):
 		bSizer22.Fit( self.tabPanelModules )
 		self.notebook.AddPage( self.tabPanelModules, u"modules", False )
 		self.tabPanelSettings = wx.Panel( self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		gSizer1 = wx.GridSizer( 3, 4, 0, 0 )
+		gSizer1 = wx.GridSizer( 4, 4, 0, 0 )
 		
 		self.selectSerialPort = wx.CheckBox( self.tabPanelSettings, wx.ID_ANY, u"fanbotnet", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.selectSerialPort.SetValue(True) 
@@ -111,6 +111,8 @@ class FanbotFrame ( wx.Frame ):
 		gSizer1.Add( self.m_staticText9, 0, wx.ALL, 5 )
 		
 		self.buttonSave = wx.Button( self.tabPanelSettings, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.buttonSave.SetToolTipString( u"Save configuratie naar disk" )
+		
 		gSizer1.Add( self.buttonSave, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.tabPanelSettings.SetSizer( gSizer1 )
@@ -635,19 +637,19 @@ class PanelModules ( wx.Panel ):
 		self.labelHubId.Wrap( -1 )
 		fgSizer1.Add( self.labelHubId, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
 		
-		self.scrolledWindowHubs = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.scrolledWindowHubs = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
 		self.scrolledWindowHubs.SetScrollRate( 5, 5 )
 		self.scrolledWindowHubs.SetMinSize( wx.Size( 150,-1 ) )
 		
-		fgSizer1.Add( self.scrolledWindowHubs, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		fgSizer1.Add( self.scrolledWindowHubs, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 2 )
 		
-		self.scrolledWindowFanbots = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.scrolledWindowFanbots = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
 		self.scrolledWindowFanbots.SetScrollRate( 5, 5 )
-		self.scrolledWindowFanbots.SetMinSize( wx.Size( 90,-1 ) )
+		self.scrolledWindowFanbots.SetMinSize( wx.Size( 100,-1 ) )
 		
-		fgSizer1.Add( self.scrolledWindowFanbots, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		fgSizer1.Add( self.scrolledWindowFanbots, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 2 )
 		
-		bSizer27.Add( fgSizer1, 1, wx.EXPAND, 5 )
+		bSizer27.Add( fgSizer1, 1, wx.EXPAND, 1 )
 		
 		self.m_panel17 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.ALWAYS_SHOW_SB|wx.TAB_TRAVERSAL )
 		bSizer30 = wx.BoxSizer( wx.HORIZONTAL )

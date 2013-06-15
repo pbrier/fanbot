@@ -37,7 +37,7 @@ class ProxyControl(PanelProxy ):
 
 
     def __del__( self ):
-        print "proxycontrol destruProxyControlctor ..."
+        print "proxycontrol destructor ..."
         self.shutdown()
         
     def panelProxyCanvasOnPaint( self, event ):

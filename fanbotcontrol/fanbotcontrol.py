@@ -28,7 +28,8 @@ class FanbotControl (FanbotFrame) :
         FanbotConfig.load()
 
         self.remote = HubProtocol(None) # no transport layer yet
-        
+        self.serial = None
+        self.socket = None
         panel = self.tabPanelDesign
         sizer = panel.GetSizer()    
         self.designControl = DesignControl(panel) 
@@ -163,8 +164,6 @@ class FanbotControl (FanbotFrame) :
 
         serialname = self.comboSerialPorts.GetValue()
         FanbotConfig.setSerialport(serialname)
-
-        
         FanbotConfig.save()
             
        
@@ -214,7 +213,6 @@ class FanbotControl (FanbotFrame) :
 
 
     def __del__( self ):
-        FanbotConfig.save()
         print "fanbotcontrol destructor ..."
                 
                 

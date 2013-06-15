@@ -28,7 +28,7 @@ class ModulenControl (PanelModules) :
         self.drawMode = 0
         self.hubList = hubs.HubListModel(self.scrolledWindowHubs,self)
         listHubsSizer = wx.BoxSizer( wx.VERTICAL )
-        listHubsSizer.Add( self.hubList, 1, wx.ALL|wx.EXPAND, 1)
+        listHubsSizer.Add( self.hubList, 1, wx.ALL|wx.EXPAND, 5)
         self.scrolledWindowHubs.SetSizer( listHubsSizer )
         listHubsSizer.Fit( self.scrolledWindowHubs )
         
@@ -52,7 +52,7 @@ class ModulenControl (PanelModules) :
  
     
     def buttonResetDiscOnButtonClick( self, event ):
-        self.remote.sendCommand( HubProtocol.DISC_RESET)
+        self.remote.sendCommand( HubProtocol.RESET)
         self.hubList.resetDiscovery()
         
     
@@ -181,11 +181,12 @@ class ModulenControl (PanelModules) :
                 x = tuple[0]
                 y = tuple[1]
                 self.bitmap.setPixel(x,y, 0xFFFFFF)
-        self.fanbotList.reset()    
+        self.fanbotList.reset()   
+        self.labelHubId.SetLabel("Hub: ") 
         self.panelModulesCanvas.Refresh()    
         self.remote.sendCommand( HubProtocol.REQUEST_STATUS,4,hub.idAsArray() )
 
-    def fanbbotSelected(item):
+    def fanbbotSelected(self,item):
         print "Selected fanbot index: " , item
 
     def showHub(self,hub):

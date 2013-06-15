@@ -96,12 +96,6 @@ class HubListModel(wx.ListCtrl):
         else:   
             return None
 
-
-
-    def save(self):
-        for hub in self.hubs:
-            hub.save()
-
     def resetDiscovery(self):
         for hub in self.hubs:
             hub.discoverd = False
@@ -144,7 +138,7 @@ class FanbotListModel(wx.ListCtrl):
         self.listener = listener
         
         self.SetColumnWidth(0, 20)
-        self.SetColumnWidth(1, 60)
+        self.SetColumnWidth(1, 50)
 
         self.SetItemCount(24)
         
@@ -221,20 +215,23 @@ class Hub :
     def __init__( self,id):
         """id must be a string with hexadecimal representaiton of ID example: '0x1234' """
         self.id = id
-        self.config = FanbotConfig.getHubConfig(self.id)
         self.discoverd = False
         self.responsive = False
         self.configidx = 0
+        self.config = FanbotConfig.getHubConfig(self.id)
+        for i in range(24):
+            if len(self.config) < 24:
+                self.config.append(-1)
+                 
         self.color = random.randint(20, 250) * 0x10000 + random.randint(20, 250) * 0x100 + random.randint(20, 250) 
         
     def save(self):
         FanbotConfig.setHubConfig(id,self.config)
 
     def resetConfig(self):
-        self.config = []
         self.configidx = 0
         for  i in range (0,24):
-            self.config.append(-1)
+            self.config[i] = -1
 
     def canAddConfigItem(self):
         return self.configidx < 24        
@@ -254,6 +251,7 @@ class Hub :
         else:
             self.config[self.configidx] = val
         self.configidx += 1
+
         return True            
 
     def getConfigColor(self,index):

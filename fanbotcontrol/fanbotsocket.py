@@ -23,6 +23,9 @@ class FanbotSocket:
         self.listener = listener
         self.thread = None
  
+    def __del__( self ):
+        print "FanbotSocket destructor ..."
+        self.closeSocket()
 
     def sendFrame(self,frame):
         if self.socket != None:

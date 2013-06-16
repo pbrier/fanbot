@@ -265,7 +265,7 @@ void iotest()
 void rs485_init()
 {
   serial_init( &stdio_uart, P1_13, P1_14); // pins: tx, rx
-  serial_baud( &stdio_uart, 19200 );
+  serial_baud( &stdio_uart, 9600 );
   LPC_USART->RS485CTRL |= (1<<4) | (1<<5); // Enable bit4: Automatic Direction control
   pin_function(P0_17,1); // RTS
 }
@@ -618,12 +618,16 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
        
        break;
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
-       debugstring("Get config\n\r");
+       debugstring("receive config\n\r");
        if ( !getint32(&serial_nr_rx) ) return 0; // we expect a serial nr!
        for( int i=0; i<24; i++)
          if ( getint(&arg[i]) == 0 ) return 0;
+       debugstring("receive config done.\n\r");
        break;
      default: // unknown opcode, just absorb the data
+       debugstring("Unknown opcode");
+       debugint(opcode);
+       debugint(length);
        if ( read_data(NULL, length) != length ) return 0;
    };
    

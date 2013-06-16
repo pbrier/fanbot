@@ -98,11 +98,12 @@ unsigned short int arg[24]; // arguments for the opcodes
 void inline read_config()
 {
   serial_nr = iap.read_serial();
+  srand(serial_nr);
   iap.read_eeprom( (char*)CONFIG_ADDRESS, (char *)config, sizeof(config) );
-  for(int i=0; i<24; i++) // init default configuration: bit 0 to 24
+ /* for(int i=0; i<24; i++) // init default configuration: bit 0 to 24
   {
     config[i] = i; // 
-  }
+  }*/
 }
 
 
@@ -197,7 +198,7 @@ void debugint(int i)
 static inline char c_get()
 {
   char c = serial_getc(&stdio_uart);
-  debugint(c);
+//  debugint(c);
   return c;
   // return usb.getc();
 }
@@ -264,6 +265,7 @@ void iotest()
 void rs485_init()
 {
   serial_init( &stdio_uart, P1_13, P1_14); // pins: tx, rx
+  serial_baud( &stdio_uart, 19200 );
   LPC_USART->RS485CTRL |= (1<<4) | (1<<5); // Enable bit4: Automatic Direction control
   pin_function(P0_17,1); // RTS
 }
@@ -373,41 +375,76 @@ void single_comm(DigitalInOut &pin)
   }
 }
 
+
+unsigned int request_id(unsigned char n)
+{
+  int id=0;
+  char val, ch, j, bitshift=28;
+  DigitalInOut pin(hub_pin[n]);
+  send(pin, 'n');
+ 
+  while( bitshift ) // for all 8 characters
+  {
+     for(j=0; j<200 && ch==0; j++)
+       ch = receive(pin);
+     debugint((int)ch);
+     if ( ch == 0 ) 
+     {
+       debugint(-1);
+       return 0; // timeout
+     }
+     if ( ch >= '0' && ch <= '9' )
+       val = ch - '0' ;
+     else if ( ch >= 'A' && ch <= 'F' )
+       val = 10 + ch - 'A';
+     id = id + (val << bitshift); 
+     bitshift -= 4;
+  }
+  return id;
+}
+
 /**
 *** Request the serial nr from the robot connected to this pin
 **/
 void request_test(void)
 {
-  static int n=0,j;
-  char c;
-    
-  for(int i=0; i<(sizeof(hub_pin)/sizeof(hub_pin[0])); i++)
-  {
-   DigitalInOut pin(hub_pin[i]);
-   pin_function(P0_15,1);
-   pin_function(P0_10,1);
-    usb.putc('\r');  
-    usb.putc('\n'); 
-    usb.putc('A'+i); 
-    usb.putc(':'); 
-    send(pin, 'n');
-    
-    n = 0;
-    j=0;    
-    while( (n<8) && (j < 200) )
-    { 
-      c = receive(pin);
-      if ( c ) 
-      {
-        usb.putc( c );  
-        n++;
-        j=0;
-      }
-      j++;
+  while(button)
+  {  
+    for(int i=0; i<24; i++)
+    {
+      debugstring("ID: ");
+      debugint(i);
+      debugint(request_id(i));
     }
+   /* for(int i=0; i<(sizeof(hub_pin)/sizeof(hub_pin[0])); i++)
+    {
+      DigitalInOut pin(hub_pin[i]);
+      pin_function(P0_15,1);
+      pin_function(P0_10,1);
+      usb.putc('\r');  
+      usb.putc('\n'); 
+      usb.putc('A'+i); 
+      usb.putc(':'); 
+      send(pin, 'n');
+    
+      n = 0;
+      j=0;    
+      while( (n<8) && (j < 200) )
+      { 
+        c = receive(pin);
+        if ( c ) 
+        {
+          usb.putc( c );  
+          n++;
+          j=0;
+        }
+        j++;
+      }
+    }*/
   }
   return;
 }
+
 
 
 
@@ -446,6 +483,7 @@ unsigned short write_data(unsigned char *buf, unsigned short length)
 /**
 *** getint()
 *** receive 16-bit integer from serial port
+*** Return 1 if OK, 0 if NOK
 **/
 unsigned short getint(unsigned short *v)
 {
@@ -541,12 +579,12 @@ enum HubOpcodes {
 **/
 unsigned short int process_opcode(unsigned short int opcode, unsigned short int length)
 {
-   unsigned short bit;  
+   unsigned short bit, index;  
    switch ( opcode )
    {
      case REQUEST_ID: // no arguments
-       break;
-     case RESET: // 4 bytes argument (serial #)
+     case RESET: 
+       break; // 4 bytes argument (serial #)
      case REQUEST_STATUS: 
      case TAG_ID: 
        if ( !getint32(&serial_nr_rx) ) return 0; 
@@ -554,15 +592,36 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
      case PLAY_FRAME: // 1 bit per port
      case LED_FRAME: // 1 bit per port
      case POS_FRAME: // 2 bits per port
-       while(length)
+     debugstring("Receive frame.\n\r");
+     debugint(length);
+      index = 0;
+      for(int i=0; i<length; i++)
        {
          unsigned char c;
-         if ( read_data(&c, 1) != 1 ) return 0;  // something wrong with the length!
+         /* c = c_get();
+         checksum += c; */
+         if ( read_data(&c, 1) != 1 ) return 0;
+        
+         for(int j=0; j<8; j++) // for all bits in this byte
+         {
+           if ( config[index] == i*8 + j ) // check if this bit in the frame corresponds to configuration index
+           {
+             if ( c & (1<<j) )  // if bit is set: enable leds, otherwise, disable leds
+               port_cmd[index] = 255;
+             else
+               port_cmd[index] = 0;
+             if ( index < 24 ) 
+               index++; // next one
+           }
+         }
        }
+       
        break;
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
+       debugstring("Get config\n\r");
        if ( !getint32(&serial_nr_rx) ) return 0; // we expect a serial nr!
-       if ( read_data((unsigned char *)arg, 24*2) != 48 ) return 0;
+       for( int i=0; i<24; i++)
+         if ( getint(&arg[i]) == 0 ) return 0;
        break;
      default: // unknown opcode, just absorb the data
        if ( read_data(NULL, length) != length ) return 0;
@@ -598,7 +657,7 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
          startframe(STATUS_REPORT, 4 + 24*4 + 4); // status is [my id] [24 robot ids] [software version]
          putint32(serial_nr);
          for(int i=0; i<24; i++)
-           putint32(i);
+           putint32( i ); //putint32( request_id(i) );
          putint32(123); // version
          endframe();
        }
@@ -606,12 +665,28 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
        if ( serial_nr_rx == serial_nr )
        {
+         debugstring("Config frame:");
        
+         for(int i=0; i<24; i++)
+         {
+           config[i] = arg[i];
+           debugint(arg[i]);
+         }
+         write_config();
        }
        break;
      case RESET: // Reset the tagged state
-       if ( serial_nr_rx == 0 || serial_nr_rx == serial_nr )
-         tagged = 0;
+       tagged = 0;
+       break;
+     case PLAY_FRAME: // 1 bit per port
+     case LED_FRAME: // 1 bit per port
+     case POS_FRAME: // 2 bits per port
+       debugstring("play/led/pos frame!");
+       for(int i=0; i<24; i++)
+       {
+        send_masked('L', 1<<i);
+        send_masked(port_cmd[i], 1<<i);
+       }
        break;
      default: // unknown opcode, flash lights
        for(int i = 0; i< 4; i++)
@@ -649,7 +724,7 @@ void hub_comm()
         error--;
       i++;
     }
-    debugstring("State: "); debugint(state); debugstring("\n");
+    // debugstring("State: "); debugint(state); debugstring("\n");
     
     switch ( state )
     {
@@ -674,12 +749,11 @@ void hub_comm()
         state = (getint(&length) ? 4 : 0); 
          break;
       case 4: // receive data [length bytes]
-        debugstring("Opcode: ");
-        debugint(opcode);
-        debugstring("Length: ");
-        debugint(length);
-        
-        state = (process_opcode(opcode, length) ? 5 : 0);
+       // debugstring("Opcode: ");
+       // debugint(opcode);
+       // debugstring("Length: ");
+        //debugint(length);
+        state = (process_opcode(opcode, length) ? 5 : 0); // If process is OK (!=0) then next state
         break;
       case 5: // check the checksum, restart comm. state if incorrect
         int c = checksum;
@@ -690,10 +764,13 @@ void hub_comm()
         if ( c == rx_checksum ) // execute function
         {
           led_b = 1;
-          execute_opcode(opcode);  
+          debugstring("Execute opcode.\n\r"); 
+          execute_opcode(opcode);
+          debugstring("Done.\n\r");          
         }
         else
         {
+          debugstring("Checksum error.\n\r");
           error = 10000; 
         }
         state = 0;

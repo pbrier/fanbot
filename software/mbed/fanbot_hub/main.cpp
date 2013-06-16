@@ -99,6 +99,10 @@ void inline read_config()
 {
   serial_nr = iap.read_serial();
   iap.read_eeprom( (char*)CONFIG_ADDRESS, (char *)config, sizeof(config) );
+  for(int i=0; i<24; i++) // init default configuration: bit 0 to 24
+  {
+    config[i] = i; // 
+  }
 }
 
 
@@ -131,19 +135,21 @@ void send(DigitalInOut  &pin, char c)
 }
 
 
+#define MARK 1
+#define SPACE 0
 // receive RS232, 9600bps, wait for some time to see if there is a start bit, or return 0
 char receive(DigitalInOut &pin)
 {
   char c = 0;
   pin.input();
   pin.mode(PullDown);
-  for(int i=0; i<30 && pin == 1; i++); // wait for first falling edge
+  for(int i=0; i<30 && pin == MARK; i++); // wait for first falling edge
      wait_us(1);
-  if ( pin == 1 ) return 0; // we have not seen an edge
+  if ( pin == MARK ) return 0; // we have not seen an edge
   wait_us(1.5*t_bit); // wait for the start bit to finish and sample haveway the first bit
   for(int bit=0; bit<8; bit++) // sample 8 bits
   { 
-    c |= ( pin == 1 ?  (1<<bit) : 0 );
+    c |= ( pin == MARK ?  (1<<bit) : 0 );
     led_a = ( ( (unsigned char) c & (1<<bit) ) ? 1 : 0 );
     wait_us(t_bit);
   }
@@ -172,13 +178,56 @@ public:
 };
  
 // Watchdog w;
-  
+ 
+void debugstring(char *s)
+{
+  usb.writeBlock((uint8_t *)s, strlen(s));
+}
+ 
+void debugint(int i)
+{
+  char d[13];
+  sprintf(d, "%d\n\r", i);
+  debugstring(d);
+}
+
  /**
- *** iotest()
- *** Toggle all outputs
+ *** getchar
  **/
- void iotest()
- {
+static inline char c_get()
+{
+  char c = serial_getc(&stdio_uart);
+  debugint(c);
+  return c;
+  // return usb.getc();
+}
+
+ /**
+ *** getchar
+ **/
+static inline void c_put(char c)
+{
+  serial_putc(&stdio_uart, c);
+  // usb.putc(c);
+}
+
+
+/**
+*** return true if data available
+**/
+static inline int c_available()
+{
+ return serial_readable( &stdio_uart );
+ // return usb.available ();
+}
+
+ 
+/**
+*** iotest()
+*** Toggle all outputs
+**/
+void iotest()
+{
   int i=0;
   // w.kick(2.5);
 
@@ -230,10 +279,9 @@ void rs485_test()
   //DigitalOut de(P0_17);
   rs485_init();
   memset(buf,0,sizeof(buf));
-  printf("Hello World!\n");
+  printf("Board Serial: 0x%6.6X\n", serial_nr);
   while( button )
   {    
-
     while ( serial_readable( &stdio_uart ) && n >= 0 && n < (sizeof(buf) - 1) )
     {     
      led_a = 1;
@@ -248,7 +296,7 @@ void rs485_test()
     {     
       led_a = 0;
       n = 0;
-      printf("Hello World!\n");
+      printf("\n\rHello World!\n\r\n\r");
       printf(buf);
       memset(buf,0,sizeof(buf));
     }
@@ -261,7 +309,6 @@ void rs485_test()
 **/
 void rs485_comm()
 {
-  rs485_init();
   while( button )
   {    
     led_a = 0;
@@ -326,6 +373,44 @@ void single_comm(DigitalInOut &pin)
   }
 }
 
+/**
+*** Request the serial nr from the robot connected to this pin
+**/
+void request_test(void)
+{
+  static int n=0,j;
+  char c;
+    
+  for(int i=0; i<(sizeof(hub_pin)/sizeof(hub_pin[0])); i++)
+  {
+   DigitalInOut pin(hub_pin[i]);
+   pin_function(P0_15,1);
+   pin_function(P0_10,1);
+    usb.putc('\r');  
+    usb.putc('\n'); 
+    usb.putc('A'+i); 
+    usb.putc(':'); 
+    send(pin, 'n');
+    
+    n = 0;
+    j=0;    
+    while( (n<8) && (j < 200) )
+    { 
+      c = receive(pin);
+      if ( c ) 
+      {
+        usb.putc( c );  
+        n++;
+        j=0;
+      }
+      j++;
+    }
+  }
+  return;
+}
+
+
+
 
 #define RX_TIMEOUT 100
 // Read n data bytes, if buf == NULL, the data is read, but not stored. Return the number of bytes read
@@ -335,10 +420,10 @@ unsigned short read_data(unsigned char *buf, unsigned short length)
   unsigned char c;
   while ( length )
   {
-    for(i=0; i<RX_TIMEOUT && !usb.available(); i++ ) 
+    for(i=0; i<RX_TIMEOUT && !c_available(); i++ ) 
       wait(0.01);
     if ( i == RX_TIMEOUT ) return 0;
-    c = usb.getc();
+    c = c_get();
     if ( buf != NULL ) *buf++ = c;
     checksum += c;
     length--;  
@@ -351,7 +436,11 @@ unsigned short read_data(unsigned char *buf, unsigned short length)
 unsigned short write_data(unsigned char *buf, unsigned short length)
 {
   while(length--)
-    usb.putc(*buf++);
+  {
+    c_put(*buf);
+    checksum += *buf;
+    *buf++;
+  }
 }
 
 /**
@@ -381,25 +470,77 @@ unsigned short getint32(unsigned int *v)
   return 1;
 }
 
+/**
+*** putint32()
+*** send 32-bits integer from serial port
+**/
+void putint32(unsigned int i)
+{
+  unsigned char c[4];
+  c[0] = i & 0xFF;
+  c[1] = (i>>8) & 0xFF;
+  c[2] = (i>>16) & 0xFF;
+  c[3] = (i>>24) & 0xFF;
+  write_data(c, 4);
+}
+
+/**
+*** putint()
+*** send 16-bits integer from serial port
+**/
+void putint(unsigned short int i)
+{
+  unsigned char c[2];
+  c[0] = i & 0xFF;
+  c[1] = (i>>8) & 0xFF;
+  write_data(c, 2);
+}
+
+/**
+*** Send start of frame, reset checksum
+**/
+void startframe(unsigned short int opcode, unsigned short int length)
+{
+  c_put('#');
+  c_put('#');
+  checksum = '#' + '#';
+  putint(opcode);
+  putint(length);
+}
+
+
+/**
+*** Send end of frame, containing checksum
+**/
+void endframe()
+{
+  putint(checksum);
+}
+
+
 // Opcodes
 enum HubOpcodes { 
-  REQUEST_ID,
+  REQUEST_ID = 1,
   TAG_ID,
   PLAY_FRAME,
   LED_FRAME,
   POS_FRAME,
   REQUEST_STATUS,
   CONFIG_FRAME,
-  ID_REPORT,
+  ID_REPORT = 128,
   STATUS_REPORT,
   RESET = 0xDEAD,
 };
 
- // Read and process data according to specified opcode and length
- // Process data on the fly. 
- // Only use this data if the checksum is correct (calculated after all data is recieved)
- unsigned short int process_opcode(unsigned short int opcode, unsigned short int length)
- {
+
+/**
+*** Read and process data according to specified opcode and length
+*** Process data on the fly. 
+*** Only use this data if the checksum is correct (calculated after all data is recieved)
+*** So execution is delayed to after reception of the checksum
+**/
+unsigned short int process_opcode(unsigned short int opcode, unsigned short int length)
+{
    unsigned short bit;  
    switch ( opcode )
    {
@@ -413,9 +554,14 @@ enum HubOpcodes {
      case PLAY_FRAME: // 1 bit per port
      case LED_FRAME: // 1 bit per port
      case POS_FRAME: // 2 bits per port
+       while(length)
+       {
+         unsigned char c;
+         if ( read_data(&c, 1) != 1 ) return 0;  // something wrong with the length!
+       }
        break;
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
-       if ( !getint32(&serial_nr_rx) ) return 0; 
+       if ( !getint32(&serial_nr_rx) ) return 0; // we expect a serial nr!
        if ( read_data((unsigned char *)arg, 24*2) != 48 ) return 0;
        break;
      default: // unknown opcode, just absorb the data
@@ -423,10 +569,12 @@ enum HubOpcodes {
    };
    
    return 1;
- }
+}
  
- 
-// Execute the received opcode (this only happens if the received checksum was correct)
+ /**
+ *** execute_opcode()
+ *** Execute the received opcode (this function is only called if the received checksum was correct)
+ **/
  unsigned short int execute_opcode(unsigned short int opcode)
  {
     switch ( opcode )
@@ -435,7 +583,9 @@ enum HubOpcodes {
        if ( !tagged ) 
        {
          wait_us( rand() & 0xFFFFF  ); // random 0..1 sec delay time
-         write_data((unsigned char*)&serial_nr, 4);
+         startframe(ID_REPORT, 4);
+         putint32(serial_nr);
+         endframe();
        }
        break;
      case TAG_ID: // Indicate we are tagged and do not need to send our ID again
@@ -444,7 +594,14 @@ enum HubOpcodes {
        break;
      case REQUEST_STATUS: // send status frame
        if ( serial_nr_rx == serial_nr )
-         write_data((unsigned char*)port_state, sizeof(port_state)); 
+       {
+         startframe(STATUS_REPORT, 4 + 24*4 + 4); // status is [my id] [24 robot ids] [software version]
+         putint32(serial_nr);
+         for(int i=0; i<24; i++)
+           putint32(i);
+         putint32(123); // version
+         endframe();
+       }
        break;
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
        if ( serial_nr_rx == serial_nr )
@@ -479,44 +636,68 @@ enum HubOpcodes {
 **/
 void hub_comm()
 {
-  static int i;
-  char c=0, c1=0, state=0;
+  static int i, error=0;
+  char c=0, state=0;
   unsigned short int opcode, length, rx_checksum;
   while( button )
-  { 
+  {
+    while ( ! c_available() )  // wait for char 
+    {    
+      led_b = (i & 0x10000) || tagged;
+      led_a = (error > 0); 
+      if ( error ) 
+        error--;
+      i++;
+    }
+    debugstring("State: "); debugint(state); debugstring("\n");
+    
     switch ( state )
     {
-      case 0: 
-        led_a = 0;
-        led_b = 0;
-        c = usb.getc();
-        if ( c == '#' && c1 == '#' )
-        {
-          led_a = 1;
-          c1 = 0;
-          checksum = 0;          
+      case 0: // wait for '#'
+        if ( c_get()  == '#' ) 
           state = 1;
+        break;
+      case 1:  // wait for start of frame '#'
+        if ( c_get()  == '#' ) 
+        {
+          state = 2;      
+          led_a = 1;
+          checksum = '#' + '#';          
         }
         else
-          c1 = c;          
+          state = 0;
         break;
-      case 1: 
-        state = (getint(&opcode) ? 2 : 0); 
+      case 2: // wait for opcode
+        state = (getint(&opcode) ? 3 : 0); 
         break;
-      case 2:
-        state = (getint(&length) ? 3 : 0); 
+      case 3: // wait for length
+        state = (getint(&length) ? 4 : 0); 
          break;
-      case 3: // receive data
-        state = (process_opcode(opcode, length) ? 4 : 0);
+      case 4: // receive data [length bytes]
+        debugstring("Opcode: ");
+        debugint(opcode);
+        debugstring("Length: ");
+        debugint(length);
+        
+        state = (process_opcode(opcode, length) ? 5 : 0);
         break;
-      case 4: // check the checksum, restart comm. state if incorrect
+      case 5: // check the checksum, restart comm. state if incorrect
         int c = checksum;
-        state = (getint(&rx_checksum) ? 5 : 0); 
-        if ( c != rx_checksum ) state = 0;
+        debugstring("Checksum: ");
+        debugint(checksum);
+        getint(&rx_checksum);
+        debugint(rx_checksum);
+        if ( c == rx_checksum ) // execute function
+        {
+          led_b = 1;
+          execute_opcode(opcode);  
+        }
+        else
+        {
+          error = 10000; 
+        }
+        state = 0;
         break;
-      case 5: // execute the function
-        led_b = 1;
-        execute_opcode(opcode);  
       default:
         state = 0;
         break;
@@ -628,6 +809,47 @@ void servo_test()
 }
 
 
+I2C i2c(P0_5,P0_4);
+
+static char init_code[] = { 
+ 0x38, // function set
+ 0x39, // function set
+ 0x14, // internal osc frequency
+ 0x7F, // contrast set
+ 0x50, // power/icon control/contrast set
+ 0x6c, // follower control
+ 0x0c, // display on/off
+ 0x01 // clear display
+};
+
+/**
+*** i2c_test()
+**/
+void i2c_test()
+{
+  const int addr = 124;
+  char cmd[2];
+  i2c.frequency(10000);
+  cmd[0] = 0;
+  for(int i=0; i<sizeof(init_code); i++)
+  {
+    cmd[1] = init_code[i];
+    i2c.write(addr, cmd, 2);
+    wait(0.1);
+  }
+  cmd[0] = 0x40;
+  cmd[1] = '0';
+  while (1) 
+  {
+    led_b = 0;
+    cmd[1] += 1;
+    wait(0.5);
+    i2c.write(addr, cmd, 2);
+    led_b = 1;
+    wait(0.5);
+  }
+}
+
 
 /**
 *** menu select function
@@ -687,20 +909,27 @@ int select_function(int n)
 **/
 int main(void) {
   read_config();
-
+  rs485_init();
+  
   while( 1 ) 
   {
-    switch ( select_function(7) )
+    switch ( select_function(4) )
     {
-      case 99: // no selection
-      case 1: hub_comm(); break;
+      case 0: // no selection
+      case 1: hub_comm(); break; // protocol decoder
+      case 2: led_test(); break;
+      case 3: request_test(); break;
+      case 4: i2c_test(); break;
+      default: break;
+
+      /* 
       case 2: iotest(); break;
-      case 3: led_test(); break;
       case 4: rs485_test(); break;
-      case 0: rs485_comm(); break;
+      case 5: rs485_comm(); break;
       case 6: play_test(); break;
       case 7: servo_test(); break;
-      default: break;
+      */
+      
     }
   }
 }

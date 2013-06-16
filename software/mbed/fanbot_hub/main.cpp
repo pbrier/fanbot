@@ -25,8 +25,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+// #define DEBUG 
+// #define DEBUG_I2C
+
+#define BAUDRATE 9600
+
 #include "mbed.h"
+
+#ifdef DEBUG
 #include "USBSerial.h"
+#endif
+
+
 #include "pinmap.h"
 #include "serial_api.h"
 #include "IAP.h"
@@ -35,9 +45,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 extern int stdio_uart_inited;
 extern serial_t stdio_uart;
  
- 
+#ifdef DEBUG
 //Virtual serial port over USB
 USBSerial usb;
+#endif
 
 
 DigitalIn button(P0_1);
@@ -88,6 +99,98 @@ unsigned short int port_cmd[24]; // 0: no command
 unsigned short int arg[24]; // arguments for the opcodes
 
 
+I2C i2c(P0_5,P0_4);
+
+static char init_code[] = { 
+ 0x38, // function set
+ 0x39, // function set
+ 0x14, // internal osc frequency
+ 0x7F, // contrast set
+ 0x50, // power/icon control/contrast set
+ 0x6c, // follower control
+ 0x0c, // display on/off
+ 0x01 // clear display
+};
+
+const int i2c_addr = 124;
+  
+/**
+*** i2c_test()
+**/
+void i2c_init()
+{
+  char cmd[2];
+  i2c.frequency(300000);
+  cmd[0] = 0;
+  for(int i=0; i<sizeof(init_code); i++)
+  {
+    cmd[1] = init_code[i];
+    i2c.write(i2c_addr, cmd, 2);
+    wait(0.01);
+  }
+}
+
+void i2c_data(char c)
+{
+  char cmd[2]; 
+  cmd[0] = 0x40;
+  cmd[1] = c;
+  i2c.write(i2c_addr, cmd, 2);
+}
+
+void i2c_cmd(char c)
+{
+  char cmd[2]; 
+  cmd[0] = 0x00;
+  cmd[1] = c;
+  i2c.write(i2c_addr, cmd, 2);
+ // wait(0.001);
+}
+
+
+void i2c_test()
+{
+  char c;
+  i2c_init();
+  while(button)
+  {
+    //i2c_cmd(1);
+    i2c_cmd(0x80); // cursor home
+    c = '0';
+    for(int i=0; i<16; i++)
+      i2c_data(c++);
+    c = 'A';
+    i2c_cmd(0x80 + 0x40); // set data ptr to address 40 (start of 2nd line)
+    for(int i=0; i<16; i++)
+      i2c_data(c++);
+  }
+}
+
+
+void debugstring(char *s)
+{
+#ifdef DEBUG
+  usb.writeBlock((uint8_t *)s, strlen(s));
+#endif
+
+#ifdef DEBUG_I2C
+  i2c_cmd(1); // cls
+  i2c_cmd(0x80 + 0x40); // set data ptr to address 40 (start of 2nd line)
+  while(*s)
+    i2c_data(*s++);
+#endif
+
+
+}
+ 
+void debugint(int i)
+{
+  char d[13];
+  sprintf(d, "%d\n\r", i);
+  debugstring(d);
+}
+
+
 /**
 *** read config()
 *** Read serial number and EEPROM values
@@ -98,6 +201,8 @@ unsigned short int arg[24]; // arguments for the opcodes
 void inline read_config()
 {
   serial_nr = iap.read_serial();
+  debugstring("Serial:");
+  debugint(serial_nr);
   srand(serial_nr);
   iap.read_eeprom( (char*)CONFIG_ADDRESS, (char *)config, sizeof(config) );
  /* for(int i=0; i<24; i++) // init default configuration: bit 0 to 24
@@ -180,17 +285,6 @@ public:
  
 // Watchdog w;
  
-void debugstring(char *s)
-{
-  usb.writeBlock((uint8_t *)s, strlen(s));
-}
- 
-void debugint(int i)
-{
-  char d[13];
-  sprintf(d, "%d\n\r", i);
-  debugstring(d);
-}
 
  /**
  *** getchar
@@ -265,7 +359,7 @@ void iotest()
 void rs485_init()
 {
   serial_init( &stdio_uart, P1_13, P1_14); // pins: tx, rx
-  serial_baud( &stdio_uart, 9600 );
+  serial_baud( &stdio_uart, BAUDRATE );
   LPC_USART->RS485CTRL |= (1<<4) | (1<<5); // Enable bit4: Automatic Direction control
   pin_function(P0_17,1); // RTS
 }
@@ -305,7 +399,7 @@ void rs485_test()
   }
 }
 
-
+#ifdef DEBUG
 /**
 *** Send all data from USB to RS485 and vice versa
 **/
@@ -328,7 +422,7 @@ void rs485_comm()
   }
   
 }
-
+#endif
 
 
 /**
@@ -349,7 +443,7 @@ void send_masked(char c, unsigned long mask)
   }
 }
 
-
+#ifdef DEBUG
 /**
 *** Receive via USB virtual COM port and send to one port, and receive chars from that port
 **/
@@ -364,9 +458,9 @@ void single_comm(DigitalInOut &pin)
   { 
 	  while ( usb.available () )
     {	 
-       c = usb.getc();
-       if ( c == '$' ) return;
-       send(pin, c);   
+      c = usb.getc();
+      if ( c == '$' ) return;
+      send(pin, c);   
     }
     c = receive(pin);
     if ( c ) usb.putc( c );  
@@ -374,7 +468,7 @@ void single_comm(DigitalInOut &pin)
     led_b = c;
   }
 }
-
+#endif
 
 unsigned int request_id(unsigned char n)
 {
@@ -444,8 +538,6 @@ void request_test(void)
   }
   return;
 }
-
-
 
 
 
@@ -592,8 +684,8 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
      case PLAY_FRAME: // 1 bit per port
      case LED_FRAME: // 1 bit per port
      case POS_FRAME: // 2 bits per port
-     debugstring("Receive frame.\n\r");
-     debugint(length);
+      debugstring("Receive frame.\n\r");
+      debugint(length);
       index = 0;
       for(int i=0; i<length; i++)
        {
@@ -615,7 +707,6 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
            }
          }
        }
-       
        break;
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
        debugstring("receive config\n\r");
@@ -669,8 +760,7 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
      case CONFIG_FRAME: // 4 bytes serial + 24 * 4 bytes
        if ( serial_nr_rx == serial_nr )
        {
-         debugstring("Config frame:");
-       
+         debugstring("Config frame:");     
          for(int i=0; i<24; i++)
          {
            config[i] = arg[i];
@@ -720,9 +810,9 @@ void hub_comm()
   unsigned short int opcode, length, rx_checksum;
   while( button )
   {
-    while ( ! c_available() )  // wait for char 
+    while ( !c_available() )  // wait for char 
     {    
-      led_b = (i & 0x10000) || tagged;
+      led_b = i & (tagged ? 0x10000 : 0x40000);
       led_a = (error > 0); 
       if ( error ) 
         error--;
@@ -753,10 +843,10 @@ void hub_comm()
         state = (getint(&length) ? 4 : 0); 
          break;
       case 4: // receive data [length bytes]
-       // debugstring("Opcode: ");
-       // debugint(opcode);
-       // debugstring("Length: ");
-        //debugint(length);
+        // debugstring("Opcode: ");
+        // debugint(opcode);
+        // debugstring("Length: ");
+        // debugint(length);
         state = (process_opcode(opcode, length) ? 5 : 0); // If process is OK (!=0) then next state
         break;
       case 5: // check the checksum, restart comm. state if incorrect
@@ -767,7 +857,7 @@ void hub_comm()
         debugint(rx_checksum);
         if ( c == rx_checksum ) // execute function
         {
-          led_b = 1;
+          error = 1000;
           debugstring("Execute opcode.\n\r"); 
           execute_opcode(opcode);
           debugstring("Done.\n\r");          
@@ -775,18 +865,19 @@ void hub_comm()
         else
         {
           debugstring("Checksum error.\n\r");
-          error = 10000; 
+          error = 20000; 
         }
         state = 0;
         break;
       default:
+        error = 20000;
         state = 0;
         break;
     }
   }
 }
 
-  
+#ifdef DEBUG
 /**
 *** Receive via USB virtual COM port and send to all ports
 **/
@@ -818,6 +909,7 @@ void usb_comm()
     led_b = c;
   }
 }
+#endif
 
 
 /**
@@ -890,46 +982,7 @@ void servo_test()
 }
 
 
-I2C i2c(P0_5,P0_4);
 
-static char init_code[] = { 
- 0x38, // function set
- 0x39, // function set
- 0x14, // internal osc frequency
- 0x7F, // contrast set
- 0x50, // power/icon control/contrast set
- 0x6c, // follower control
- 0x0c, // display on/off
- 0x01 // clear display
-};
-
-/**
-*** i2c_test()
-**/
-void i2c_test()
-{
-  const int addr = 124;
-  char cmd[2];
-  i2c.frequency(10000);
-  cmd[0] = 0;
-  for(int i=0; i<sizeof(init_code); i++)
-  {
-    cmd[1] = init_code[i];
-    i2c.write(addr, cmd, 2);
-    wait(0.1);
-  }
-  cmd[0] = 0x40;
-  cmd[1] = '0';
-  while (1) 
-  {
-    led_b = 0;
-    cmd[1] += 1;
-    wait(0.5);
-    i2c.write(addr, cmd, 2);
-    led_b = 1;
-    wait(0.5);
-  }
-}
 
 
 /**
@@ -991,6 +1044,7 @@ int select_function(int n)
 int main(void) {
   read_config();
   rs485_init();
+  i2c_init();
   
   while( 1 ) 
   {

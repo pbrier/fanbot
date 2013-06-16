@@ -12,6 +12,8 @@ class FanbotConfig():
     config             = {}
     width  = 50
     height = 20
+    baudrate = 9600
+    
     
     @classmethod
     def load(cls):

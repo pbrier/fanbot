@@ -22,9 +22,9 @@ class HubListModel(wx.ListCtrl):
         self.InsertColumn(2, "Resp")
         self.listener = listener
         
-        self.SetColumnWidth(0, 80)
-        self.SetColumnWidth(1, 40)
-        self.SetColumnWidth(2, 40)
+        self.SetColumnWidth(0, 60)
+        self.SetColumnWidth(1, 35)
+        self.SetColumnWidth(2, 35)
 
         self.hubs = []
         self.hubs.append(Hub('0x1234'))
@@ -79,9 +79,15 @@ class HubListModel(wx.ListCtrl):
             return ""
         hub = self.hubs[item]
         if col == 0: return hub.id
-        elif col == 1: return hub.discoverd
-        elif col == 2: return hub.responsive
+        elif col == 1: return self.boolean2String(hub.discoverd)
+        elif col == 2: return self.boolean2String(hub.responsive)
         else: return ""
+
+    def boolean2String(self,bool):
+        if bool:
+            return "1"
+        else:
+            return "0"
 
     def OnGetItemImage(self, item):
             return -1
@@ -138,7 +144,7 @@ class FanbotListModel(wx.ListCtrl):
         self.listener = listener
         
         self.SetColumnWidth(0, 20)
-        self.SetColumnWidth(1, 50)
+
 
         self.SetItemCount(24)
         
@@ -159,7 +165,7 @@ class FanbotListModel(wx.ListCtrl):
         for i in range(24):
             id = ""
             for j in range(4):
-                id =  "%s%02x"%(id,rawdata[rawIndex])
+                id =  "%02x%s"%(rawdata[rawIndex],id)
                 rawIndex +=1
                 if id == '00000000':
                     id = "--------"
@@ -271,7 +277,7 @@ class Hub :
     def idAsArray(self):
          idAsLong = int(self.id,16)
          idArray = []
-         for i in range (3,-1,-1):
+         for i in range (4):
              byte = idAsLong >> (i * 8)
              byte %= 0x100
              idArray.append(byte )

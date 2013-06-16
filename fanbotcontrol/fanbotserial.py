@@ -31,10 +31,11 @@ class FanbotSerial:
         self.close()
 
     def sendFrame(self,frame):
-        print "Serial: sendframe"
         if self.serial != None:
+            print 'Sending: ',frame
             try:
-                self.serial.write(frame)
+                for i in frame:                ##self.serial.write(frame)
+                    self.serial.write(chr(i))
             except Exception as e:
                 print "sendCommand Exception %s %s"  %(e.__class__.__name__, e.message)
                 raise e
@@ -59,21 +60,19 @@ class FanbotSerial:
 
     def receiverHandler(self):
         print "Started receiving on serial port", self.serialname
-        frame = []
          
         if self.listener:
             self.parser = self.listener.createProtocolParser()
+
         while self.alive and self.serial:
-            data = 0
+            data = None
             try:
                 data = self.serial.read(1)
             except Exception  as e:
                 print "Exception ",e
-            print data            
-            frame.append(data)
-            if data == 13 or data == 10 and self.parser:
-                self.parser.parseFrame(frame)
-                print "Received frame: ", frame
-                frame = []
+            try:
+                self.parser.parseFrame(data)
+            except Exception  as e:
+                print "Exception during parsing",e
                 
         print "Stopped receiving on serial port " , self.serialname 

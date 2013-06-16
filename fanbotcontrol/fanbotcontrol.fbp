@@ -34,10 +34,10 @@
             <property name="hidden">0</property>
             <property name="id">wxID_ANY</property>
             <property name="maximum_size"></property>
-            <property name="minimum_size">700,470</property>
+            <property name="minimum_size">800,600</property>
             <property name="name">FanbotFrame</property>
             <property name="pos"></property>
-            <property name="size">873,470</property>
+            <property name="size">873,600</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass"></property>
             <property name="title"></property>
@@ -3837,7 +3837,7 @@
                             <object class="wxFlexGridSizer" expanded="1">
                                 <property name="cols">2</property>
                                 <property name="flexible_direction">wxBOTH</property>
-                                <property name="growablecols">0</property>
+                                <property name="growablecols">0,1</property>
                                 <property name="growablerows">1</property>
                                 <property name="hgap">0</property>
                                 <property name="minimum_size"></property>
@@ -4027,7 +4027,7 @@
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
                                         <property name="maximum_size"></property>
-                                        <property name="minimum_size">100,-1</property>
+                                        <property name="minimum_size">120,-1</property>
                                         <property name="name">scrolledWindowFanbots</property>
                                         <property name="permission">protected</property>
                                         <property name="pos"></property>

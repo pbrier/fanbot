@@ -134,6 +134,7 @@ class HubProtocolParser:
         self.payload = []
 
     def parseFrame(self,frame):
+        """"  Parse incoming frame byte for byte. If a frame has been received return true else false """
         for c in frame:
             b = ord(c)
             if self.state == 0:
@@ -176,15 +177,15 @@ class HubProtocolParser:
                 self.state = 9
                 self.rcvchecksum = b
             elif self.state == 9:
+                self.state = 0
                 self.rcvchecksum += b << 8
                 if self.calcChecksum == self.rcvchecksum:
                     for listener in HubProtocol.listeners:
                         listener.handleCommand(self.opcode,self.payload)
                 else:    
                     print "checksum not correct  received: %d expected %d" %(self.rcvchecksum,self.calcChecksum)
-                self.state = 0
-            self.checksum += b   
 
+            self.checksum += b   
     
 if __name__ == "__main__":
     import time

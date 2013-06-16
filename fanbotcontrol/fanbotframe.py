@@ -25,9 +25,9 @@ toolWhite = 1007
 class FanbotFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 873,470 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 873,600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
-		self.SetSizeHintsSz( wx.Size( 700,470 ), wx.DefaultSize )
+		self.SetSizeHintsSz( wx.Size( 800,600 ), wx.DefaultSize )
 		
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -625,6 +625,7 @@ class PanelModules ( wx.Panel ):
 		
 		fgSizer1 = wx.FlexGridSizer( 2, 2, 0, 0 )
 		fgSizer1.AddGrowableCol( 0 )
+		fgSizer1.AddGrowableCol( 1 )
 		fgSizer1.AddGrowableRow( 1 )
 		fgSizer1.SetFlexibleDirection( wx.BOTH )
 		fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
@@ -645,7 +646,7 @@ class PanelModules ( wx.Panel ):
 		
 		self.scrolledWindowFanbots = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
 		self.scrolledWindowFanbots.SetScrollRate( 5, 5 )
-		self.scrolledWindowFanbots.SetMinSize( wx.Size( 100,-1 ) )
+		self.scrolledWindowFanbots.SetMinSize( wx.Size( 120,-1 ) )
 		
 		fgSizer1.Add( self.scrolledWindowFanbots, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 2 )
 		

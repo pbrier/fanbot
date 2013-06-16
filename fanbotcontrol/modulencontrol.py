@@ -12,16 +12,20 @@ import hubs
 import time
 from bitmap import Bitmap
 
+from fanbotcontrolbase import  ControlBase
+
 from fanbotconfig import FanbotConfig
 
 from executecontrol import ExecuteControl
+import fanbotevent 
 
-class ModulenControl (PanelModules) :
+class ModulenControl (PanelModules,ControlBase) :
     
     
     def __init__( self, parent, remote ):
         """ remote is instance of HubProtocol for communication with remote"""
         PanelModules.__init__( self,parent)
+        ControlBase.__init__(self)
         self.remote = remote
         self.scaleX = 1
         self.scaleY = 1
@@ -49,6 +53,9 @@ class ModulenControl (PanelModules) :
         for hub in self.hubList.hubs:
             self.showHub(hub);
             
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.timerDiscover, self.timer)   
+        self.timerDiscoverCount = 0;    
  
     
     def buttonResetDiscOnButtonClick( self, event ):
@@ -58,10 +65,19 @@ class ModulenControl (PanelModules) :
     
     def buttonDiscoverOnButtonClick( self, event ):
         self.remote.sendCommand( HubProtocol.REQUEST_ID)
-        time.sleep(2)
-        self.remote.sendCommand( HubProtocol.REQUEST_ID)
-        time.sleep(2)
-        self.hubList.refresh()
+        self.timer.Start(2000)
+        self.timerDiscoverCount = 2
+        self.sendMessage("Discover module. Even geduld aub... ")
+        
+    def timerDiscover(self,event):        
+        if self.timerDiscoverCount == 0:
+            self.timer.Stop()
+            
+        else:
+            self.timerDiscoverCount -= 1 
+            self.remote.sendCommand( HubProtocol.REQUEST_ID)
+            self.hubList.refresh()
+        
     
     def buttonClearListOnButtonClick( self, event ):
         self.listModules.Clear()
@@ -73,8 +89,9 @@ class ModulenControl (PanelModules) :
 
     def buttonSetConfigOnButtonClick( self, event ):
         if self.currenthub:
-            print "buttonSetConfigOnButtonClick"
-            self.remote.sendConfig(self.currenthub.idAsArray(),self.currenthub.config)
+            hub =  self.currenthub
+            print "buttonSetConfigOnButtonClick, currenthub: ", hub.id
+            self.remote.sendConfig(hub.idAsArray(),hub.config)
 
     def buttonSetConfigAllOnButtonClick( self, event ):
         print "buttonSetConfigAllButtonClick"
@@ -149,16 +166,17 @@ class ModulenControl (PanelModules) :
         id = "" 
         if len(payload) >= 4:
             for i in range(4):
-                id =  "%s%02x"%(id,payload[i])
+                id =  "%02x%s"%(payload[i],id)
 
         
         if opcode == HubProtocol.ID_REPORT:
             if len(payload) != 4:
                 print  "Error: incorrect length from hub received"
                 return
+            self.sendMessage("Discovered hub: " +id)
             print "Modulen: Received ID_REPORT from %s" % (id)
             hub = self.hubList.addHub(id)
-            hub.discovered = True
+            hub.discoverd = True
             hub.responsive = True
             self.remote.sendCommand( HubProtocol.TAG_ID,4,hub.idAsArray() )
         elif opcode == HubProtocol.STATUS_REPORT:

@@ -18,8 +18,9 @@ from fanbotserial import FanbotSerial
 import fanbotevent
 from executecontrol import ExecuteControl
 import time
+from fanbotcontrolbase import  ControlBase
 
-class FanbotControl (FanbotFrame) :
+class FanbotControl (FanbotFrame,ControlBase) :
     
     
     def __init__( self, parent ):
@@ -58,9 +59,8 @@ class FanbotControl (FanbotFrame) :
         self.SetSizeWH(600,400)
         
         em.eventManager.Register(self.proxyOnChange, fanbotevent.EVT_PROXY_SERVER, self.proxy)
-        
         #self.proxy.startProxyServer()
-
+        ControlBase.messageHandler = self.displayMessage
 
 
     def proxyOnChange(self,event):
@@ -72,7 +72,8 @@ class FanbotControl (FanbotFrame) :
         self.executor.stopSendingFrames()
         self.tabPanelExec.Enable(enable)
         
-              
+    def displayMessage(self, message):
+        self.labelStatus.SetLabel(message)          
 
     """ Panel Wave   """
     """ Panel Modules   """
@@ -99,7 +100,7 @@ class FanbotControl (FanbotFrame) :
             try:
                 factory = ParserFactory()             # Parser factory can create a parser object
                 self.serial = FanbotSerial(factory);
-                self.serial.open(serialname,115200)
+                self.serial.open(serialname,FanbotConfig.baudrate)
                 self.remote.setTransport(self.serial)
                 self.buttonConnectReal.SetLabel('disconnect')
                 FanbotConfig.setSerialport(serialname)

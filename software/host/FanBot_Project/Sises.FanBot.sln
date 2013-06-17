@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sises.FanBot.View", "Sises.FanBot.View\Sises.FanBot.View.csproj", "{023B9C9F-A1D0-4669-B1D8-F5ECAD7F2EE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sises.FanBot.ViewModel", "Sises.FanBot.ViewModel\Sises.FanBot.ViewModel.csproj", "{218FDAA4-7109-494A-B16E-1F6D443CB791}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sises.FanBot.Model", "Sises.FanBot.Model\Sises.FanBot.Model.csproj", "{6AD4AE16-3BE2-4F69-BEF3-81EABB10349E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{023B9C9F-A1D0-4669-B1D8-F5ECAD7F2EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{023B9C9F-A1D0-4669-B1D8-F5ECAD7F2EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{023B9C9F-A1D0-4669-B1D8-F5ECAD7F2EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{023B9C9F-A1D0-4669-B1D8-F5ECAD7F2EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{218FDAA4-7109-494A-B16E-1F6D443CB791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{218FDAA4-7109-494A-B16E-1F6D443CB791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{218FDAA4-7109-494A-B16E-1F6D443CB791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{218FDAA4-7109-494A-B16E-1F6D443CB791}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AD4AE16-3BE2-4F69-BEF3-81EABB10349E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AD4AE16-3BE2-4F69-BEF3-81EABB10349E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AD4AE16-3BE2-4F69-BEF3-81EABB10349E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AD4AE16-3BE2-4F69-BEF3-81EABB10349E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

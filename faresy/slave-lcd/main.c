@@ -10,9 +10,10 @@
 #include "lcd.h"
 #include "SFont.h"
 
-#define PIXELS (320*240)
-uint8_t rgbIn24 [PIXELS][3];
-unsigned rgbOut15 [PIXELS];
+#define WIDTH 240
+#define HEIGHT 320
+uint8_t rgbIn24 [WIDTH*HEIGHT*3];
+unsigned rgbOut16 [WIDTH][HEIGHT];
 
 static void initLcd () {
   wiringPiSetup();
@@ -22,6 +23,7 @@ static void initLcd () {
 }
 
 static void displayBitMap (const char* filename) {
+	// read entire rgb image into memory
   int fd = open(filename, O_RDONLY);
   if (fd < 0) {
     perror(filename);
@@ -34,16 +36,21 @@ static void displayBitMap (const char* filename) {
   }
   close(fd);
   
-  int x;
-  for (x = 0; x < PIXELS; ++x) {
-    uint8_t r = rgbIn24[x][0] >> 3;
-    uint8_t g = rgbIn24[x][1] >> 2;
-    uint8_t b = rgbIn24[x][2] >> 3;
-    rgbOut15[x] = (r << 11) | (g << 5) | b;
-  }
+	// convert 24-bit to 16-bit (5+6+5) colour, and rotate + flip image by 90 deg
+  int x, y;
+	const uint8_t *p = rgbIn24;
+  for (y = 0; y < HEIGHT; ++y) {
+    for (x = WIDTH; --x >= 0;) {
+      uint8_t r = *p++ >> 3;
+      uint8_t g = *p++ >> 2;
+      uint8_t b = *p++ >> 3;
+      rgbOut16[x][y] = (r << 11) | (g << 5) | b;
+    }
+	}
 
+	// init the LCD display now that the hard work is done and display the image
   initLcd();
-  drawBitmapP(0, 0, 320, 240, rgbOut15, 1);
+  drawBitmapP(0, 0, HEIGHT, WIDTH, rgbOut16[0], 1);
 }
 
 static void displayMessages (int argc, const char* argv[]) {

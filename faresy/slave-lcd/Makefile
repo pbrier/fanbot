@@ -1,3 +1,5 @@
+CFLAGS = -O2
+
 all: lcd
 	
 lcd: main.c lcd.o SFont.o

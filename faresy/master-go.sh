@@ -8,4 +8,4 @@ while :
 do
   nodemon --exitcrash app.js
 	sleep 10
-done >../master-log.txt 2>&1
+done #>../master-log.txt 2>&1

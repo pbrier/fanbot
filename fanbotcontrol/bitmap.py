@@ -32,20 +32,58 @@ class Bitmap:
         self.changed = False
  
     def togglePixel(self,x,y):
-        if y >= self.height:
-            print "Row index too high: " , y
-            return
-        if x >= self.width:
-            print "Col index too high: " , x
-            return
-        offset = (y * self.width + x) * Bitmap.bpp
-        if self.buffer[offset] > 0:
-            val = 0
+        val = -1
+        if self.pixelIsGray(x,y):
+            val = 0;
+        elif self.pixelIsBlack(x,y):
+            val = 0xAAAAAA
+        elif self.pixelIsWhite(x,y):
+            val = 0x404040
+        if val >= 0:    
+            self.im.putpixel( (x,y),val)
+            print 'toggle pixel %d %d %x'%(x,y,val)
+            return True
         else:
-            val = 255       
-        self.im.putpixel( (x,y),val)
+            return False
 
 
+    def pixelSetGray(self,x,y):
+        self.im.putpixel( (x,y),0x404040)
+
+    def pixelSetWhite(self,x,y):
+        if self.pixelIsGray(x, y):
+            self.im.putpixel( (x,y),0xFFFFFF)
+            return True
+        else:
+            return False
+
+    def pixelIsGray(self,x,y):
+        pixel = self.im.getpixel( (x,y) )
+        if pixel[0] == 0x40 and pixel[1] == 0x40 and pixel[2] ==0x40:
+            return True
+        else:
+            return False
+        
+    def pixelIsWhite(self,x,y):
+        pixel = self.im.getpixel( (x,y) )
+        if pixel[0] == 0xFF and pixel[1] == 0xFF and pixel[2] == 0xFF:
+            return True
+        else:
+            return False
+        
+    def pixelIsBlack(self,x,y):
+        pixel = self.im.getpixel( (x,y) )
+        if pixel[0] == 0x0 and pixel[1] == 0x0 and pixel[2] ==0x0:
+            return True
+        else:
+            return False
+
+
+    def clear(self):
+        for x in range(0,self.width):
+            for y in range(0,self.height):
+                self.pixelSetGray(x,y)
+                    
     
     def setPixel(self,x,y,val):
         if y >= self.height:
@@ -54,7 +92,7 @@ class Bitmap:
         if x >= self.width:
             print "Col index too high: " , x
             return
-        print 'Setting pixel at ',x,":",y   
+        #print 'Setting pixel at ',x,":",y   
         self.changed = True 
         self.im.putpixel( (x,y),val)
 

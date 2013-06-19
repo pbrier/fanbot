@@ -1,35 +1,47 @@
-""" Protocol of the data send between the controller and the hubs
 
-command              direction  parameters            description
-command_sendframe    pc->hub    1                    broadcast data frame to all hubs. 
-                                                     No response expected from hub                     
-                                frame                125 byte for 50x20 tribune. 
-                                                     frame data for each fanbot 1 bit
-                                                     first bit in first byte is top left
-                                                     last bit in last byte is bottom right
-command_disc_reset   pc->hub    0                    broadcast to all hubs that discovery flag must be reset
-                                                     No response expected from hub
-command_discovery    pc->hub    0                    broadcast to all hubs that they should response
-                                                          self.remote = HubProtocol(self.socket) # assume simulation as default
-           Each hub with discovery flag reset 
-                                                     respond with command_disc_ack, within 3 seconds
-command_disc_ack     hub->pc    1                    Hub will send this command asynchrounous
-                                hub address          8 bytes with hub unique hw address
-command_config       pc->hub    2                    Addressed hub will take over the config, and set discovered flag
-                                hub address          8 bytes with hub unique hw address
-                                config data          2x24 byte: 24 words (little endian) 
-command_ack          hub->pc    0                    hub acknowlidge
-"""
+
+
+
 import array
 
 
 class HubProtocol:
-    command_sendframe =  0x1030
-    command_disc_reset = 0x2010
-    command_discovery  = 0x2020
-    command_disc_ack   = 0x6567 
-    command_config     = 0x3010
-    command_ack        = 0x1010
+    """
+    Opcodes
+    NR      Name          Direction    Data
+    1       REQUEST_ID     PC --> HUB    All nodes that are not tagged will send their ID on the bus 
+                                        after a random time [0 to 1 sec]
+    2       TAG_ID         PC --> HUB    4 bytes (UID). The hub that is tagged (its UID corresponds to the UID data) 
+                                        wil not respond to any REQUEST_ID commands.
+    3       PLAY_FRAME     PC --> HUB    128 bytes (1024 bits) with play status
+                                        Send a bitmapped block of data to all hubs. Each hub will decode the appropriate bits and send their state to the robots via the hub outputs
+    4       LED_FRAME      PC --> HUB    128 bytes (1024 bits) with led status (ON/OFF)
+    5       POS_FRAME      PC --> HUB    256 bytes (2048 bits) with servo position status (2 bits / port, 0=OFF, 1=LEFT,2=MIDDLE,3=RIGHT)
+    6       REQUEST_STATUS PC --> HUB    4 bytes (UID).
+                                        The addressed slave will respond with their unique ID and status information in the HUB_STATUS_REPORT
+    7       CONFIG_FRAME   PC --> HUB    4 + 48 bytes (4 bytes UID and 24 x 16bits indexes for all outputs)
+    128     ID_REPORT      HUB --> PC    4 bytes (UID of HUB)
+    129     STATUS_REPORT  HUB --> PC    Total 104 bytes: 4 bytes (UID of HUB) + 24* 4 bytes UID of the connected robots. Followed by the 4 byte UID of the hub, and 4 byte software revision code of the hub
+    0xDEAD  RESET          PC --> HUB    Cause a reset of the hubs
+    """
+    REQUEST_ID     = 1      
+    TAG_ID         = 2      
+    PLAY_FRAME     = 3     
+    LED_FRAME      = 4     
+    POS_FRAME      = 5     
+    REQUEST_STATUS = 6     
+    CONFIG_FRAME   = 7     
+    ID_REPORT      = 128   
+    STATUS_REPORT  = 129   
+    """Next command should be added to the protocol"""
+    DISC_RESET     = 0xde01       
+    RESET          = 0xdead    
+    
+    HUB_ID_LEN         = 4
+    HUB_STATUS_LEN     = 104    
+    HUB_TIMEOUT_MS     = 100
+    
+    
     listeners          = []
 
     def __init__(self,transport):
@@ -43,21 +55,31 @@ class HubProtocol:
         """ Listeners must implement method handleCommand(opcode,data = None) """
         cls.listeners.append(listener)
         
+    @classmethod
+    def clearListeners(cls):
+        """ clear list of listeners """
+        cls.listeners =[]
  
-    def sendAck(self):
-        self.sendCommand(HubProtocol.command_ack)
 
-    def sendDiscoveryAck(self,myid):
-        if not myid or len(myid) < 8:
-            print "sendDiscoveryAck Incorect parameter"
-            return
-        self.sendCommand(HubProtocol.command_disc_ack,8,myid)
+
+    def sendConfig(self,id,config):
+        data = []
+        for i in range(0,len(id)):
+            data.append(id[i])
+        for i in range(0,len(config)):
+            word = config[i]
+            if word < 0: word = 0xFFFF
+            data.append(word % 0x100)
+            data.append((word / 0x100) % 0x100)
+        self.sendCommand(HubProtocol.CONFIG_FRAME,len(data), data)
+
         
     def sendFanbotFrame(self,data):
-        self.sendCommand( HubProtocol.command_sendframe,len(data),data)    
+        self.sendCommand( HubProtocol.LED_FRAME,len(data),data)    
         
     def sendCommand(self,opcode,len = 0 ,data = None):
-        print "send command %04x" % opcode
+        print "send command %04x " % (opcode)
+ 
         framelen = len + 8
         frame = array.array('B', [0] * framelen )
         checksum = 0
@@ -112,6 +134,7 @@ class HubProtocolParser:
         self.payload = []
 
     def parseFrame(self,frame):
+        """"  Parse incoming frame byte for byte. If a frame has been received return true else false """
         for c in frame:
             b = ord(c)
             if self.state == 0:
@@ -154,15 +177,15 @@ class HubProtocolParser:
                 self.state = 9
                 self.rcvchecksum = b
             elif self.state == 9:
+                self.state = 0
                 self.rcvchecksum += b << 8
                 if self.calcChecksum == self.rcvchecksum:
                     for listener in HubProtocol.listeners:
                         listener.handleCommand(self.opcode,self.payload)
                 else:    
                     print "checksum not correct  received: %d expected %d" %(self.rcvchecksum,self.calcChecksum)
-                self.state = 0
-            self.checksum += b   
 
+            self.checksum += b   
     
 if __name__ == "__main__":
     import time
@@ -185,7 +208,7 @@ if __name__ == "__main__":
     socket.openSocket("127.0.0.1",1234)
     time.sleep(1)
     
-    hubProtocol.sendCommand(HubProtocol.command_discovery)
+    hubProtocol.sendCommand(HubProtocol.REQUEST_ID)
 
     
     while True:

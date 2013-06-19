@@ -25,9 +25,9 @@ toolWhite = 1007
 class FanbotFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 873,470 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 873,600 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
-		self.SetSizeHintsSz( wx.Size( 700,470 ), wx.DefaultSize )
+		self.SetSizeHintsSz( wx.Size( 800,600 ), wx.DefaultSize )
 		
 		bSizer2 = wx.BoxSizer( wx.VERTICAL )
 		
@@ -64,7 +64,7 @@ class FanbotFrame ( wx.Frame ):
 		bSizer22.Fit( self.tabPanelModules )
 		self.notebook.AddPage( self.tabPanelModules, u"modules", False )
 		self.tabPanelSettings = wx.Panel( self.notebook, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		gSizer1 = wx.GridSizer( 3, 4, 0, 0 )
+		gSizer1 = wx.GridSizer( 4, 4, 0, 0 )
 		
 		self.selectSerialPort = wx.CheckBox( self.tabPanelSettings, wx.ID_ANY, u"fanbotnet", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.selectSerialPort.SetValue(True) 
@@ -106,6 +106,15 @@ class FanbotFrame ( wx.Frame ):
 		self.textProxyPort = wx.TextCtrl( self.tabPanelSettings, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		gSizer1.Add( self.textProxyPort, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
+		self.m_staticText9 = wx.StaticText( self.tabPanelSettings, wx.ID_ANY, u"MyLabel", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText9.Wrap( -1 )
+		gSizer1.Add( self.m_staticText9, 0, wx.ALL, 5 )
+		
+		self.buttonSave = wx.Button( self.tabPanelSettings, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.buttonSave.SetToolTipString( u"Save configuratie naar disk" )
+		
+		gSizer1.Add( self.buttonSave, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
 		self.tabPanelSettings.SetSizer( gSizer1 )
 		self.tabPanelSettings.Layout()
 		gSizer1.Fit( self.tabPanelSettings )
@@ -144,6 +153,7 @@ class FanbotFrame ( wx.Frame ):
 		self.selectSimulation.Bind( wx.EVT_CHECKBOX, self.selectSimulationOnCheckBox )
 		self.buttonConnectSimul.Bind( wx.EVT_BUTTON, self.buttonConnectSimulOnButtonClick )
 		self.textProxyPort.Bind( wx.EVT_LEAVE_WINDOW, self.textProxyPortOnLeaveWindow )
+		self.buttonSave.Bind( wx.EVT_BUTTON, self.buttonSaveOnButtonClick )
 	
 	def __del__( self ):
 		pass
@@ -166,6 +176,9 @@ class FanbotFrame ( wx.Frame ):
 		event.Skip()
 	
 	def textProxyPortOnLeaveWindow( self, event ):
+		event.Skip()
+	
+	def buttonSaveOnButtonClick( self, event ):
 		event.Skip()
 	
 
@@ -573,20 +586,9 @@ class PanelModules ( wx.Panel ):
 		bSizer27 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.panelModulesCanvas = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		bSizer27.Add( self.panelModulesCanvas, 7, wx.EXPAND |wx.ALL, 5 )
+		self.panelModulesCanvas.SetMinSize( wx.Size( 200,-1 ) )
 		
-		self.m_scrolledWindow4 = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
-		self.m_scrolledWindow4.SetScrollRate( 5, 5 )
-		bSizer28 = wx.BoxSizer( wx.VERTICAL )
-		
-		listModuleConfigChoices = []
-		self.listModuleConfig = wx.ListBox( self.m_scrolledWindow4, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listModuleConfigChoices, 0 )
-		bSizer28.Add( self.listModuleConfig, 1, wx.ALL|wx.EXPAND, 5 )
-		
-		self.m_scrolledWindow4.SetSizer( bSizer28 )
-		self.m_scrolledWindow4.Layout()
-		bSizer28.Fit( self.m_scrolledWindow4 )
-		bSizer27.Add( self.m_scrolledWindow4, 3, wx.EXPAND |wx.ALL, 5 )
+		bSizer27.Add( self.panelModulesCanvas, 5, wx.EXPAND |wx.ALL, 5 )
 		
 		bSizer25.Add( bSizer27, 1, wx.EXPAND, 5 )
 		
@@ -602,28 +604,78 @@ class PanelModules ( wx.Panel ):
 		
 		bSizer26.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
 		
-		self.buttonClearList = wx.Button( self.m_panel16, wx.ID_ANY, u"lijst leegmaken", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer26.Add( self.buttonClearList, 0, wx.ALL, 5 )
+		
+		bSizer26.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.checkBoxMatrix = wx.CheckBox( self.m_panel16, wx.ID_ANY, u"Matrix 6x4", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer26.Add( self.checkBoxMatrix, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.labelPosition = wx.StaticText( self.m_panel16, wx.ID_ANY, u"0:0", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
+		self.labelPosition.Wrap( -1 )
+		bSizer26.Add( self.labelPosition, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_panel16.SetSizer( bSizer26 )
 		self.m_panel16.Layout()
 		bSizer26.Fit( self.m_panel16 )
 		bSizer25.Add( self.m_panel16, 0, wx.EXPAND |wx.ALL, 5 )
 		
-		bSizer23.Add( bSizer25, 7, wx.EXPAND, 5 )
+		bSizer23.Add( bSizer25, 3, wx.EXPAND, 5 )
 		
-		self.m_scrolledWindow3 = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
-		self.m_scrolledWindow3.SetScrollRate( 5, 5 )
-		bSizer24 = wx.BoxSizer( wx.VERTICAL )
+		bSizer27 = wx.BoxSizer( wx.VERTICAL )
 		
-		listModulesChoices = []
-		self.listModules = wx.ListBox( self.m_scrolledWindow3, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listModulesChoices, 0 )
-		bSizer24.Add( self.listModules, 1, wx.ALL|wx.EXPAND, 5 )
+		fgSizer1 = wx.FlexGridSizer( 2, 2, 0, 0 )
+		fgSizer1.AddGrowableCol( 0 )
+		fgSizer1.AddGrowableCol( 1 )
+		fgSizer1.AddGrowableRow( 1 )
+		fgSizer1.SetFlexibleDirection( wx.BOTH )
+		fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
-		self.m_scrolledWindow3.SetSizer( bSizer24 )
-		self.m_scrolledWindow3.Layout()
-		bSizer24.Fit( self.m_scrolledWindow3 )
-		bSizer23.Add( self.m_scrolledWindow3, 3, wx.ALL|wx.EXPAND, 5 )
+		self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, u"Hubs", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText11.Wrap( -1 )
+		fgSizer1.Add( self.m_staticText11, 0, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		self.labelHubId = wx.StaticText( self, wx.ID_ANY, u"Fanbots", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.labelHubId.Wrap( -1 )
+		fgSizer1.Add( self.labelHubId, 1, wx.ALL|wx.ALIGN_CENTER_HORIZONTAL, 5 )
+		
+		self.scrolledWindowHubs = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
+		self.scrolledWindowHubs.SetScrollRate( 5, 5 )
+		self.scrolledWindowHubs.SetMinSize( wx.Size( 150,-1 ) )
+		
+		fgSizer1.Add( self.scrolledWindowHubs, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL|wx.ALIGN_CENTER_HORIZONTAL, 2 )
+		
+		self.scrolledWindowFanbots = wx.ScrolledWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.VSCROLL )
+		self.scrolledWindowFanbots.SetScrollRate( 5, 5 )
+		self.scrolledWindowFanbots.SetMinSize( wx.Size( 120,-1 ) )
+		
+		fgSizer1.Add( self.scrolledWindowFanbots, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND|wx.ALIGN_CENTER_HORIZONTAL, 2 )
+		
+		bSizer27.Add( fgSizer1, 1, wx.EXPAND, 1 )
+		
+		self.m_panel17 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.ALWAYS_SHOW_SB|wx.TAB_TRAVERSAL )
+		bSizer30 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.buttonResetConfig = wx.Button( self.m_panel17, wx.ID_ANY, u"Reset Config", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.buttonResetConfig.SetHelpText( u"Reset configuratie geselcteerde hub" )
+		
+		bSizer30.Add( self.buttonResetConfig, 0, wx.ALL, 5 )
+		
+		self.buttonSetConfig = wx.Button( self.m_panel17, wx.ID_ANY, u"Set Config", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.buttonSetConfig.SetHelpText( u"Set config geselecteerde hub" )
+		
+		bSizer30.Add( self.buttonSetConfig, 0, wx.ALL, 5 )
+		
+		self.buttonSetConfigAll = wx.Button( self.m_panel17, wx.ID_ANY, u"Set All", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.buttonSetConfigAll.SetToolTipString( u"Set config voor alle hubs" )
+		
+		bSizer30.Add( self.buttonSetConfigAll, 0, wx.ALL, 5 )
+		
+		self.m_panel17.SetSizer( bSizer30 )
+		self.m_panel17.Layout()
+		bSizer30.Fit( self.m_panel17 )
+		bSizer27.Add( self.m_panel17, 0, wx.EXPAND |wx.ALL, 5 )
+		
+		bSizer23.Add( bSizer27, 2, wx.EXPAND, 5 )
 		
 		self.SetSizer( bSizer23 )
 		self.Layout()
@@ -644,11 +696,11 @@ class PanelModules ( wx.Panel ):
 		self.panelModulesCanvas.Bind( wx.EVT_MOUSEWHEEL, self.panelModulesCanvasOnMouseEvents )
 		self.panelModulesCanvas.Bind( wx.EVT_PAINT, self.panelModulesCanvasOnPaint )
 		self.panelModulesCanvas.Bind( wx.EVT_SIZE, self.panelModulesCanvasOnSize )
-		self.listModuleConfig.Bind( wx.EVT_LISTBOX, self.listModuleConfigOnListBox )
 		self.buttonResetDisc.Bind( wx.EVT_BUTTON, self.buttonResetDiscOnButtonClick )
 		self.buttonDiscover.Bind( wx.EVT_BUTTON, self.buttonDiscoverOnButtonClick )
-		self.buttonClearList.Bind( wx.EVT_BUTTON, self.buttonClearListOnButtonClick )
-		self.listModules.Bind( wx.EVT_LISTBOX, self.listModulesOnListBox )
+		self.buttonResetConfig.Bind( wx.EVT_BUTTON, self.buttonResetConfigOnButtonClick )
+		self.buttonSetConfig.Bind( wx.EVT_BUTTON, self.buttonSetConfigOnButtonClick )
+		self.buttonSetConfigAll.Bind( wx.EVT_BUTTON, self.buttonSetConfigAllOnButtonClick )
 	
 	def __del__( self ):
 		pass
@@ -664,19 +716,19 @@ class PanelModules ( wx.Panel ):
 	def panelModulesCanvasOnSize( self, event ):
 		event.Skip()
 	
-	def listModuleConfigOnListBox( self, event ):
-		event.Skip()
-	
 	def buttonResetDiscOnButtonClick( self, event ):
 		event.Skip()
 	
 	def buttonDiscoverOnButtonClick( self, event ):
 		event.Skip()
 	
-	def buttonClearListOnButtonClick( self, event ):
+	def buttonResetConfigOnButtonClick( self, event ):
 		event.Skip()
 	
-	def listModulesOnListBox( self, event ):
+	def buttonSetConfigOnButtonClick( self, event ):
+		event.Skip()
+	
+	def buttonSetConfigAllOnButtonClick( self, event ):
 		event.Skip()
 	
 

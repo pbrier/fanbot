@@ -21,10 +21,15 @@ class Bitmap(BitmapCanvas):
         self.scaleY = 1
         val = 0
         for x in range(w):
+            val = 0x10
             for y in range(h):
                 self.setPixel(x, y, val)
-                val += 1
+                val += 30
                 val %= 256
+                if x % 10 ==0:
+                    val = 10
+                if y % 10 ==0:
+                    val = 10
         self.BitmapCanvasOnSize(None)
     
 

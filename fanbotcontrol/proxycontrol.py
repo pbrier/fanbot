@@ -10,6 +10,7 @@ import SocketServer
 import threading
 import fanbotevent 
 import time
+import json
 
 from fanbotframe import  PanelDrawIcon
 
@@ -30,13 +31,13 @@ class ProxyControl(PanelProxy ):
         self.scaleY = 1
         self.server = None
         ProxyControl.instance = self
-        self.bitmap = Bitmap(50,20)
+        self.bitmap = Bitmap(FanbotConfig.width,FanbotConfig.height)
         self.Refresh()
      # Virtual event handlers, overide them in your derived class
 
 
     def __del__( self ):
-        print "proxycontrol destruProxyControlctor ..."
+        print "proxycontrol destructor ..."
         self.shutdown()
         
     def panelProxyCanvasOnPaint( self, event ):
@@ -139,6 +140,10 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
         ProxyControl.instance.labelConnectionNr.SetLabel(str(ProxyHandler.connections))
     
     def handle(self):
+        self.handleJson()
+#        self.handlePlain()
+
+    def handlePlain(self):
         """ 
            Char.   Hex.    Function
     ~~~~~~  ~~~~~~  ~~~~~~~~~~~~~~~~~
@@ -181,3 +186,26 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
                 print "server handle:exception %s %s"% (e.__class__.__name__, e.message)
                 alive = False        
         print "Client disconnected: %s" % self.client_address[0]
+        
+        
+        
+    def handleJson(self):                
+        print "Client connected: %s" % self.client_address[0]
+        state = 0
+        index = 0
+        alive = True
+        array = None
+        while ProxyControl.alive and alive:
+            try:
+                data = self.request.recv(1024)
+                print 'Received raw data: ' ,data
+                data = data.strip()
+                data = json.loads(data)
+                # process the data, i.e. print it:
+                print 'Received json data: ' , data
+                # send some 'ok' back
+                self.request.sendall(json.dumps({'status':'ok','version':'0.0.1'}))
+            except Exception, e:
+                print "Exception wile receiving message: ", e
+                alive = False
+

@@ -13,6 +13,9 @@ EVT_PROXY_PORT_CHANGED    = wx.PyEventBinder(EVT_PROXY_PORT_CHANGED_ID,1)
 EVT_PROXY_SERVER_ID       = wx.NewEventType()
 EVT_PROXY_SERVER          = wx.PyEventBinder(EVT_PROXY_SERVER_ID,1)
 
+EVT_STATUS_INFO_ID        = wx.NewEventType()
+EVT_STATUS_INFO           = wx.PyEventBinder(EVT_STATUS_INFO_ID,1)
+
 
 class FanbotEvent(wx.PyCommandEvent):
     def __init__(self,evtType,id,payload = None):
@@ -25,6 +28,7 @@ class FanbotEvent(wx.PyCommandEvent):
             
     def getPayload(self):
         return self.payload    
-        
+
+
 
     

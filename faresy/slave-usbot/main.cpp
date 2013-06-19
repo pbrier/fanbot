@@ -111,10 +111,20 @@ int main(int argc, char* argv[])
     }
   }
   
-  // Wait for connection
+  // Wait for connection, but no longer than 5 seconds
   if ( verbose ) printf("Wait for connection...\n");
-  while ((handle = hid_open(vid, pid, NULL)) == NULL)
+	for (int i = 0; i < 50; ++i) {
+    handle = hid_open(vid, pid, NULL);
+		if (handle)
+		  break;
     usleep(1000*100);
+	}
+	if (handle == NULL) {
+    hid_close(handle); 
+    hid_exit();
+    return 1;
+	}
+
   hid_flush(handle);
   
   // Read serial# and name
@@ -124,10 +134,14 @@ int main(int argc, char* argv[])
     fprintf(stderr, "got %d bytes, expected %d\n", res, 64);
     hid_close(handle); 
     hid_exit();
-    return 1;
+    return 2;
   }
   
-  printf("FBID=%08X\nNAME='%s'\n", *(int*) buf, buf + 12);
+  buf[1] = 0;
+  res = hid_read(handle, buf, sizeof(buf));
+  memcpy(&serial, &buf[8], sizeof(serial) );
+  name = (char*)&buf[12];
+  printf("FBID=%08X\nNAME='%s'\n", serial, name);
   
   memset(buf, 0, sizeof buf);
   read_program(handle, program);

@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "lcd.h"
 #include "SFont.h"
@@ -96,8 +97,8 @@ int main (int argc, const char* argv[]) {
     
   if (mode == 'b' && argc == 2) {
     displayBitMap(argv[1]);
-    return 0;
-  }
+		return 0;
+	}
     
   if (mode == 'm' && argc >= 2) {
     displayMessages(argc - 1, argv + 1);

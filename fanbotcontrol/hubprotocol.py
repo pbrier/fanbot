@@ -75,7 +75,7 @@ class HubProtocol:
 
         
     def sendFanbotFrame(self,data):
-        self.sendCommand( HubProtocol.LED_FRAME,len(data),data)    
+        self.sendCommand( HubProtocol.POS_FRAME,len(data),data)    
         
     def sendCommand(self,opcode,len = 0 ,data = None):
         print "send command %04x " % (opcode)

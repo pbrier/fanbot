@@ -10,6 +10,7 @@ from hubprotocol import HubProtocol
 import wx
 import hubs
 import time
+import array
 from bitmap import Bitmap
 
 from fanbotcontrolbase import  ControlBase
@@ -47,12 +48,19 @@ class ModulenControl (PanelModules,ControlBase) :
         self.pointPrevious = wx.Point(0,0)
         self.currenthub = None
         
+        self.compressedFrame = array.array('B', [0] * 125)
+        
         self.bitmap = Bitmap(FanbotConfig.width,FanbotConfig.height)
         self.bitmap.clear()
         
         for hub in self.hubList.hubs:
             self.showHub(hub);
             
+        self.timerAnimate = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.timerAnimateHandler, self.timerAnimate)
+        self.animateIdx = 0
+
+
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.timerDiscover, self.timer)   
         self.timerDiscoverCount = 0;    
@@ -96,7 +104,7 @@ class ModulenControl (PanelModules,ControlBase) :
     def buttonSetConfigAllOnButtonClick( self, event ):
         print "buttonSetConfigAllButtonClick"
         for hub in self.hubList.hubs:
-            self.remote.sendConfig(self.currenthub.idAsArray(),self.currenthub.config)
+            self.remote.sendConfig(hub.idAsArray(),hub.config)
             time.sleep(0.100)
             
 
@@ -175,8 +183,8 @@ class ModulenControl (PanelModules,ControlBase) :
         if  hub:
             if hub.canAddConfigItem():
                 hub.resetConfig()
-                for x in range(self.pointCurrent.x,self.pointCurrent.x + 4):
-                    for y in range(self.pointCurrent.y,self.pointCurrent.y + 6): 
+                for y in range(self.pointCurrent.y,self.pointCurrent.y + 6): 
+                    for x in range(self.pointCurrent.x,self.pointCurrent.x + 4):
                         self.bitmap.pixelSetWhite(x, y)
                         self.currenthub.setConfig(x, y)
                         self.panelModulesCanvas.Refresh()
@@ -255,7 +263,33 @@ class ModulenControl (PanelModules,ControlBase) :
                     self.bitmap.pixelSetGray(x,y)
             hub.resetConfig() 
             self.panelModulesCanvas.Refresh()       
-         
+       
+       
+    def sliderAnimateHubOnScroll( self, event ):
+        speed = self.sliderAnimateHub.GetValue()
+        if speed == 0:
+            self.timerAnimate.Stop()
+        else :
+            self.timerAnimate.Start(250 -speed * 25)         
             
-
+    def timerAnimateHandler(self,event):
+        """  """
+        hub         = self.currenthub
+        maxFrameLen = len(self.compressedFrame)
+        if  hub:
+            for i in range(maxFrameLen):
+                self.compressedFrame[i]=0
+            self.animateIdx += 1
+            if self.animateIdx >= 24: 
+                self.animateIdx = 0
+            pixelIdx = hub.config[self.animateIdx]
+            byteIdx = pixelIdx / 8
+            if byteIdx >= maxFrameLen:
+                return;
+            bitIdx = pixelIdx % 8
+            self.compressedFrame[byteIdx] = 1 << bitIdx
+                
+        print self.animateIdx
+        self.remote.sendFanbotFrame(self.compressedFrame)
+ 
             

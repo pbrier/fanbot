@@ -24,7 +24,7 @@ class HubSimulControl(HubSimulFrame ):
         
         panel = self.panelRawBitmap
         sizer = panel.GetSizer()    
-        self.bitmap = Bitmap(panel,50,20) 
+        self.bitmap = Bitmap(panel,Bitmap.width,Bitmap.height) 
         sizer.Add( self.bitmap, 1, wx.EXPAND )
         
         # start listeneing on port 1234
@@ -52,7 +52,8 @@ class HubSimulControl(HubSimulFrame ):
         self.server = None
 
     def handleCommand(self, opcode,payload):    
-        if opcode == HubProtocol.LED_FRAME:
+
+        if opcode == HubProtocol.POS_FRAME:
             wx.CallAfter(self.updateBitmapInGuiThread,payload)
 
         else:    

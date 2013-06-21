@@ -10,6 +10,8 @@ from hubsimulframe import  BitmapCanvas
 
 class Bitmap(BitmapCanvas):
     bpp    = 4  # bytes per pixel
+    width = 44
+    height= 24
     
     def __init__( self, parent,w, h ):
         BitmapCanvas.__init__( self,parent)
@@ -78,6 +80,7 @@ class Bitmap(BitmapCanvas):
         idx = -1
         val = 0
         inb = 0
+
         for j in range(0,self.width * self.height):
             if j % 8 == 0 and j < len(data) * 8: 
                 idx += 1

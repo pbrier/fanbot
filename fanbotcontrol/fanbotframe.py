@@ -607,7 +607,8 @@ class PanelModules ( wx.Panel ):
 		
 		bSizer26.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
 		
-		self.checkBoxMatrix = wx.CheckBox( self.m_panel16, wx.ID_ANY, u"Matrix 6x4", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkBoxMatrix = wx.CheckBox( self.m_panel16, wx.ID_ANY, u"Matrix 4x6", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkBoxMatrix.SetValue(True) 
 		bSizer26.Add( self.checkBoxMatrix, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.labelPosition = wx.StaticText( self.m_panel16, wx.ID_ANY, u"0:0", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )

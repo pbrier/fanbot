@@ -2,6 +2,34 @@
 .hg
 .hgignore
 
-# ignore python 
+
+# ignore IbmWorklight
+WorklightServerHome
+
+#
+# All content of build\ folder may be ignored
+#
+**/build/**
+
+**/bin
+
+FanBotConsole/**
+#ignore git
+.git
+
+# Ignore vc*.pcb files
+**/vc*.pdb
+
+#Ignore all python compiled files
 **/**.pyc
 
+#
+# Ignore Eclipse project files 
+#
+.metadata
+.settings/
+.project
+.cproject
+.classpath
+.externalToolBuilders/
+.pydevproject

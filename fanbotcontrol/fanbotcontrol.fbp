@@ -3709,7 +3709,7 @@
                                         <property name="proportion">0</property>
                                         <object class="wxCheckBox" expanded="1">
                                             <property name="bg"></property>
-                                            <property name="checked">0</property>
+                                            <property name="checked">1</property>
                                             <property name="context_help"></property>
                                             <property name="context_menu">1</property>
                                             <property name="enabled">1</property>
@@ -3717,7 +3717,7 @@
                                             <property name="font"></property>
                                             <property name="hidden">0</property>
                                             <property name="id">wxID_ANY</property>
-                                            <property name="label">Matrix 6x4</property>
+                                            <property name="label">Matrix 4x6</property>
                                             <property name="maximum_size"></property>
                                             <property name="minimum_size"></property>
                                             <property name="name">checkBoxMatrix</property>

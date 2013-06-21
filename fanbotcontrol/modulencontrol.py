@@ -132,6 +132,13 @@ class ModulenControl (PanelModules,ControlBase) :
             if point.x < 0 or point.x >= FanbotConfig.width or point.y < 0 or point.y >= FanbotConfig.height:
                 #print 'x,y out of bounds: ',point.x ,':',point.y    
                 return
+            if self.checkBoxMatrix.IsChecked():
+                """ set the snapto grid to horizontal 4 and vertical 6"""
+                point.x /= 4
+                point.x *= 4
+                point.y /= 6
+                point.y *= 6
+                
             self.labelPosition.SetLabel("%s : %s" % (point.x,point.y))
             self.pointCurrent = point    
             #print "mouse event X : " ,point.x , " Y: ",point.y
@@ -140,9 +147,12 @@ class ModulenControl (PanelModules,ControlBase) :
         if event.LeftDown():
             self.panelModulesCanvas.Refresh()
             self.pointPrevious = self.pointCurrent
-            self.updateHubConfig(point.x, point.y)
+            if self.checkBoxMatrix.IsChecked():
+                self.matrixHubConfig(point.x, point.y)
+            else:        
+                self.updateHubConfig(point.x, point.y)
                         
-        elif event.LeftIsDown():
+        elif event.LeftIsDown() and not self.checkBoxMatrix.IsChecked():
             if self.pointPrevious.x == self.pointCurrent.x and self.pointPrevious.y == self.pointCurrent.y:
                 return;
             self.pointPrevious = self.pointCurrent
@@ -153,11 +163,24 @@ class ModulenControl (PanelModules,ControlBase) :
                                     
             
     def updateHubConfig(self,x,y):
-        if self.currenthub:
-            if self.currenthub.canAddConfigItem():
+        hub = self.currenthub
+        if hub:
+            if hub.canAddConfigItem():
                 if self.bitmap.pixelSetWhite(x, y):
-                    self.currenthub.setConfig(x, y)
+                    hub.setConfig(x, y)
                     self.panelModulesCanvas.Refresh()
+
+    def matrixHubConfig(self,x,y):
+        hub = self.currenthub
+        if  hub:
+            if hub.canAddConfigItem():
+                hub.resetConfig()
+                for x in range(self.pointCurrent.x,self.pointCurrent.x + 4):
+                    for y in range(self.pointCurrent.y,self.pointCurrent.y + 6): 
+                        self.bitmap.pixelSetWhite(x, y)
+                        self.currenthub.setConfig(x, y)
+                        self.panelModulesCanvas.Refresh()
+
                         
     def handleCommand(self, opcode,payload):
         """ Handle incoming data from remote hubs or hubsimulator"""

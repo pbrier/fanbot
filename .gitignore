@@ -1,0 +1,7 @@
+# ignore hg
+.hg
+.hgignore
+
+# ignore python 
+**/**.pyc
+

@@ -289,7 +289,7 @@ class ModulenControl (PanelModules,ControlBase) :
             bitIdx = pixelIdx % 8
             self.compressedFrame[byteIdx] = 1 << bitIdx
                 
-        print self.animateIdx
+
         self.remote.sendFanbotFrame(self.compressedFrame)
  
             

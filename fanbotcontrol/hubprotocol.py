@@ -78,7 +78,8 @@ class HubProtocol:
         self.sendCommand( HubProtocol.POS_FRAME,len(data),data)    
         
     def sendCommand(self,opcode,len = 0 ,data = None):
-        print "send command %04x " % (opcode)
+        if opcode != HubProtocol.POS_FRAME:
+            print "send command %04x " % (opcode)
  
         framelen = len + 8
         frame = array.array('B', [0] * framelen )

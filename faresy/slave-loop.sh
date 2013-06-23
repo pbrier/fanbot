@@ -11,7 +11,7 @@ FBID=""
 . /tmp/info.txt
 if [ "$FBID" != "" ]
 then
-  echo $FBID "$NAME" `date` >>slave.log.txt
+  echo $FBID "$NAME" `date` >>slave-log.txt
   while slave-usbot/usbot
 	do
 		if [ -r /tmp/snap.jpg ]

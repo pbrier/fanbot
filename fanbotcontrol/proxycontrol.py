@@ -140,8 +140,8 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
         ProxyControl.instance.labelConnectionNr.SetLabel(str(ProxyHandler.connections))
     
     def handle(self):
-        self.handleJson()
-#        self.handlePlain()
+#        self.handleJson()
+        self.handlePlain()
 
     def handlePlain(self):
         """ 
@@ -181,7 +181,7 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
                                 data = proxy.bitmap.getCompressedArray()
                                 proxy.remote.sendFanbotFrame(data)
                             state = 0
-                            self.request.send("ok")
+                            # self.request.send("ok")
             except Exception as e:
                 print "server handle:exception %s %s"% (e.__class__.__name__, e.message)
                 alive = False        

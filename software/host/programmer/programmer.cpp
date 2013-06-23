@@ -116,7 +116,10 @@ int main(int argc, char *argv[])
     waitfor(to, false);
     if ( comparefile(from,to) )
       copyfile(from, to);
-    comparefile(from,to);
+    if ( comparefile(from,to) == 0 )
+      printf("\a");
+    else
+      printf("\a\a\a");
     waitfor(to, true);
   }
   return 0;

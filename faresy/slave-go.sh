@@ -15,7 +15,7 @@ do
 done &
 
 # briefly show our own IP address on the display
-IP=$(ip addr list eth0 | sed -ne '/inet /s/\/.*//p')
+IP=$(ip addr list eth0 | sed -n -e '/inet /s/\/.*//' -e 's/inet // p')
 sudo slave-lcd/lcd -m "$IP"
 sleep 3
 

@@ -16,7 +16,7 @@ done &
 
 # briefly show our own IP address on the display
 IP=$(ip addr list eth0 | sed -ne '/inet /s/\/.*//p')
-sudo slave-lcd/lcd -m $IP
+sudo slave-lcd/lcd -m "$IP"
 sleep 3
 
 # upload changes to master and display latest image as test

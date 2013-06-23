@@ -38,7 +38,7 @@ int y = 0;
 int count=0;
 
 void setup() { 
-  frameRate(5);
+  frameRate(6);
   size((w+0)*s, (h+0)*s); 
   thisClient = new Client(this, "127.0.0.1", port); 
   for(int y=0; y<h; y++)
@@ -86,21 +86,26 @@ void draw()
       if ( v < 0 ) v = 0; 
       screen[w*y + x ] = v;
       if ( screen[w*y + x ] < 128  )
-      {
         fill(color(0));
-        frame = frame + " ";
-      }
-      else
-      {
+      else      
         fill(color(220 + 35 * sin(count/20.0),0,0));
-        frame = frame + "*";
-      }
+      
       rect(x*s, y*s, (x+1)*s, (y+1)*s);
     }
    
   } 
   count++;
-   frame = frame + "\n";
+
+
+  for(int y=h-1; y>=0; y--)
+  {
+    for(int x=0; x<w; x++)
+      if ( screen[w*y + x ] < 128 )
+        frame = frame + " ";
+      else
+        frame = frame + "*";
+  }
+  frame = frame + "\n";
   if ( thisClient != null )
     thisClient.write(frame);
 } 

@@ -1,6 +1,6 @@
 # called from slave-go.sh
 
-sudo slave-lcd/lcd -b intro.rgb
+sudo slave-lcd/lcd -b images/intro.rgb
 
 IP=`cat master-ip.txt`
 RSYNC_PASSWORD=tralala rsync -a incoming/ jcw@$IP::uploads/
@@ -24,7 +24,7 @@ then
 	done
 	mv /tmp/info.txt incoming/$FBID.txt
 	mv /tmp/last.jpg incoming/$FBID.jpg
-	sudo slave-lcd/lcd -b done.rgb
+	sudo slave-lcd/lcd -b images/done.rgb
 	while :
 	do
 		slave-usbot/usbot || exit

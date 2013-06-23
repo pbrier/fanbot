@@ -1,8 +1,16 @@
-FBID=${1:-'0909FD34'}
-NAME=${2:-'Willem Wever'}
+# generate a PDF from specified ID
 
 INDIR=master-node/client/static/uploads
 OUTDIR=$HOME/Dropbox/Faresy/Passports
+
+# this sets FBID and NAME
+source $INDIR/$1.txt 2>/dev/null
+
+if [ -z "$FBID" ]
+then
+  echo "Usage: $0 <8-char-fanbot-id>"
+  exit 1
+fi
 
 msg1='Gratis ophalen op maandag 1 juli tussen 11:00 en 14:00
 Indoor Sportcentrum, Theo Koomenlaan 1 in Eindhoven
@@ -30,6 +38,6 @@ convert \
   -draw "text 20,640 '$msg2'" \
   -draw "text 400,655 'Vragen, omperkingen?'" \
   -draw "text 400,670 'marieke@kekbot.org'" \
-  -draw "image SrcOver 20,740,560,85 logobar2.jpg" \
+  -draw "image SrcOver 20,740,560,85 images/logobar2.jpg" \
   -page A4 \
   $OUTDIR/$FBID.pdf

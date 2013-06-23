@@ -1,7 +1,7 @@
-# generate a PDF from specified ID
+# generate a PDF from specified ID and send it to the printer
 
 INDIR=master-node/client/static/uploads
-OUTDIR=master-queue
+OUTDIR=$HOME/Dropbox/Faresy/Passports
 
 # this sets FBID and NAME
 source $INDIR/$1.txt 2>/dev/null
@@ -41,3 +41,9 @@ convert \
   -draw "image SrcOver 20,740,560,85 images/logobar2.jpg" \
   -page A4 \
   $OUTDIR/$FBID.pdf
+
+osascript - <<EOF
+tell application "Samsung ML-2525W Series"
+print "$OUTDIR/$FBID.pdf" without print dialog
+end tell
+EOF

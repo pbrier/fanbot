@@ -1,7 +1,7 @@
 # generate a PDF from specified ID
 
 INDIR=master-node/client/static/uploads
-OUTDIR=$HOME/Dropbox/Faresy/Passports
+OUTDIR=master-queue
 
 # this sets FBID and NAME
 source $INDIR/$1.txt 2>/dev/null

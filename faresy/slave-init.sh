@@ -1,7 +1,5 @@
-# put this line in crontab (crontab -e):
-#   @reboot fanbot/faresy/slave-go.sh
+# main slave logic, this is sourced from slave-go.sh
 
-cd ~/fanbot/faresy
 mkdir -p incoming
 
 # keep the webcam running at all times

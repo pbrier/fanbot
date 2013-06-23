@@ -14,6 +14,11 @@ do
   sleep 3
 done &
 
+# briefly show our own IP address on the display
+IP=$(ip addr list eth0 | sed -ne '/inet /s/\/.*//p')
+slave-lcd/lcd -m $IP
+sleep 3
+
 # upload changes to master and display latest image as test
 # use separate script so changes can be picked up without rebooting
 while :

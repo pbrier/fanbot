@@ -1,5 +1,3 @@
 incoming
-master-log.txt
-master-queue
-slave-log.txt
+*-log.txt
 *.o

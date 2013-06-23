@@ -2,6 +2,7 @@
 #   @reboot fanbot/faresy/slave-go.sh
 
 cd ~/fanbot/faresy
+mkdir -p incoming
 
 # keep the webcam running at all times
 while :

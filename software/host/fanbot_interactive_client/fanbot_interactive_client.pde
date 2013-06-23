@@ -24,10 +24,10 @@ import processing.net.*;
 Client thisClient;
 int dataIn; 
 
-int w = 42; // width
+int w = 44; // width
 int h = 24; // height
 int s =30; // dot size
-int port = 2013; // TCP/IP port number
+int port = 1234; // TCP/IP port number
 float decay = 0.8;
 int diameter = 2;
 
@@ -38,7 +38,7 @@ int y = 0;
 int count=0;
 
 void setup() { 
-  frameRate(60);
+  frameRate(5);
   size((w+0)*s, (h+0)*s); 
   thisClient = new Client(this, "127.0.0.1", port); 
   for(int y=0; y<h; y++)
@@ -67,10 +67,8 @@ void paint(int x, int y, boolean state)
 
 void draw()
 { 
-  if ( thisClient != null )
-    thisClient.write('\f'); // use '^' in the future
-  
-  
+  String frame = "^\f";
+
   // Handle mouse event
   if (mousePressed == true) {
     int mx = mouseX/s;
@@ -79,7 +77,7 @@ void draw()
   }
   
   
-  // Display the screen
+  // Display the screen, convert to a string with '*' and ' ' (line by line)
   for(int y=0; y<h; y++)
   {
     for(int x=0; x<w; x++)
@@ -90,18 +88,21 @@ void draw()
       if ( screen[w*y + x ] < 128  )
       {
         fill(color(0));
-        thisClient.write(' ');
+        frame = frame + " ";
       }
       else
       {
         fill(color(220 + 35 * sin(count/20.0),0,0));
-        thisClient.write('*');
+        frame = frame + "*";
       }
       rect(x*s, y*s, (x+1)*s, (y+1)*s);
     }
-    thisClient.write('\n');
+   
   } 
-    count++;
+  count++;
+   frame = frame + "\n";
+  if ( thisClient != null )
+    thisClient.write(frame);
 } 
 
 

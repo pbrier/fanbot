@@ -73,6 +73,15 @@ void print_program(unsigned char *program)
   printf("\n");
 }
 
+// get rid of characters which mess up shell quoting
+void fixQuotes (char* buffer) {
+  while (*buffer)
+    switch (*buffer++) {
+      case 0: return;
+      case '\'': buffer[-1] = '`'; break;
+      case '\\': buffer[-1] = ' '; break;
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -141,6 +150,7 @@ int main(int argc, char* argv[])
   res = hid_read(handle, buf, sizeof(buf));
   memcpy(&serial, &buf[8], sizeof(serial) );
   name = (char*)&buf[12];
+  fixQuotes(name);
   printf("FBID=%08X\nNAME='%s'\n", serial, name);
   
   memset(buf, 0, sizeof buf);

@@ -3,7 +3,7 @@
 sudo slave-lcd/lcd -b images/intro.rgb
 
 IP=`cat master-ip.txt`
-RSYNC_PASSWORD=tralala rsync -a incoming/ jcw@$IP::uploads/
+RSYNC_PASSWORD=tralala rsync -au incoming/ jcw@$IP::uploads/
 
 slave-usbot/usbot >/tmp/info.txt
 

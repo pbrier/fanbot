@@ -2,6 +2,11 @@
 
 # Delete this file once you've seen how the demo works
 
+console.log 'starting up'
+ss.rpc 'demo.getCountAndImages', ([count,images]) ->
+  console.log 'count', count, images
+  $('#counter').text count
+
 # Listen out for newMessage events coming from the server
 ss.event.on 'newMessage', (msg) ->
 

@@ -1,9 +1,9 @@
 # called from slave-go.sh
 
-sudo slave-lcd/lcd -b intro.rgb
+sudo slave-lcd/lcd -b images/intro.rgb
 
 IP=`cat master-ip.txt`
-RSYNC_PASSWORD=tralala rsync -a incoming/ jcw@$IP::uploads/
+RSYNC_PASSWORD=tralala rsync -au incoming/ jcw@$IP::uploads/
 
 slave-usbot/usbot >/tmp/info.txt
 
@@ -11,7 +11,7 @@ FBID=""
 . /tmp/info.txt
 if [ "$FBID" != "" ]
 then
-  echo $FBID "$NAME" `date` >>slave.log.txt
+  echo $FBID "$NAME" `date` >>slave-log.txt
   while slave-usbot/usbot
 	do
 		if [ -r /tmp/snap.jpg ]
@@ -24,7 +24,7 @@ then
 	done
 	mv /tmp/info.txt incoming/$FBID.txt
 	mv /tmp/last.jpg incoming/$FBID.jpg
-	sudo slave-lcd/lcd -b done.rgb
+	sudo slave-lcd/lcd -b images/done.rgb
 	while :
 	do
 		slave-usbot/usbot || exit

@@ -3,20 +3,19 @@
 
 cd ~/fanbot/faresy
 
-# keep the webcam running at all times
-while :
-do
-  if [ -c /dev/video0 ]
-  then
-    nice webcam webcam.conf
-  fi
-  sleep 3
-done &
+# make sure DNS and proper NTP clock works through laptop routing
+sudo sh -c 'echo nameserver 8.8.8.8 >/etc/resolv.conf'
+sudo service ntp restart
 
-# upload changes to master and display latest image as test
-# use separate script so changes can be picked up without rebooting
-while :
-do
-  ./slave-loop.sh
-	sleep 1
-done
+# briefly show our own IP address on the display
+IP=$(ip addr list eth0 | sed -n -e '/inet /s/\/.*//' -e 's/inet // p')
+sudo slave-lcd/lcd -m "$IP"
+sleep 3
+
+git pull # always get the latest changes before doing any further setup
+
+# build the apps, in case a source change just came in
+(cd slave-lcd && make)
+(cd slave-usbot && make)
+
+sh slave-init.sh

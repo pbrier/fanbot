@@ -32,7 +32,7 @@ class FanbotSerial:
 
     def sendFrame(self,frame):
         if self.serial != None:
-            print 'Sending: ',frame
+            #print 'Sending: ',frame
             try:
                 for i in frame:                ##self.serial.write(frame)
                     self.serial.write(chr(i))

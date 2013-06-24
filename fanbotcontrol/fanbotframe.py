@@ -601,13 +601,13 @@ class PanelModules ( wx.Panel ):
 		self.buttonDiscover = wx.Button( self.m_panel16, wx.ID_ANY, u"discover", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer26.Add( self.buttonDiscover, 0, wx.ALL, 5 )
 		
+		self.sliderAnimateHub = wx.Slider( self.m_panel16, wx.ID_ANY, 0, 0, 10, wx.DefaultPosition, wx.DefaultSize, wx.SL_HORIZONTAL )
+		self.sliderAnimateHub.SetToolTipString( u"Stuur alle 24 fanbots achter elkaar aan" )
 		
-		bSizer26.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		bSizer26.Add( self.sliderAnimateHub, 0, wx.ALL, 5 )
 		
-		
-		bSizer26.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
-		
-		self.checkBoxMatrix = wx.CheckBox( self.m_panel16, wx.ID_ANY, u"Matrix 6x4", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkBoxMatrix = wx.CheckBox( self.m_panel16, wx.ID_ANY, u"Matrix 4x6", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.checkBoxMatrix.SetValue(True) 
 		bSizer26.Add( self.checkBoxMatrix, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.labelPosition = wx.StaticText( self.m_panel16, wx.ID_ANY, u"0:0", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
@@ -698,6 +698,7 @@ class PanelModules ( wx.Panel ):
 		self.panelModulesCanvas.Bind( wx.EVT_SIZE, self.panelModulesCanvasOnSize )
 		self.buttonResetDisc.Bind( wx.EVT_BUTTON, self.buttonResetDiscOnButtonClick )
 		self.buttonDiscover.Bind( wx.EVT_BUTTON, self.buttonDiscoverOnButtonClick )
+		self.sliderAnimateHub.Bind( wx.EVT_SCROLL, self.sliderAnimateHubOnScroll )
 		self.buttonResetConfig.Bind( wx.EVT_BUTTON, self.buttonResetConfigOnButtonClick )
 		self.buttonSetConfig.Bind( wx.EVT_BUTTON, self.buttonSetConfigOnButtonClick )
 		self.buttonSetConfigAll.Bind( wx.EVT_BUTTON, self.buttonSetConfigAllOnButtonClick )
@@ -720,6 +721,9 @@ class PanelModules ( wx.Panel ):
 		event.Skip()
 	
 	def buttonDiscoverOnButtonClick( self, event ):
+		event.Skip()
+	
+	def sliderAnimateHubOnScroll( self, event ):
 		event.Skip()
 	
 	def buttonResetConfigOnButtonClick( self, event ):

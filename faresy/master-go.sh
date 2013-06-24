@@ -4,6 +4,8 @@
 PATH=/usr/local/bin:$PATH
 cd ~/w/fanbot/faresy/master-node
 
+git pull # always get the latest changes before doing any further setup
+
 while :
 do
   nodemon --exitcrash app.js

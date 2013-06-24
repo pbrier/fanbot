@@ -1,4 +1,4 @@
-# main slave logic, this is sourced from slave-go.sh
+# main slave logic, this is launched from slave-go.sh
 
 mkdir -p incoming
 

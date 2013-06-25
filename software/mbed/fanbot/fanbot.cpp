@@ -26,6 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pinmap.h"
 #include "IAP.h"
 
+
+#define SERVO_TIMEOUT 4000 // msec to switch servo off of no position change has occured [msec]
+#define TICK_INTERVAL 50 // tick interval [msec]
+#define SERVO_PERIOD 15 // period [mec]
+#define SERVO_OFFSET 1300
+#define SERVO_GAIN 2
+
 // externals 
 extern int stdio_uart_inited;
 extern serial_t stdio_uart;
@@ -34,19 +41,19 @@ extern serial_t stdio_uart;
 USBHID hid(
  64,  // out 
  64,  // in
- 0x1234, // vid
- 0x0006, // pid
+ 0x1234, // 0x1FC9, // vid  (NXP)  
+ 0x6, // 0x8066 , // pid (Fanbot)
  0x0001, // p_release
  false // connect
 );
 
 // Globals
 HID_REPORT send_report, recv_report; //This report will contain data to be sent and received
-PwmOut servo1(P0_18);
-PwmOut servo2(P0_19);
+PwmOut servo1(P0_19);
+PwmOut servo2(P0_18);
 Ticker tic; // msec ticker
-unsigned char pos1=0, pos2=0;
-unsigned char loop_count=0, prog_step=0;
+int pos1=0, pos2=0;
+unsigned char loop_count=0, prog_step=0, servo_timeout = 2000;
 
 // fanbot IO
 BusOut leds(P1_19, P1_25, P0_8, P0_9, P0_22, P0_13, P0_14); // Leds
@@ -135,7 +142,7 @@ void tic_handler()
   if ( ++idx >= FAN_STEPS ) idx = 0;
  
   // The program sequencer:
-  if ( counter % 4 == 0 ) // every 200 msec
+  if ( counter % 10 == 0 ) // every 500 msec
   {  
     if ( prog_step < 0 || prog_step > FAN_STEPS ) prog_step = 0;
     if ( loop_count > 0 )
@@ -150,6 +157,15 @@ void tic_handler()
       }    
     }
   }    
+  
+  if ( servo_timeout <= 0 )
+  {
+    set_servo('A', 0 );
+    set_servo('B', 0 );
+  }
+  else
+    servo_timeout -= TICK_INTERVAL;
+  
 }
 
 // Software UART send. mark is LOW space is HIGH
@@ -206,9 +222,17 @@ void stop()
 void inline set_servo(char n, int val)
 {
   PwmOut *p = (n == 'A' ? &servo1 : &servo2 );
-  int a = (val ? 500 : 0);  
-  p->pulsewidth_us(a + 10 * val);
+  int *pval = (n == 'A' ? &pos1 : &pos2 );
+  int a = (val ? SERVO_OFFSET : 0);  
+  if ( *pval != val )
+  {  // there is a change!
+    servo_timeout = SERVO_TIMEOUT;
+    p->pulsewidth_us(a + SERVO_GAIN*val);
+  }
+  if ( val ) // only remember non zero values
+  *pval = val;
 }
+
 
 // get value, wait max 30msec
 int get_val()
@@ -309,6 +333,12 @@ void read_name()
   memcpy(&send_report.data[12], name_string, sizeof(name_string) );
 }
 
+void  check_program()
+{
+
+
+}
+
 
 /**
 *** Main program
@@ -333,7 +363,7 @@ int main(void) {
   // Read name from EEPROM and store it in name string and send report
   read_name();
   iap.read_eeprom( (char*)PROGRAM_ADDRESS, (char *)program, MEM_SIZE );
-  
+  check_program(); // see if there is a default program loaded
    
   // enable IR transmitter
   ir_pwm.period(1.0/38000.0);
@@ -344,8 +374,8 @@ int main(void) {
 
 
   // Set the servo update period
-  servo1.period_ms(15);
-  servo2.period_ms(15);
+  servo1.period_ms(SERVO_PERIOD);
+  servo2.period_ms(SERVO_PERIOD);
 	set_servo('A', 0);
   set_servo('B', 0);
 	
@@ -353,18 +383,18 @@ int main(void) {
 	for(int l=0, p=1; l<7;l++, p|= (1<<l))
 	{
 	  leds = p;
-	  wait(0.1);
+	  wait(0.01);
 	}
 
   // Connect to USB
 	hid.connect(false); // do not block
 	for(int i=0; i<7 && !hid.configured(); i++)
 	{
-	  wait(0.15);
+	  wait(0.1);
 	  leds = 1<<i;
-	  wait(0.15);
+	  wait(0.1);
 	}	 
-  tic.attach(tic_handler, 0.05);
+  tic.attach(tic_handler, TICK_INTERVAL/1000.0 );
 	
   if ( !hid.configured() )
     do_serial();

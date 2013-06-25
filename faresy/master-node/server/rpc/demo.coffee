@@ -29,5 +29,5 @@ exports.actions = (req, res, ss) ->
       res [filetimes.length, files]
   
 getFileTime = (f) ->
-  {ctime} = fs.statSync "#{PATH}/#{f}"
-  [f, ctime.getTime()]
+  {mtime} = fs.statSync "#{PATH}/#{f}"
+  [f, mtime.getTime()]

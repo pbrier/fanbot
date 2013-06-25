@@ -54,19 +54,15 @@ static void displayBitMap (const char* filename) {
   drawBitmapP(0, 0, HEIGHT, WIDTH, rgbOut16[0], 1);
 }
 
-static void displayMessages (int argc, const char* argv[]) {
+static void displayMessage (const char* msg) {
   initLcd();
   setFont(16,16,32);
-  // setColor(0x07e0);
-  // setBackColor(0xf800);  
 
   setColorRGB(255, 0, 0);
   fillRect(0, 0, 319, 239);
   setColorRGB(255, 255, 255);
   setBackColorRGB(255, 0, 0);
-  print("That's it!", CENTER, 93,0);
-  print("Restarting in a", CENTER, 119,0);
-  print("few seconds...", CENTER, 142,0);
+  print((char*) msg, CENTER, 119,0);
 }
 
 static void waitForTouch (const char* fileCheck) {
@@ -100,8 +96,8 @@ int main (int argc, const char* argv[]) {
 		return 0;
 	}
     
-  if (mode == 'm' && argc >= 2) {
-    displayMessages(argc - 1, argv + 1);
+  if (mode == 'm' && argc == 2) {
+    displayMessage(argv[1]);
     return 0;
   }
       

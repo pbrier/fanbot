@@ -36,6 +36,7 @@ int y = 0;
 int count=0;
 
 void setup() { 
+    frameRate(60);
   size((w+0)*s, (h+0)*s); 
   myServer = new Server(this, port);
   for(int y=0; y<h; y++)

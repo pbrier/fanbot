@@ -1,5 +1,5 @@
 communication:
-  proxyPort: '5678'
+  proxyPort: '1234'
   serialport: COM7
   simulation: true
   simulationIP: 127.0.0.1
@@ -387,7 +387,7 @@ hubs:
     - -1
     - -1
     - -1
-    - -1
+    - -1 
     fanbots:
     - '00454545'
     - '01454545'

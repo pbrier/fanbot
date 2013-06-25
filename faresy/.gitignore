@@ -1,3 +1,5 @@
-master-log.txt
-slave-log.txt
+incoming
+*-log.txt
 *.o
+slave-lcd/lcd
+slave-usbot/usbot

@@ -183,7 +183,7 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
                                 data = proxy.bitmap.getCompressedArray()
                                 proxy.remote.sendFanbotFrame(data)
                             state = 0
-                            self.request.send("ok")
+                            # self.request.send("ok")
             except Exception as e:
                 print "server handle:exception %s %s"% (e.__class__.__name__, e.message)
                 alive = False        

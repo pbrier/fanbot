@@ -27,9 +27,10 @@ class HubListModel(wx.ListCtrl):
         self.SetColumnWidth(2, 35)
 
         self.hubs = []
-        self.hubs.append(Hub('0x1234'))
+        ''' self.hubs.append(Hub('0x1234'))
         self.hubs.append(Hub('0x3456'))
         self.hubs.append(Hub('0x789A'))
+        '''
         self.load()
         self.SetItemCount(len(self.hubs))
         

@@ -5,7 +5,7 @@
 import array
 
 
-class HubProtocol:
+class HubProtocol: 
     """
     Opcodes
     NR      Name          Direction    Data

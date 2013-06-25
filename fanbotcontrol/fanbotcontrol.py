@@ -167,6 +167,14 @@ class FanbotControl (FanbotFrame,ControlBase) :
         FanbotConfig.setSerialport(serialname)
         FanbotConfig.save()
             
+    def radioBoxFrameOnRadioBox( self, event ):
+        val = self.radioBoxFrame.GetSelection()
+        if val == 0:
+             HubProtocol.frameCommand = HubProtocol.PLAY_FRAME
+        if val == 1:
+             HubProtocol.frameCommand = HubProtocol.LED_FRAME
+        if val == 2:
+             HubProtocol.frameCommand = HubProtocol.POS_FRAME
        
         
     def initComboSerialPorts( self ):

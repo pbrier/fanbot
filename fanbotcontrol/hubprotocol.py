@@ -41,6 +41,8 @@ class HubProtocol:
     HUB_STATUS_LEN     = 104    
     HUB_TIMEOUT_MS     = 100
     
+    frameCommand    = POS_FRAME
+    
     
     listeners          = []
 
@@ -75,7 +77,7 @@ class HubProtocol:
 
         
     def sendFanbotFrame(self,data):
-        self.sendCommand( HubProtocol.POS_FRAME,len(data),data)    
+        self.sendCommand( HubProtocol.frameCommand,len(data),data)    
         
     def sendCommand(self,opcode,len = 0 ,data = None):
         if opcode != HubProtocol.POS_FRAME:

@@ -114,7 +114,7 @@ class ModulenControl (PanelModules,ControlBase) :
 
         self.scaleX = rect.GetWidth() / self.bitmap.width
         self.scaleY = rect.GetHeight() / self.bitmap.height
-        print 'Scale x:y',self.scaleX,':',self.scaleY
+        #print 'Scale x:y',self.scaleX,':',self.scaleY
         self.Refresh()
 
     def panelModulesCanvasOnPaint( self, event ):
@@ -211,7 +211,10 @@ class ModulenControl (PanelModules,ControlBase) :
             hub.responsive = True
             self.remote.sendCommand( HubProtocol.TAG_ID,4,hub.idAsArray() )
         elif opcode == HubProtocol.STATUS_REPORT:
-            self.fanbotList.setFanbots(payload)
+            hub = self.currenthub
+            if hub:
+                hub.setFanbots(payload)
+                self.fanbotList.setFanbots(hub.fanbots)
             self.labelHubId.SetLabel("Hub: " + id)
             
  
@@ -230,18 +233,25 @@ class ModulenControl (PanelModules,ControlBase) :
                 x = tuple[0]
                 y = tuple[1]
                 self.bitmap.setPixel(x,y, 0xFFFFFF)
-        self.fanbotList.reset()   
+        self.fanbotList.setFanbots(None)  
         self.labelHubId.SetLabel("Hub: ") 
         self.panelModulesCanvas.Refresh()    
         self.remote.sendCommand( HubProtocol.REQUEST_STATUS,4,hub.idAsArray() )
+        if 0 == self.sliderAnimateHub.GetValue():
+            self.createHubBitmap()
+            self.remote.sendFanbotFrame(self.compressedFrame)
+ 
+
 
     def fanbbotSelected(self,item):
         print "Selected fanbot index: " , item
+        if 0 == self.sliderAnimateHub.GetValue():
+            self.createFanbotBitmap(item)
+            self.remote.sendFanbotFrame(self.compressedFrame)
 
     def showHub(self,hub):
         """for the given hub, show the pixels in the bitmap, in the color of he hub"""
         if hub:
-            print 'show hub:' ,hub.id
             config = hub.config
             for i in range (0,len(config)):
                 tuple = hub.getConfigColor(i)
@@ -275,21 +285,42 @@ class ModulenControl (PanelModules,ControlBase) :
     def timerAnimateHandler(self,event):
         """  """
         hub         = self.currenthub
+        if  hub:
+            self.animateIdx += 1
+            if self.animateIdx >= 24: 
+                self.animateIdx = 0
+            self.createFanbotBitmap(self.animateIdx)    
+        self.remote.sendFanbotFrame(self.compressedFrame)
+ 
+    def createHubBitmap(self):
+        hub         = self.currenthub
         maxFrameLen = len(self.compressedFrame)
         if  hub:
             for i in range(maxFrameLen):
                 self.compressedFrame[i]=0
-            self.animateIdx += 1
-            if self.animateIdx >= 24: 
-                self.animateIdx = 0
-            pixelIdx = hub.config[self.animateIdx]
-            byteIdx = pixelIdx / 8
-            if byteIdx >= maxFrameLen:
-                return;
-            bitIdx = pixelIdx % 8
-            self.compressedFrame[byteIdx] = 1 << bitIdx
+            for i in range(24):
+                pixelIdx = hub.config[i]
+                if pixelIdx >= 0:
+                    byteIdx = pixelIdx / 8
+                    if byteIdx >= maxFrameLen:
+                        return;
+                    bitIdx = pixelIdx % 8
+                    self.compressedFrame[byteIdx] |= 1 << bitIdx
+    
                 
-
-        self.remote.sendFanbotFrame(self.compressedFrame)
- 
-            
+        
+    def createFanbotBitmap(self,idx):        
+        hub         = self.currenthub
+        maxFrameLen = len(self.compressedFrame)
+        if  hub:
+            for i in range(maxFrameLen):
+                self.compressedFrame[i]=0
+            if idx >= 24:
+                return    
+            pixelIdx = hub.config[idx]
+            if pixelIdx >= 0:
+                byteIdx = pixelIdx / 8
+                if byteIdx >= maxFrameLen:
+                    return;
+                bitIdx = pixelIdx % 8
+                self.compressedFrame[byteIdx] = 1 << bitIdx

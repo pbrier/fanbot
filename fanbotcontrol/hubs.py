@@ -152,31 +152,13 @@ class FanbotListModel(wx.ListCtrl):
         self.attr.SetBackgroundColour("light blue")
 
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.OnItemSelected)
-        self.fanbots = [] 
-        for i in range(24):
-            self.fanbots.append('--------')
+        self.fanbots = None 
 
-    def setFanbots(self,rawdata):
-        """From the raw data as received from the hub, extract the fanbot ID's"""
-        if len(rawdata) < 100:
-            print "Received incoorect data size. Expected 100 got: ",len(rawdata)
-            return
-        rawIndex = 4
-        for i in range(24):
-            id = ""
-            for j in range(4):
-                id =  "%02x%s"%(rawdata[rawIndex],id)
-                rawIndex +=1
-                if id == '00000000':
-                    id = "--------"
-            self.fanbots[i] = id    
+    def setFanbots(self,fanbots):
+        self.fanbots = fanbots   
         self.parent.Refresh();
 
-    def reset(self):
-        """ reset the list of  fanbot ID's"""
-        for i in range(24):
-            self.fanbots[i] = "----"    
-        self.parent.Refresh();
+
 
 
 
@@ -203,12 +185,13 @@ class FanbotListModel(wx.ListCtrl):
     # on values from some external data source, but for
     # this demo we'll just calculate them
     def OnGetItemText(self, item, col):
+        result = ''
         if item >= 24:
             print 'Error row index too high: ', items
-            return ""
+            return result
         if col == 0: return item
-        elif col == 1: return self.fanbots[item]
-        else: return ""
+        elif col == 1 and self.fanbots: result = self.fanbots[item]
+        return result
 
     def OnGetItemImage(self, item):
         return -1
@@ -225,9 +208,13 @@ class Hub :
         self.responsive = False
         self.configidx = 0
         self.config = FanbotConfig.getHubConfig(self.id)
+        self.fanbots = FanbotConfig.getHubFanbots(self.id)
+        
         for i in range(24):
             if len(self.config) < 24:
                 self.config.append(-1)
+            if len(self.fanbots) < 24:
+                self.fanbots.append(-1)
                  
         self.color = random.randint(20, 250) * 0x10000 + random.randint(20, 250) * 0x100 + random.randint(20, 250) 
         
@@ -250,7 +237,7 @@ class Hub :
             return False
         
         val = x + y * FanbotConfig.width
-        print 'setting config index %d to %d'%(self.configidx,val)
+        #print 'setting config index %d to %d'%(self.configidx,val)
             
         if len(self.config) <= self.configidx:
             self.config.append(val)
@@ -272,8 +259,27 @@ class Hub :
          y = val / FanbotConfig.width            
          y = y % FanbotConfig.height      
          return (x,y,self.color)
-              
-              
+
+    def setFanbots(self,rawdata):
+        """From the raw data as received from the hub, extract the fanbot ID's"""
+        if len(rawdata) < 100:
+            print "Received incoorect data size. Expected 100 got: ",len(rawdata)
+            return
+        rawIndex = 4
+        for i in range(24):
+            id = ""
+            for j in range(4):
+                id =  "%02x%s"%(rawdata[rawIndex],id)
+                rawIndex +=1
+                if id == '00000000':
+                    id = "--------"
+            self.fanbots[i] = id                  
+
+    def resetFanbots(self):
+        """ reset the list of  fanbot ID's"""
+        for i in range(24):
+            self.fanbots[i] = "----"    
+ 
     def idAsArray(self):
          idAsLong = int(self.id,16)
          idArray = []

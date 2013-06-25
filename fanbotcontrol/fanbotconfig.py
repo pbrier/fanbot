@@ -124,8 +124,49 @@ class FanbotConfig():
             for i in range(0,23):
                 result.append(-1)
             hubs[id] = result    
+
         return result
 
+    @classmethod
+    def createHub(cls,id):
+        """Create and return a hub which can be added to the yaml file"""
+        result = { }
+        config = []
+        fanbots = []
+        for i in range(0,23):
+            config.append(-1)
+            fanbots.append("-0-")
+        result['config'] = config
+        result['fanbots'] = fanbots
+        return result    
+
+    @classmethod
+    def getHubConfig(cls,id):
+        """ Return array with with 24 integers signed, 16 bit. 
+        Id is a string with hexadecimal representation of id of a hub
+        if id is not found in dictionary it will be created with a config 0f 24 x -1"""
+        hubs = cls.config.get('hubs')
+        hub = hubs.get(id)
+        if hub == None:
+            hub = FanbotConfig.createHub(id)
+            hubs[id] = hub
+        if hub['config'] == None:
+            hub['config'] = []    
+        return hub['config']
+
+    @classmethod
+    def getHubFanbots(cls,id):
+        """ Return array with with 24 integers signed, 16 bit. 
+        Id is a string with hexadecimal representation of id of a hub
+        if id is not found in dictionary it will be created with a config 0f 24 x -1"""
+        hubs = cls.config.get('hubs')
+        hub = hubs.get(id)
+        if hub == None:
+            hub = FanbotConfig.createHub(id)
+            hubs[id] = hub
+        if hub['fanbots'] == None:
+            hub['fanbots'] = []    
+        return hub['fanbots']
 
 
     

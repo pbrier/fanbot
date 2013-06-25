@@ -5,6 +5,7 @@ import copy
 
 from fanbotframe import PanelProxy
 from fanbotconfig import FanbotConfig
+from hubprotocol import HubProtocol
 import os
 import SocketServer
 import threading
@@ -18,7 +19,7 @@ from bitmap import Bitmap
 from banner import Banner
       
 # Implementing HubSimulFrame
-class ProxyControl(PanelProxy ):
+class ProxyControl(PanelProxy):
     alive = True
     instance = None
     
@@ -54,7 +55,7 @@ class ProxyControl(PanelProxy ):
 
         self.scaleX = rect.GetWidth() / self.bitmap.width
         self.scaleY = rect.GetHeight() / self.bitmap.height
-        print 'Scale x:y',self.scaleX,':',self.scaleY
+        #print 'Scale x:y',self.scaleX,':',self.scaleY
         self.Refresh()
  
     def startProxyServer(self):    
@@ -140,8 +141,8 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
         ProxyControl.instance.labelConnectionNr.SetLabel(str(ProxyHandler.connections))
     
     def handle(self):
-        self.handleJson()
-#        self.handlePlain()
+#        self.handleJson()
+        self.handlePlain()
 
     def handlePlain(self):
         """ 
@@ -162,6 +163,7 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
         while ProxyControl.alive and alive:
             try:
                 data = self.request.recv(1024)
+                print 'rec:' ,data
                 proxy = ProxyControl.instance
                 for c in data:
                     if state == 0:
@@ -208,4 +210,5 @@ class ProxyHandler(SocketServer.BaseRequestHandler):
             except Exception, e:
                 print "Exception wile receiving message: ", e
                 alive = False
+
 

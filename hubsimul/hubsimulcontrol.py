@@ -53,17 +53,16 @@ class HubSimulControl(HubSimulFrame ):
 
     def handleCommand(self, opcode,payload):    
 
-        if opcode == HubProtocol.POS_FRAME:
-            wx.CallAfter(self.updateBitmapInGuiThread,payload)
-
+        if opcode in [HubProtocol.POS_FRAME,HubProtocol.PLAY_FRAME,HubProtocol.LED_FRAME]:
+            wx.CallAfter(self.updateBitmapInGuiThread,opcode,payload)
         else:    
             for i in range (HubSimulControl.HubCount):
                 hub = self.hubs[i]
                 hub.handleCommand(opcode,payload)
             
             
-    def updateBitmapInGuiThread(self,payload):  
-        self.bitmap.fromCompressedBuffer(payload)
+    def updateBitmapInGuiThread(self,command,payload):  
+        self.bitmap.fromCompressedBuffer(command,payload)
         self.Refresh()
             
         

@@ -7,6 +7,7 @@ import array
 
 import wx
 from hubsimulframe import  BitmapCanvas
+from hubprotocol import HubProtocol
 
 class Bitmap(BitmapCanvas):
     bpp    = 4  # bytes per pixel
@@ -25,7 +26,7 @@ class Bitmap(BitmapCanvas):
         for x in range(w):
             val = 0x10
             for y in range(h):
-                self.setPixel(x, y, val)
+                self.setPixel(x, y, val,val,val)
                 val += 30
                 val %= 256
                 if x % 10 ==0:
@@ -35,7 +36,7 @@ class Bitmap(BitmapCanvas):
         self.BitmapCanvasOnSize(None)
     
 
-    def setPixel(self,x,y,val):
+    def setPixel(self,x,y,r,g,b):
         if y >= self.height:
             print "Row index too high: " , y
             exit(1)
@@ -43,15 +44,15 @@ class Bitmap(BitmapCanvas):
             print "Col index too high: " , x
             exit(1)
         offset = (y * self.width + x) * Bitmap.bpp
-        self.setPixelAt(offset,val)
+        self.setPixelAt(offset,r,g,b)
 
-    def setPixelAt(self,offset,val):
+    def setPixelAt(self,offset,r,g,b):
         if offset >= len(self.buffer) - 3:
             print "Offset too high: " , offset
             return
-        self.buffer[offset + 0] = val
-        self.buffer[offset + 1] = val
-        self.buffer[offset + 2] = val
+        self.buffer[offset + 0] = r
+        self.buffer[offset + 1] = g
+        self.buffer[offset + 2] = b
         self.buffer[offset + 3] = 0xFF  #alpha
 
  
@@ -75,11 +76,14 @@ class Bitmap(BitmapCanvas):
         self.Refresh() 
         
         
-    def fromCompressedBuffer(self,data):
+    def fromCompressedBuffer(self,command,data):
           
         idx = -1
         val = 0
         inb = 0
+        r = 0
+        g = 0
+        b = 0
 
         for j in range(0,self.width * self.height):
             if j % 8 == 0 and j < len(data) * 8: 
@@ -91,6 +95,12 @@ class Bitmap(BitmapCanvas):
                 val = 20
             inb = inb / 2
             offset = j * Bitmap.bpp
-            self.setPixelAt(offset, val)
+            if command == HubProtocol.PLAY_FRAME: 
+                r = val    
+            elif command == HubProtocol.LED_FRAME:      
+                g= val    
+            elif command == HubProtocol.POS_FRAME:      
+                b = val
+            self.setPixelAt(offset, r,g,b)
                     
         self.Refresh()       

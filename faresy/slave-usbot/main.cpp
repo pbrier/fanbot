@@ -156,6 +156,10 @@ int main(int argc, char* argv[])
   memset(buf, 0, sizeof buf);
   read_program(handle, program);
   print_program(program);
+
+  memset(buf, 0, sizeof buf);
+  buf[1] = 2; // PLAY
+  hid_write(handle, buf, report_size);
   
   hid_close(handle); 
   hid_exit();

@@ -7,6 +7,7 @@ import os
 import wx.lib.evtmgr as em
 import fanbotevent
 from fanbotconfig import FanbotConfig
+from hubprotocol import HubProtocol
 
 
 from fanbotframe import  PanelDrawIcon
@@ -149,5 +150,6 @@ class ExecuteControl(PanelExecute ):
             self.initFileList('.gif')    
         if self.radioFileType.GetSelection() == 1:
             self.initFileList('.bmp')    
-        
-  
+    
+    
+

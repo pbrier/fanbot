@@ -134,7 +134,17 @@ class FanbotFrame ( wx.Frame ):
 		self.labelStatus.Wrap( -1 )
 		self.labelStatus.SetMinSize( wx.Size( 200,15 ) )
 		
-		bSizer3.Add( self.labelStatus, 0, wx.ALL, 5 )
+		bSizer3.Add( self.labelStatus, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		bSizer3.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		radioBoxFrameChoices = [ u"Play", u"Led", u"Pos" ]
+		self.radioBoxFrame = wx.RadioBox( self.panelStatus, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, radioBoxFrameChoices, 1, wx.RA_SPECIFY_ROWS )
+		self.radioBoxFrame.SetSelection( 1 )
+		self.radioBoxFrame.SetMaxSize( wx.Size( -1,20 ) )
+		
+		bSizer3.Add( self.radioBoxFrame, 0, 0, 5 )
 		
 		self.panelStatus.SetSizer( bSizer3 )
 		self.panelStatus.Layout()
@@ -154,6 +164,7 @@ class FanbotFrame ( wx.Frame ):
 		self.buttonConnectSimul.Bind( wx.EVT_BUTTON, self.buttonConnectSimulOnButtonClick )
 		self.textProxyPort.Bind( wx.EVT_LEAVE_WINDOW, self.textProxyPortOnLeaveWindow )
 		self.buttonSave.Bind( wx.EVT_BUTTON, self.buttonSaveOnButtonClick )
+		self.radioBoxFrame.Bind( wx.EVT_RADIOBOX, self.radioBoxFrameOnRadioBox )
 	
 	def __del__( self ):
 		pass
@@ -179,6 +190,9 @@ class FanbotFrame ( wx.Frame ):
 		event.Skip()
 	
 	def buttonSaveOnButtonClick( self, event ):
+		event.Skip()
+	
+	def radioBoxFrameOnRadioBox( self, event ):
 		event.Skip()
 	
 
@@ -521,7 +535,7 @@ class PanelProxy ( wx.Panel ):
 		bSizer26 = wx.BoxSizer( wx.HORIZONTAL )
 		
 		self.buttonProxyStart = wx.Button( self.m_panel17, wx.ID_ANY, u"Start", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer26.Add( self.buttonProxyStart, 0, wx.ALL, 5 )
+		bSizer26.Add( self.buttonProxyStart, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_staticText4 = wx.StaticText( self.m_panel17, wx.ID_ANY, u"proxy host:port", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
@@ -534,13 +548,13 @@ class PanelProxy ( wx.Panel ):
 		
 		bSizer26.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
 		
-		self.m_staticText6 = wx.StaticText( self.m_panel17, wx.ID_ANY, u"connections:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText6 = wx.StaticText( self.m_panel17, wx.ID_ANY, u"connections:", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
 		self.m_staticText6.Wrap( -1 )
-		bSizer26.Add( self.m_staticText6, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer26.Add( self.m_staticText6, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
-		self.labelConnectionNr = wx.StaticText( self.m_panel17, wx.ID_ANY, u"0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.labelConnectionNr = wx.StaticText( self.m_panel17, wx.ID_ANY, u"0", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
 		self.labelConnectionNr.Wrap( -1 )
-		bSizer26.Add( self.labelConnectionNr, 1, wx.ALL|wx.EXPAND|wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer26.Add( self.labelConnectionNr, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 		
 		self.m_panel17.SetSizer( bSizer26 )
 		self.m_panel17.Layout()

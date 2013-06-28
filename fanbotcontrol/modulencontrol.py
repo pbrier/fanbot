@@ -237,6 +237,7 @@ class ModulenControl (PanelModules,ControlBase) :
         self.labelHubId.SetLabel("Hub: ") 
         self.panelModulesCanvas.Refresh()    
         self.remote.sendCommand( HubProtocol.REQUEST_STATUS,4,hub.idAsArray() )
+        time.sleep(0.2)
         if 0 == self.sliderAnimateHub.GetValue():
             self.createHubBitmap()
             self.remote.sendFanbotFrame(self.compressedFrame)

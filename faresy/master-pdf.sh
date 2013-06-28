@@ -36,7 +36,7 @@ convert \
   -draw "text 20,565 '$msg1'" \
   -weight Bold -draw "text 20,625 'FanBot via de Post?'" -weight normal \
   -draw "text 20,640 '$msg2'" \
-  -draw "text 400,655 'Vragen, omperkingen?'" \
+  -draw "text 400,655 'Vragen, opmerkingen?'" \
   -draw "text 400,670 'marieke@kekbot.org'" \
   -draw "image SrcOver 20,740,560,85 images/logobar2.jpg" \
   -page A4 \

@@ -22,5 +22,6 @@ For a bit of technical info, see the JeeLabs weblog:
 * http://jeelabs.org/2013/06/21/cheap-webcam/
 * http://jeelabs.org/2013/06/25/fanbots-at-robocup-2013/
 * http://jeelabs.org/2013/06/27/meet-the-fanbot/
+* http://jeelabs.org/2013/06/29/fanbot-registration-system/
 
 For project details and results, check out http://www.kekbot.org/ - enjoy!

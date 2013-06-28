@@ -202,6 +202,8 @@ class FanbotListModel(wx.ListCtrl):
 
             
 class Hub :
+    fanbotMapping     =  [11, 12, 24, 23,  9, 10, 22, 21,  7, 8, 20, 19,  5, 6, 18, 17,  3, 4, 16, 15,  1, 2, 14, 13]
+
     def __init__( self,id):
         """id must be a string with hexadecimal representaiton of ID example: '0x1234' """
         self.id = id
@@ -237,13 +239,13 @@ class Hub :
             print 'Maximum amount of pixels reacched (24) '
             return False
         
+        
         val = x + y * FanbotConfig.width
         #print 'setting config index %d to %d'%(self.configidx,val)
+        
+        mappedConfigIndex = Hub.fanbotMapping[self.configidx] -1
             
-        if len(self.config) <= self.configidx:
-            self.config.append(val)
-        else:
-            self.config[self.configidx] = val
+        self.config[mappedConfigIndex] = val
         self.configidx += 1
 
         return True            

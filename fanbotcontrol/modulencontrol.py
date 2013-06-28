@@ -12,6 +12,7 @@ import hubs
 import time
 import array
 from bitmap import Bitmap
+from hubs import Hub
 
 from fanbotcontrolbase import  ControlBase
 
@@ -245,9 +246,10 @@ class ModulenControl (PanelModules,ControlBase) :
 
 
     def fanbbotSelected(self,item):
-        print "Selected fanbot index: " , item
+        mappedindex = Hub.fanbotMapping[item] -1
+        print "Selected fanbot index: %d mapped onto index %d" %( item,mappedindex)
         if 0 == self.sliderAnimateHub.GetValue():
-            self.createFanbotBitmap(item)
+            self.createFanbotBitmap(mappedindex)
             self.remote.sendFanbotFrame(self.compressedFrame)
 
     def showHub(self,hub):
@@ -290,7 +292,7 @@ class ModulenControl (PanelModules,ControlBase) :
             self.animateIdx += 1
             if self.animateIdx >= 24: 
                 self.animateIdx = 0
-            self.createFanbotBitmap(self.animateIdx)    
+            self.createFanbotBitmap(Hub.fanbotMapping[self.animateIdx] - 1)    
         self.remote.sendFanbotFrame(self.compressedFrame)
  
     def createHubBitmap(self):

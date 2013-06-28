@@ -210,7 +210,7 @@ class ModulenControl (PanelModules,ControlBase) :
             hub = self.hubList.addHub(id)
             hub.discoverd = True
             hub.responsive = True
-            self.remote.sendCommand( HubProtocol.TAG_ID,4,hub.idAsArray() )
+            # self.remote.sendCommand( HubProtocol.TAG_ID,4,hub.idAsArray() ) # remove tagging, as it messes up frames
         elif opcode == HubProtocol.STATUS_REPORT:
             hub = self.currenthub
             if hub:

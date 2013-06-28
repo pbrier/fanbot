@@ -10,8 +10,8 @@ import array
 
 class FanbotConfig():
     config             = {}
-    width  = 44
-    height = 24
+    width  = 52
+    height = 18
     baudrate = 115200
     
     

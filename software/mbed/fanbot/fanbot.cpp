@@ -219,7 +219,7 @@ void stop()
 }
 
 // Set servo position (clamped to range for Fanbot)
-void inline set_servo(char n, int val)
+void inline set_servo(char n, volatile int val)
 {
   PwmOut *p = (n == 'A' ? &servo1 : &servo2 );
   int *pval = (n == 'A' ? &pos1 : &pos2 );
@@ -341,6 +341,43 @@ void  check_program()
 
 
 /**
+*** Select a mode
+**/
+int select_mode()
+{
+  int mode = 0, time = 0, state=0;
+  if ( button != 0 ) return 0; // button not pressed: return
+  while ( 1 )
+  {
+    time++;
+    wait(0.1);
+    if (button == 0 && state != button) // down press
+    {
+      time = 0;
+      mode++;
+      if ( mode > 6)
+        mode = 0;
+    
+    }
+    leds = (time & 1 ? 1<< mode : 0); // flash led
+    if ( time > 20 ) return mode+1; // after two seconds: return mode number
+    state = button;
+  }
+}
+
+static const unsigned char sine_table[] = {
+128	, 141	, 153	, 166	, 178	, 189	, 200	, 210	, 
+220	, 228	, 236	, 242	, 247	, 251	, 254	, 255	, 
+255	, 255	, 253	, 249	, 245	, 239	, 232	, 224	, 
+215	, 205	, 195	, 184	, 172	, 160	, 147	, 134	,
+122	, 109	,  96	,  84	,  72	,  61	,  51	,  41	,
+32	,  24	,  17	,  11	,   7	,   3	,   1	,   1	, 
+  1	,   2	,   5	,   9	,  14	,  20	,  28	,  36	,
+ 46	,  56	,  67	,  78	,  90	, 103	, 115	, 128	,
+};
+
+
+/**
 *** Main program
 *** work in 3 modes: 
 ***   1) HID mode (tried first): receive commands from USB
@@ -351,7 +388,7 @@ void  check_program()
 *** comes out of reset. 
 **/
 int main(void) {
- 
+  int function = 0;
   // Read serial# from device eeprom
   serial_nr = iap.read_serial();
   
@@ -380,22 +417,88 @@ int main(void) {
   set_servo('B', 0);
 	
   // Say 'hello'
-	for(int l=0, p=1; l<7;l++, p|= (1<<l))
+	for(int l=0; l<3; l++)
 	{
-	  leds = p;
-	  wait(0.01);
-	}
+  	leds = 255;
+	  wait(0.15);
+    leds = 0;
+    wait(0.15);
+  }
 
   // Connect to USB
 	hid.connect(false); // do not block
-	for(int i=0; i<7 && !hid.configured(); i++)
+  function = 0;
+	for(int i=0; i<7 && !hid.configured() && !function; i++)
 	{
 	  wait(0.1);
 	  leds = 1<<i;
 	  wait(0.1);
+    function = select_mode();
 	}	 
   tic.attach(tic_handler, TICK_INTERVAL/1000.0 );
 	
+  if ( function ) // button was pressed during startup:
+  {
+    int i;
+    wait(0.5);
+    switch( function )
+    {
+      case 1: // Continous play
+        while( 1 ) 
+        {
+          play(1);
+          wait(1);
+        }
+        break;
+      case 2: // led disco
+      case 3: // led disco and motion
+        i = 0;
+        while( 1 ) 
+        {
+	        wait(0.2);
+	        leds = 1<<i++;
+          if ( function == 3 )
+            set_servo('A', (i * 255)/6 );
+          if ( i == 7 ) 
+            i = 0;
+        }
+        break;
+      case 4:// smooth motion forward and leds
+      case 5: // smooth motion forward and leds (only move if button is pressed)
+        i = 0;
+        set_servo('A', 1);
+        while( 1 ) 
+        {
+	        wait(0.02);
+          set_servo('A', i );
+          i++;
+          if ( i == 255 ) i = 1;
+          leds = i;
+          if ( function == 5 ) while( button ); // wait
+        }
+        break;
+      case 6: // random motion and leds after random time
+        while ( 1 )
+        {
+          wait( (rand() & 1023) / 102 ); // 0 to 10 seconds wait;
+          set_servo('A', rand() & 0xFF ); // random pos
+          leds = rand() & 0xFF;
+        }
+        break;
+       case 7: // Smooth motion back and forth
+         i = 0;
+         while(1)
+         {
+           wait(0.03);
+           leds = 3 | (1 << (sine_table[i]>>5));       
+           set_servo('A', sine_table[i] );
+           if ( ++i > 63 ) i = 0;
+         }
+         break;
+    }
+  }
+  leds = 255;
+  
   if ( !hid.configured() )
     do_serial();
   
@@ -441,3 +544,4 @@ int main(void) {
 	  wait_ms(1);
 	}
 } // main
+

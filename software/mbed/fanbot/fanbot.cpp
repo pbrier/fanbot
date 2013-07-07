@@ -53,7 +53,7 @@ PwmOut servo1(P0_19);
 PwmOut servo2(P0_18);
 Ticker tic; // msec ticker
 int pos1=0, pos2=0;
-unsigned char loop_count=0, prog_step=0, servo_timeout = 2000;
+unsigned char loop_count=0, prog_step=0, servo_timeout = 200;
 
 // fanbot IO
 BusOut leds(P1_19, P1_25, P0_8, P0_9, P0_22, P0_13, P0_14); // Leds
@@ -72,6 +72,7 @@ PwmOut ir_pwm(P1_13);
 #define MEM_SIZE            256
 #define PROGRAM_ADDRESS       0
 #define NAME_ADDRESS   MEM_SIZE
+#define MODE_ADDRESS (2*MEM_SIZE)
 #define NAME_SIZE            32
 IAP iap;
 
@@ -144,7 +145,7 @@ void tic_handler()
   // The program sequencer:
   if ( counter % 10 == 0 ) // every 500 msec
   {  
-    if ( prog_step < 0 || prog_step > FAN_STEPS ) prog_step = 0;
+    if ( prog_step > FAN_STEPS ) prog_step = 0;
     if ( loop_count > 0 )
     {
       leds = program[prog_step] & 0xFF;
@@ -218,8 +219,9 @@ void stop()
   prog_step = 0;
 }
 
+
 // Set servo position (clamped to range for Fanbot)
-void inline set_servo(char n, volatile int val)
+void inline set_servo_ab(char n, volatile int val)
 {
   PwmOut *p = (n == 'A' ? &servo1 : &servo2 );
   int *pval = (n == 'A' ? &pos1 : &pos2 );
@@ -231,6 +233,16 @@ void inline set_servo(char n, volatile int val)
   }
   if ( val ) // only remember non zero values
   *pval = val;
+}
+
+// Same 'A' value for both servo's
+void inline set_servo(char n, volatile int val)
+{
+  if ( n == 'A' )
+  {
+    set_servo_ab('A', val);
+    set_servo_ab('B', val);
+  }
 }
 
 
@@ -333,6 +345,21 @@ void read_name()
   memcpy(&send_report.data[12], name_string, sizeof(name_string) );
 }
 
+// Read default mode from EEPROM, and store it in to the global var
+int read_mode()
+{
+  int m=0;
+  iap.read_eeprom( (char*)MODE_ADDRESS, (char *)program, MEM_SIZE );
+  memcpy(&m, program, sizeof(m) );
+  if ( m > 10 ) m = 0;
+  return m;
+}
+
+void write_mode(int mode)
+{
+  iap.write_eeprom( (char*)&mode, (char*)MODE_ADDRESS, sizeof(mode) );
+}
+
 void  check_program()
 {
 
@@ -346,7 +373,8 @@ void  check_program()
 int select_mode()
 {
   int mode = 0, time = 0, state=0;
-  if ( button != 0 ) return 0; // button not pressed: return
+  if ( button != 0 ) 
+    return 0; // button not pressed: return
   while ( 1 )
   {
     time++;
@@ -357,10 +385,12 @@ int select_mode()
       mode++;
       if ( mode > 6)
         mode = 0;
-    
     }
     leds = (time & 1 ? 1<< mode : 0); // flash led
-    if ( time > 20 ) return mode+1; // after two seconds: return mode number
+    if ( time > 20 ) 
+    {
+      return mode+1; // after two seconds: return mode number
+    }
     state = button;
   }
 }
@@ -386,6 +416,8 @@ static const unsigned char sine_table[] = {
 ***      Any serial character received causes serial mode to be activated
 *** In addition the chip has a USB/MSD bootloader that can be activated by holding the program swith when the chip
 *** comes out of reset. 
+*** Additional program modes can be selected during power up:
+*** If the button is pressed during startup: select one of 7 modes. This mode is used and stored for a next time (as stand-alone mode). 
 **/
 int main(void) {
   int function = 0;
@@ -399,7 +431,8 @@ int main(void) {
   
   // Read name from EEPROM and store it in name string and send report
   read_name();
-  iap.read_eeprom( (char*)PROGRAM_ADDRESS, (char *)program, MEM_SIZE );
+  read_mode();
+  iap.read_eeprom( (char*)PROGRAM_ADDRESS, (char *)program, MEM_SIZE ); // perform this as last EEPROM read, as the other read functions will overwrite the program memory
   check_program(); // see if there is a default program loaded
    
   // enable IR transmitter
@@ -436,6 +469,13 @@ int main(void) {
     function = select_mode();
 	}	 
   tic.attach(tic_handler, TICK_INTERVAL/1000.0 );
+
+  if ( function ) // something pressed?
+    write_mode(function);
+  
+  
+  if ( !hid.configured() && !function ) // go to default mode
+    function = read_mode();
 	
   if ( function ) // button was pressed during startup:
   {

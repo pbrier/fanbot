@@ -1,0 +1,33 @@
+
+#include "mbed.h"
+#include "USBAudio.h"
+ 
+Serial pc(USBTX, USBRX);
+ 
+// frequency: 48 kHz
+#define FREQ 48000
+ 
+// 1 channel: mono
+#define NB_CHA 1
+ 
+// length of an audio packet: each ms, we receive 48 * 16bits ->48 * 2 bytes. as there is one channel, the length will be 48 * 2 * 1
+#define AUDIO_LENGTH_PACKET 48 * 2 * 1
+ 
+// USBAudio
+USBAudio audio(FREQ, NB_CHA);
+ 
+int main() {
+    int16_t buf[AUDIO_LENGTH_PACKET/2];
+    
+    while (1) {
+        // read an audio packet
+        audio.read((uint8_t *)buf);
+ 
+        // print packet received
+        pc.printf("recv: ");
+        for(int i = 0; i < AUDIO_LENGTH_PACKET/2; i++) {
+            pc.printf("%d ", buf[i]);
+        }
+        pc.printf("\r\n");
+    }
+}

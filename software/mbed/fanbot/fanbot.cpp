@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "IAP.h"
 
 
-#define SERVO_TIMEOUT 4000 // msec to switch servo off of no position change has occured [msec]
+#define SERVO_TIMEOUT 40000 // msec to switch servo off of no position change has occured [msec]
 #define TICK_INTERVAL 50 // tick interval [msec]
 #define SERVO_PERIOD 15 // period [mec]
 #define SERVO_OFFSET 1300
@@ -53,7 +53,8 @@ PwmOut servo1(P0_19);
 PwmOut servo2(P0_18);
 Ticker tic; // msec ticker
 int pos1=0, pos2=0;
-unsigned char loop_count=0, prog_step=0, servo_timeout = 200;
+unsigned char loop_count=0, prog_step=0;
+int servo_timeout = SERVO_TIMEOUT;
 
 // fanbot IO
 BusOut leds(P1_19, P1_25, P0_8, P0_9, P0_22, P0_13, P0_14); // Leds
@@ -529,10 +530,21 @@ int main(void) {
          i = 0;
          while(1)
          {
-           wait(0.03);
+           wait(0.04);
            leds = 3 | (1 << (sine_table[i]>>5));       
-           set_servo('A', sine_table[i] );
-           if ( ++i > 63 ) i = 0;
+           set_servo('A', 90 + (sine_table[i]/2) );
+           if ( ++i > 63 ) 
+           {
+             i = 0;
+             for(int t=0; t<2000; t++)
+             {
+               float tw = sine_table[(t/8) & 63] / 50000.0;
+               leds = 0;
+               wait(tw);
+               leds = 3 | (1<<3) | (1<<5);
+               wait( (256.0/50000.0) - tw );
+             }
+           }
          }
          break;
     }

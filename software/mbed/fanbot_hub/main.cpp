@@ -215,15 +215,29 @@ void debughex(int i)
 **/
 void inline read_config()
 {
+  int n=24, c, d, swap;
+ 
+
+ 
   serial_nr = iap.read_serial();
   debugstring("Serial:");
   debugint(serial_nr);
   srand(serial_nr);
   iap.read_eeprom( (char*)CONFIG_ADDRESS, (char *)config, sizeof(config) );
- /* for(int i=0; i<24; i++) // init default configuration: bit 0 to 24
+ /* sort in ascending order */
+    for (c = 0 ; c < ( n - 1 ); c++)
   {
-    config[i] = i; // 
-  }*/
+    for (d = 0 ; d < n - c - 1; d++)
+    {
+      if (config[d] > config[d+1]) /* For decreasing order use < */
+      {
+        swap       = config[d];
+        config[d]   = config[d+1];
+        config[d+1] = swap;
+      }
+    }
+  }
+  
 }
 
 
@@ -490,7 +504,7 @@ void single_comm(DigitalInOut &pin)
 unsigned int request_id(unsigned char n)
 {
   unsigned int id=0;
-  char val, ch, j, bitshift=28;
+  char val, ch, j, bitshift=32;
   DigitalInOut pin(hub_pin[n]);
   send(pin, 'n');
  
@@ -650,6 +664,7 @@ enum HubOpcodes {
   POS_FRAME,
   REQUEST_STATUS,
   CONFIG_FRAME,
+  RANDOM_FRAME,
   ID_REPORT = 128,
   STATUS_REPORT,
   RESET = 0xDEAD,
@@ -772,7 +787,12 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
      case PLAY_FRAME: // 1 bit per port
        debugstring("play frame!");
        for(int i=0; i<24; i++)
-        send_masked('p', 1<<i);
+       {
+         if ( port_cmd[i] & 0xFF )
+           send_masked('p', 1<<i);
+         else
+           send_masked('s', 1<<i);
+       }
        break;
      case LED_FRAME: // 1 bit per port
        debugstring("led frame!");
@@ -792,6 +812,14 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
         else
           send_masked(1, 1<<i);
        }
+       for(int i=0; i<24; i++)
+       {
+        send_masked('L', 1<<i);
+        if ( port_cmd[i] & 0xFF )         
+          send_masked(255, 1<<i);
+        else
+          send_masked(0, 1<<i);
+       }
        break;
      default: // unknown opcode, flash lights
        for(int i = 0; i< 4; i++)
@@ -804,7 +832,63 @@ unsigned short int process_opcode(unsigned short int opcode, unsigned short int 
    return 1;
  }
  
+ 
+/**
+*** arm test
+*** Move arms from left to right
+**/
+void arm_test(int n)
+{
+  unsigned long mask;
+  unsigned char j;
+  while( button && n )
+  {
+    j++;
+    if ( n > 0 ) n--;
+    if ( j > 7 ) j = 0;
+    for(int i=0; i<24; i++)
+    {
+      led_b = i & 32;
+      mask = 1 << i;
+      send_masked('L', mask);
+      send_masked(1<<j, mask );
+     send_masked('A', mask);
+      send_masked(32*j, mask );
+    }
+  }
+}
 
+ /** Go into random mode */
+void random_mode()
+{
+  signed char dir[24];
+  while ( !c_available() ) 
+  {
+    for(int i=0; i<24; i++)
+    {
+      switch ( rand() & 0x4F )
+      {
+      case 0: dir[i] = -10; break;
+      case 1: dir[i] = 10; break;
+      case 2: send_masked('p', 1<<i); break;
+      case 3: 
+       send_masked('A', 1<<i);
+       send_masked(port_cmd[i], 1<<i); 
+       break;
+      case 4: arm_test(8); break;
+      default: 
+       send_masked('L', 1<<i);
+       send_masked(rand() & 0xFF , 1<<i); 
+       wait(0.2); 
+       break;      
+      }
+      port_cmd[i] += dir[i];
+      if ( port_cmd[i] > 255 ) port_cmd[i] = 255;
+      if ( port_cmd[i] < 1 ) port_cmd[i] = 1;
+      wait(0.01);
+    }
+  } 
+}
  
 /**
 *** HUB Communication
@@ -828,6 +912,11 @@ void hub_comm()
       if ( error ) 
         error--;
       i++;
+     if ( i > 0x100000 ) 
+      {
+        // random_mode();
+        i = 0;
+      } 
     }
     // debugstring("State: "); debugint(state); debugstring("\n");
     
@@ -842,7 +931,8 @@ void hub_comm()
         {
           state = 2;      
           led_a = 1;
-          checksum = '#' + '#';          
+          checksum = '#' + '#'; 
+          i = 0;          
         }
         else
           state = 0;
@@ -970,30 +1060,6 @@ void led_test(int n)
 }
 
 
-/**
-*** arm test
-*** Move arms from left to right
-**/
-void arm_test(int n)
-{
-  unsigned long mask;
-  unsigned char j;
-  while( button && n )
-  {
-    j++;
-    if ( n > 0 ) n--;
-    if ( j > 7 ) j = 0;
-    for(int i=0; i<24; i++)
-    {
-      led_b = i & 32;
-      mask = 1 << i;
-      send_masked('L', mask);
-      send_masked(1<<j, mask );
-     send_masked('A', mask);
-      send_masked(32*j, mask );
-    }
-  }
-}
 
 
 
@@ -1099,7 +1165,7 @@ int main(void) {
   {
     switch ( select_function(5) )
     {
-      case 0: // no selection
+      case 0: send_masked('p', 0xFF);  wait(5); break;// no selection
       case 1: hub_comm(); break; // protocol decoder
       case 2: led_test(-1); break;
       case 3: arm_test(-1); break;

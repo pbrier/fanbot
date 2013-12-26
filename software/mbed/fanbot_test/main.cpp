@@ -9,7 +9,7 @@ DigitalOut led4(P0_9);
 DigitalOut led5(P0_22);
 DigitalOut led6(P0_13);
 DigitalOut led7(P0_14);
-DigitalOut servo1(P0_18);
+DigitalOut servo1(P0_19);
 DigitalOut servo2(P0_18);
 DigitalIn  button(P0_1);
 

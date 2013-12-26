@@ -174,8 +174,8 @@ int main(int argc, char* argv[])
     if ( verbose ) printf("Wait for connection...\n");
     handle = hid_open(vid, pid, NULL);
     if ( handle ) break; // we have a connection
-    // Sleep(500);    
-    usleep(1000*100);
+    Sleep(500);    
+    // usleep(1000*100);
   }
   hid_flush(handle);
   
